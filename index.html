@@ -227,7 +227,7 @@ button { cursor: pointer; }
 .btn[disabled], .btn[aria-disabled="true"] { opacity: .35; cursor: not-allowed; box-shadow: none; }
 
 /* Стеклянная карточка — базовый вид */
-.glass, .panel, .product, .app-card, .why__item, .review, .faq__item, .contact-card, .quiz, .rec {
+.glass, .panel, .product, .app-card, .why__item, .review, .contact-card, .quiz, .rec {
   background: linear-gradient(180deg, rgba(255,255,255,.035) 0%, rgba(255,255,255,.012) 100%), var(--surface);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -699,32 +699,8 @@ button { cursor: pointer; }
 @media (max-width: 920px) { .reviews { grid-template-columns: 1fr; } }
 
 /* =========================================================
-   11. Вопросы и ответы
+   11. Вопросы инженеру (плашка со ссылками на Telegram-бот)
    ========================================================= */
-.faq-wrap { display: grid; grid-template-columns: 1fr 340px; gap: 28px; align-items: start; }
-.faq { display: grid; gap: 10px; }
-.faq__item { border-radius: 16px; overflow: hidden; box-shadow: none; transition: border-color .25s; }
-.faq__item:has(.faq__btn[aria-expanded="true"]) { border-color: var(--border-accent); }
-.faq__q { margin: 0; font-size: inherit; font-weight: inherit; }
-.faq__btn {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%;
-  padding: 18px 20px; background: none; border: 0; text-align: left; font-weight: 400; font-size: 16px; color: var(--text);
-}
-.faq__btn:hover { color: #fff; }
-.faq__btn:focus-visible { outline-offset: -3px; }
-.faq__sign { position: relative; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border-2); flex: 0 0 auto; transition: background-color .2s, border-color .2s; }
-.faq__sign::before, .faq__sign::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; background: var(--text); transform: translate(-50%, -50%); transition: transform .25s; }
-.faq__sign::after { transform: translate(-50%, -50%) rotate(90deg); }
-.faq__btn[aria-expanded="true"] .faq__sign { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 14px rgba(1,244,199,.5); }
-.faq__btn[aria-expanded="true"] .faq__sign::before, .faq__btn[aria-expanded="true"] .faq__sign::after { background: var(--on-accent); }
-.faq__btn[aria-expanded="true"] .faq__sign::after { transform: translate(-50%, -50%) rotate(0); }
-.faq__a { padding: 0 20px 18px; color: var(--text-2); }
-.faq__a[hidden] { display: none; }
-.faq__group { font-size: 15px; font-weight: 500; color: var(--accent); margin: 22px 0 2px; }
-.faq__group:first-child { margin-top: 0; }
-.faq__a p + p, .faq__a p + .spec-table, .faq__a .spec-table + p { margin-top: 10px; }
-.faq__a ol { margin: 0; padding-left: 20px; }
-.faq__a .spec-table { max-width: 460px; color: var(--text); }
 .ask-card {
   position: sticky; top: calc(var(--header-h) + 20px); padding: 28px; border-radius: 22px; overflow: hidden;
   background: radial-gradient(120% 80% at 50% 0%, rgba(1,244,199,.25), transparent 60%), var(--surface);
@@ -734,7 +710,11 @@ button { cursor: pointer; }
 .ask-card p { color: var(--text-2); font-size: 15px; margin-bottom: 20px; }
 .ask-card .btn { width: 100%; margin-top: 8px; }
 .placeholder-mark { background: rgba(255,209,102,.12); color: var(--warn); padding: 0 6px; border-radius: 6px; }
-@media (max-width: 920px) { .faq-wrap { grid-template-columns: 1fr; } .ask-card { position: static; } }
+.ask-wrap { display: flex; justify-content: center; }
+.ask-card { position: static; width: 100%; max-width: 560px; text-align: center; padding: 36px 32px; }
+.ask-card h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 500; margin-bottom: 12px; }
+.ask-card p { max-width: 440px; margin-left: auto; margin-right: auto; }
+@media (max-width: 600px) { .ask-card { padding: 26px 18px; } }
 
 /* =========================================================
    Как работает pH-контроллер, пробоотборник
@@ -1437,19 +1417,14 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   </section>
 
   <!-- =========================================================
-       ВОПРОСЫ И ОТВЕТЫ
+       ВОПРОСЫ ИНЖЕНЕРУ (сами вопросы и ответы — в Telegram-боте)
        ========================================================= -->
-  <section class="section dots" id="faq" aria-labelledby="faq-title">
+  <section class="section dots" id="faq" aria-labelledby="ask-title">
     <div class="container">
-      <div class="section__head reveal">
-        <span class="section__eyebrow">Вопросы</span>
-        <h2 class="section__title" id="faq-title">Вопросы <em>и ответы</em></h2>
-      </div>
-      <div class="faq-wrap">
-        <div class="faq reveal" id="faqList"></div>
+      <div class="ask-wrap">
         <aside class="ask-card reveal" aria-labelledby="ask-title">
-          <h3 id="ask-title">Не нашли ответ?</h3>
-          <p>Спросите в Telegram-боте инженера. Там все ответы и инструкции к приборам — открываются прямо в Telegram.</p>
+          <h2 id="ask-title">Есть вопрос по прибору?</h2>
+          <p>Ответы на частые вопросы, инструкции к приборам и переписка с инженером — в нашем Telegram-боте.</p>
           <a class="btn btn--primary" data-link="engineerBot" target="_blank" rel="noopener"><svg class="ico-tg" aria-hidden="true"><use href="#b-telegram"/></svg>Задать вопрос инженеру</a>
           <a class="btn btn--line-white" data-link="engineerBotManuals" target="_blank" rel="noopener"><svg class="i i-sm" aria-hidden="true"><use href="#i-file"/></svg>Инструкции в Telegram</a>
         </aside>
@@ -1850,54 +1825,6 @@ const APPLICATIONS = [
 ];
 
 /* Вопросы и ответы */
-/* Вопросы сгруппированы; ответы — HTML */
-const ELECTRODE_TABLE = `<table class="spec-table"><tbody>
-  <tr><th scope="row">Диапазон измерения</th><td>0–14 pH</td></tr>
-  <tr><th scope="row">Рабочая температура</th><td>0–80 °C</td></tr>
-  <tr><th scope="row">Теоретическая точность</th><td>≥97 %</td></tr>
-  <tr><th scope="row">Нулевое значение</th><td>7±0.5 pH</td></tr>
-  <tr><th scope="row">Внутреннее сопротивление</th><td>≤250 МОм</td></tr>
-  <tr><th scope="row">Допустимая ошибка</th><td>≤15 мВ</td></tr>
-</tbody></table>`;
-
-const FAQ = [
-  { group: "pH-контроллер", items: [
-    ["Если выставить pH 6, при каком pH включится прибор?",
-      "<p>Если вы установили pH 6, а текущий pH высокий, например 8, первая дозировка кислоты пройдёт через время, заданное в паузе дозирования. С каждым следующим дозированием прибор меняет объём подачи. Если текущий pH, например, 6.3, первая подача может быть значительно позже.</p><p>Прибор перестаёт подавать кислоту, когда pH достигает заданного значения. При повышении pH прибор работает так же.</p>"],
-    ["Как работает дозировка реагента?",
-      "<p>В приборе используется ПИД-регулятор. Прибор постоянно проверяет разницу между текущим и заданным pH и подаёт порцию реагента в зависимости от указанного объёма системы.</p><p>Если после подачи pH не меняется, дозировка увеличивается. Если разница уменьшается, дозировка снижается. Когда разница минимальна, подачи становятся очень короткими. Чем больше объём системы, тем больше разовая подача. <a href=\"#howto\">График работы</a>.</p>"],
-    ["Указывать желаемый pH или верхнюю/нижнюю границу? Какую паузу дозирования ставить?",
-      "<p>В параметре «Уровень pH» установите значение, которое нужно поддерживать. В параметре «Режим рег.» выберите pH+ или pH−.</p><p>Паузу дозирования ставьте такую, чтобы за это время вода успевала перемешаться с реагентом. Желательно использовать помпу для перемешивания. Параметр «Объём» влияет на количество подаваемого реагента: чем больше объём, тем больше дозировка.</p>"],
-    ["Какая должна быть концентрация реагента?",
-      "Прибор рассчитан на концентрацию 15%. Если концентрация выше, уменьшите объём в настройках или разбавьте реагент. Концентрация выше 30% разрушает трубку насоса."],
-    ["Может ли pH-контроллер работать с кислотой и щёлочью одновременно?",
-      "Один прибор работает с одним реагентом. Для двух реагентов ставят два прибора. В гидропонике обычно хватает одного: pH, как правило, смещается в одну сторону."],
-    ["Какой объём бака обслуживает pH-контроллер?", "20–2000 л. Больший объём — под заказ."],
-    ["Для чего нужен пробоотборник?",
-      "Пробоотборник улучшает качество измерений, обеспечивает равномерное перемешивание реагентов и уменьшает загрязнение электрода. Интервал обслуживания увеличивается, показания стабильнее. Стоимость сборки — около 500 ₽ без помпы. <a href=\"#probe\">Как собрать</a>."]
-  ]},
-  { group: "Электрод и калибровка", items: [
-    ["Нужно ли калибровать прибор при покупке?",
-      "Нет. Все приборы откалиброваны на заводе. Достаточно проверить показания растворами и выставить параметры."],
-    ["В какой последовательности проводить калибровку?",
-      "<ol><li>Промойте электрод водой, лучше осмосом.</li><li>Опустите в раствор pH 4 и нажмите «ОК».</li><li>Промойте, опустите в раствор pH 7, нажмите «ОК» и сохраните.</li></ol><p>При такой последовательности растворы можно использовать 5 раз и более.</p>"],
-    ["Как часто калибровать pH-метр?", "Рекомендуется раз в месяц, по двум калибровочным растворам."],
-    ["Какой электрод используется?",
-      `<p>Подходит любой электрод с разъёмом BNC и нулевым значением pH 7±0.5. Электрод может быть с гелем KCl или с раствором KCl. Заправка требуется крайне редко: мембрана расходует раствор очень медленно.</p>${ELECTRODE_TABLE}`],
-    ["Какой срок службы электрода?", "Около 3 лет. Электрод стандартный, новый можно подобрать по параметрам из ответа выше."],
-    ["Чем приборы отличаются от китайских pH-метров?",
-      "В китайских приборах автоматическая калибровка: при смещении характеристик электрод становится непригодным. В приборах «Джинн» этой проблемы нет — электрод достаточно откалибровать."]
-  ]},
-  { group: "Блоки управления", items: [
-    ["Что будет при отключении электричества?", "Блоки управления сохраняют часы и все настройки."],
-    ["Как подключить блок высокой мощности?", "Через отдельный автомат в силовом щите. Номинал — по таблице в <a href=\"#calc\">калькуляторе</a>."]
-  ]},
-  { group: "Заказ и гарантия", items: [
-    ["Какая гарантия?", "1 год. Ремонтируем, обмениваем, дорабатываем под задачу."],
-    ["Как оплатить и получить заказ?", "<span class=\"placeholder-mark\">[заполнить: способы оплаты и доставки]</span>"]
-  ]}
-];
-
 /* Документы (тексты-заглушки) */
 const DOCS = {
   policy: { title: "Политика обработки персональных данных",
@@ -2637,28 +2564,6 @@ $("#lightbox").addEventListener("keydown", e => {
 });
 
 /* =========================================================
-   14. ВОПРОСЫ И ОТВЕТЫ (аккордеон)
-   ========================================================= */
-function renderFaq() {
-  let i = 0;
-  $("#faqList").innerHTML = FAQ.map(g => `
-    <h3 class="faq__group">${esc(g.group)}</h3>
-    ${g.items.map(([q, a]) => { i++; return `
-    <div class="faq__item">
-      <h4 class="faq__q"><button class="faq__btn" type="button" id="faq-b${i}" aria-expanded="false" aria-controls="faq-a${i}">
-        <span>${esc(q)}</span><span class="faq__sign" aria-hidden="true"></span></button></h4>
-      <div class="faq__a" id="faq-a${i}" role="region" aria-labelledby="faq-b${i}" hidden>${a}</div>
-    </div>`; }).join("")}`).join("");
-  $("#faqList").addEventListener("click", e => {
-    const b = e.target.closest(".faq__btn");
-    if (!b) return;
-    const open = b.getAttribute("aria-expanded") === "true";
-    b.setAttribute("aria-expanded", String(!open));
-    $("#" + b.getAttribute("aria-controls")).hidden = open;
-  });
-}
-
-/* =========================================================
    15. ФОРМЫ: маска телефона, валидация, отправка
    ========================================================= */
 function formatPhone(digits) {
@@ -2793,7 +2698,6 @@ renderApps();
 renderCatalog();
 renderGallery();
 renderDoseChart();
-renderFaq();
 quiz.render();
 calc.renderRows();
 renderLampN();
