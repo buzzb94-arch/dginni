@@ -18,8 +18,8 @@
 2. Задайте имя (например, «Инженер Джинн») и адрес бота (например, `dginni_engineer_bot`).
 3. BotFather пришлёт **токен** — храните его в секрете, в репозиторий не добавляйте.
 
-Если адрес бота отличается от `dginni_ru`, поменяйте ссылки в `index.html`
-в объекте `CONFIG`: `engineerBot`, `engineerBotManuals`, `engineerBotProbe`.
+Бот «Джинн»: **@dginni_engineer_bot**. Ссылки на него — в `index.html`, объект `CONFIG`:
+`engineerBot`, `engineerBotManuals`, `engineerBotProbe`.
 
 ## 2. Узнать чат инженера
 
