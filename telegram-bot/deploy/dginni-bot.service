@@ -1,0 +1,18 @@
+# Служба systemd для бота «Джинн» на сервере Linux (Ubuntu/Debian).
+# Установка — см. telegram-bot/README.md, раздел «Свой сервер (VPS)».
+[Unit]
+Description=Dginni engineer Telegram bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=dginni
+WorkingDirectory=/opt/dginni/telegram-bot
+# Токен и чат инженера — в /etc/dginni-bot.env (не в коде)
+EnvironmentFile=/etc/dginni-bot.env
+ExecStart=/usr/bin/python3 /opt/dginni/telegram-bot/bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

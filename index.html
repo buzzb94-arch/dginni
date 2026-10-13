@@ -480,11 +480,6 @@ button { cursor: pointer; }
 .product__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .product__actions .btn { padding: 8px 10px; white-space: nowrap; }
 .product__market { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.product__pdf {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  font-size: 14px; font-weight: 400; text-decoration: none; padding: 6px 0; color: var(--text-2);
-}
-.product__pdf:hover { color: var(--accent); }
 .mp-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   min-height: 38px; padding: 6px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 500;
@@ -958,6 +953,69 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   border: 1px solid var(--border-accent); box-shadow: 0 12px 30px rgba(0,0,0,.5), 0 0 30px rgba(1,244,199,.15); opacity: 0; transition: transform .3s, opacity .3s; pointer-events: none;
 }
 .toast.is-shown { transform: translate(-50%, 0); opacity: 1; }
+/* =========================================================
+   17. Картинки-карточки (новые фото с надписями) — показываем целиком
+   ========================================================= */
+.ico-tg { width: 20px; height: 20px; flex: 0 0 auto; }
+.hero__stage { max-width: 960px; }
+.hero__frame img, .hero__frame .img-fallback { aspect-ratio: 3 / 2; object-position: center; }
+.glass-chip--tl { left: -64px; top: 40%; }
+.glass-chip--br { right: -64px; bottom: 20%; }
+@media (max-width: 1120px) { .glass-chip { display: none; } }
+.app-card__img { aspect-ratio: 3 / 2; }
+.app-card__img::after { display: none; }
+.app-card__img img { filter: none; }
+.app-card__body { padding: 20px 20px 22px; }
+.app-card__icon { position: static; margin-bottom: 4px; }
+.product__img { aspect-ratio: 2 / 3; padding: 0; background: var(--surface-2); }
+.product__img img { object-fit: cover; mix-blend-mode: normal; }
+@media (max-width: 1200px) { .product__img { aspect-ratio: 2 / 3; } }
+.pm__main { background: var(--surface-2); }
+.pm__main img { mix-blend-mode: normal; }
+.pm__thumb { background: var(--surface-2); }
+.rec__img, .cart-item__img { background: var(--surface-2); }
+.rec__img img, .cart-item__img img { padding: 0; object-fit: cover; object-position: top; mix-blend-mode: normal; }
+.gallery, .probe__photos { grid-auto-rows: auto; }
+.gallery li:nth-child(n), .probe__photos li:nth-child(n) { grid-column: auto; grid-row: auto; aspect-ratio: 3 / 2; }
+.gallery__cap { display: none; } /* подписи уже есть на самих картинках; текст остаётся в лайтбоксе */
+.why__media { background: var(--surface-2); }
+.why__media img { object-fit: contain; opacity: 1; }
+.why__media::after { display: none; }
+
+/* Подвал: блок «Стать дилером» */
+.footer { padding-top: 0; }
+.footer__dealer { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; padding-top: 72px; padding-bottom: 56px; margin-bottom: 36px; border-bottom: 1px solid var(--border); }
+.footer__title { font-size: clamp(30px, 3.6vw, 46px); font-weight: 500; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); }
+.footer__title em { font-style: normal; color: var(--accent); text-shadow: 0 0 40px rgba(1,244,199,.35); }
+.footer__dealer .section__lead { margin-top: 14px; }
+@media (max-width: 920px) { .footer__dealer { grid-template-columns: 1fr; gap: 24px; } }
+
+/* =========================================================
+   18. Мобильная версия: короче промежутки между модулями
+   ========================================================= */
+@media (max-width: 600px) {
+  .section { padding: 44px 0; }
+  .section--tight { padding: 32px 0 40px; }
+  .section__head { margin-bottom: 22px; }
+  .section__lead { margin-top: 10px; font-size: 16px; }
+  .pill, .section__eyebrow { margin-bottom: 14px; }
+  .hero { padding: 24px 0 8px; }
+  .hero__cta { margin-top: 24px; }
+  .hero__stage { padding-top: 44px; margin-top: 12px; }
+  .hero__beam { height: 110px; }
+  .uses { margin-top: 28px; }
+  .uses__label { margin-bottom: 14px; }
+  .apps, .catalog, .why, .reviews, .contacts, .calc, .dose { gap: 12px; }
+  .probe { margin-top: 36px; gap: 20px; }
+  .contacts-row { margin-top: 16px; }
+  .quiz { padding: 20px 14px; }
+  .panel { padding: 18px 14px; }
+  .footer__dealer { padding-top: 44px; padding-bottom: 32px; margin-bottom: 24px; }
+  .lamp-quick { display: flex; width: 100%; border-radius: 16px; }
+  .lamp-quick .select { width: 92px; flex: 0 0 auto; border-radius: 999px; }
+  .lamp-quick .btn { flex: 1; white-space: nowrap; }
+  .footer { padding-bottom: 32px; }
+}
 </style>
 </head>
 <body>
@@ -1371,7 +1429,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <li>Гермоввод PG 13.5</li>
           </ol>
           <p class="small-note">Переходник ищите по фразе «Переходник с 1/2 на 4 мм». Помпа — любая с резьбой 20 мм под трубу (использовалась HAILEA HX8807, 650 л/ч). Производительность помпы должна быть такой, чтобы пробоотборник был полностью заполнен раствором. Детали продаются на маркетплейсах и в магазинах сантехники и электротоваров. Стоимость — около 500 ₽ без помпы.</p>
-          <a class="btn btn--outline" data-probe-pdf target="_blank" rel="noopener"><svg class="i i-sm" aria-hidden="true"><use href="#i-file"/></svg>Скачать инструкцию (PDF)</a>
+          <a class="btn btn--outline" data-link="engineerBotProbe" target="_blank" rel="noopener"><svg class="ico-tg" aria-hidden="true"><use href="#b-telegram"/></svg>Инструкция по сборке в Telegram</a>
         </div>
         <ul class="probe__photos reveal" id="probeList"></ul>
       </div>
@@ -1391,50 +1449,10 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <div class="faq reveal" id="faqList"></div>
         <aside class="ask-card reveal" aria-labelledby="ask-title">
           <h3 id="ask-title">Не нашли ответ?</h3>
-          <p>Напишите инженеру. Поможем подобрать прибор и настроить его под вашу установку.</p>
-          <a class="btn btn--primary" data-link="whatsapp" target="_blank" rel="noopener">Задать вопрос инженеру</a>
-          <a class="btn btn--line-white" data-link="telegram" target="_blank" rel="noopener">Написать в Telegram</a>
+          <p>Спросите в Telegram-боте инженера. Там все ответы и инструкции к приборам — открываются прямо в Telegram.</p>
+          <a class="btn btn--primary" data-link="engineerBot" target="_blank" rel="noopener"><svg class="ico-tg" aria-hidden="true"><use href="#b-telegram"/></svg>Задать вопрос инженеру</a>
+          <a class="btn btn--line-white" data-link="engineerBotManuals" target="_blank" rel="noopener"><svg class="i i-sm" aria-hidden="true"><use href="#i-file"/></svg>Инструкции в Telegram</a>
         </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================
-       СТАТЬ ДИЛЕРОМ
-       ========================================================= -->
-  <section class="section section--alt" id="dealers" aria-labelledby="dealers-title">
-    <div class="container two-col">
-      <div class="reveal">
-        <span class="section__eyebrow">Дилерам</span>
-        <h2 class="section__title" id="dealers-title">Стать <em>дилером</em></h2>
-        <p class="section__lead">Работаем с магазинами и дилерами. Условия: <span class="placeholder-mark">[заполнить: условия]</span></p>
-        <ul class="dealer-points">
-          <li><svg class="i"><use href="#i-factory"/></svg><span>Собственное производство в Перми с 2008 года.</span></li>
-          <li><svg class="i"><use href="#i-shield"/></svg><span>Гарантия на все приборы — 1 год.</span></li>
-          <li><svg class="i"><use href="#i-wrench"/></svg><span>Ремонт, обмен и доработка приборов.</span></li>
-        </ul>
-      </div>
-      <div class="panel reveal">
-        <form id="dealerForm" novalidate>
-          <div class="form-grid">
-            <label class="field"><span class="field__label">Компания <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="company" required autocomplete="organization"><span class="field__error">Укажите компанию</span></label>
-            <label class="field"><span class="field__label">Город <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="city" required autocomplete="address-level2"><span class="field__error">Укажите город</span></label>
-            <label class="field"><span class="field__label">Имя <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="name" required autocomplete="name"><span class="field__error">Укажите имя</span></label>
-            <label class="field"><span class="field__label">Телефон <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="phone" type="tel" required data-phone autocomplete="tel" placeholder="+7 (___) ___-__-__"><span class="field__error">Введите телефон полностью</span></label>
-            <label class="field full"><span class="field__label">E-mail <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="email" type="email" required autocomplete="email" placeholder="name@company.ru"><span class="field__error">Введите корректный e-mail</span></label>
-            <label class="field full"><span class="field__label">Комментарий</span>
-              <textarea class="textarea" name="comment"></textarea></label>
-            <label class="check full"><input type="checkbox" name="consent" data-consent>
-              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a> (152‑ФЗ)</span></label>
-            <div class="full"><button class="btn btn--primary btn--block" type="submit" disabled>Стать дилером</button></div>
-            <div class="form-success full" role="status"><svg class="i"><use href="#i-check"/></svg><span>Заявка сформирована. Мы свяжемся с вами в ближайшее время.</span></div>
-          </div>
-        </form>
       </div>
     </div>
   </section>
@@ -1509,7 +1527,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           <li><a class="social" data-link="ozonStore" target="_blank" rel="noopener"><svg><use href="#b-ozon"/></svg>Ozon</a></li>
           <li><a class="social" data-link="wildberriesStore" target="_blank" rel="noopener"><svg><use href="#b-wb"/></svg>Wildberries</a></li>
         </ul>
-        <a class="btn btn--blue" data-link="whatsapp" target="_blank" rel="noopener"><svg class="i i-sm"><use href="#i-chat"/></svg>Задать вопрос инженеру</a>
+        <a class="btn btn--blue" data-link="engineerBot" target="_blank" rel="noopener"><svg class="i i-sm"><use href="#i-chat"/></svg>Задать вопрос инженеру</a>
       </div>
     </div>
   </section>
@@ -1519,6 +1537,42 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
      ФУТЕР
      ========================================================= -->
 <footer class="footer">
+  <!-- Стать дилером (перенесено в подвал) -->
+  <div class="container footer__dealer" id="dealers" aria-labelledby="dealers-title">
+    <div class="footer__dealer-text reveal">
+      <span class="section__eyebrow">Дилерам</span>
+      <h2 class="footer__title" id="dealers-title">Стать <em>дилером</em></h2>
+      <p class="section__lead">Работаем с магазинами и дилерами. Условия: <span class="placeholder-mark">[заполнить: условия]</span></p>
+      <ul class="dealer-points">
+        <li><svg class="i"><use href="#i-factory"/></svg><span>Собственное производство в Перми с 2008 года.</span></li>
+        <li><svg class="i"><use href="#i-shield"/></svg><span>Гарантия на все приборы — 1 год.</span></li>
+        <li><svg class="i"><use href="#i-wrench"/></svg><span>Ремонт, обмен и доработка приборов.</span></li>
+      </ul>
+    </div>
+    <div class="panel reveal">
+        <form id="dealerForm" novalidate>
+          <div class="form-grid">
+            <label class="field"><span class="field__label">Компания <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="company" required autocomplete="organization"><span class="field__error">Укажите компанию</span></label>
+            <label class="field"><span class="field__label">Город <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="city" required autocomplete="address-level2"><span class="field__error">Укажите город</span></label>
+            <label class="field"><span class="field__label">Имя <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="name" required autocomplete="name"><span class="field__error">Укажите имя</span></label>
+            <label class="field"><span class="field__label">Телефон <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="phone" type="tel" required data-phone autocomplete="tel" placeholder="+7 (___) ___-__-__"><span class="field__error">Введите телефон полностью</span></label>
+            <label class="field full"><span class="field__label">E-mail <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="email" type="email" required autocomplete="email" placeholder="name@company.ru"><span class="field__error">Введите корректный e-mail</span></label>
+            <label class="field full"><span class="field__label">Комментарий</span>
+              <textarea class="textarea" name="comment"></textarea></label>
+            <label class="check full"><input type="checkbox" name="consent" data-consent>
+              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a> (152‑ФЗ)</span></label>
+            <div class="full"><button class="btn btn--primary btn--block" type="submit" disabled>Стать дилером</button></div>
+            <div class="form-success full" role="status"><svg class="i"><use href="#i-check"/></svg><span>Заявка сформирована. Мы свяжемся с вами в ближайшее время.</span></div>
+          </div>
+        </form>
+    </div>
+  </div>
+
   <div class="container footer__inner">
     <a class="logo" href="#top" aria-label="Джинн — наверх"><span class="logo__mark" aria-hidden="true"></span><span class="logo__name">Джинн</span><span class="logo__sub">dginni.ru</span></a>
     <ul class="footer__docs">
@@ -1596,8 +1650,11 @@ const CONFIG = {
   // Ссылки на товары. Если не заполнено, кнопка «Купить на Ozon» ведёт в магазин (ozonStore)
   ozon: { phMetr: "ЗАМЕНИТЬ", phController: "ЗАМЕНИТЬ", blokUniversal: "ЗАМЕНИТЬ", blokPower: "ЗАМЕНИТЬ" },
   wildberries: { phMetr: "ЗАМЕНИТЬ", phController: "ЗАМЕНИТЬ", blokUniversal: "ЗАМЕНИТЬ", blokPower: "ЗАМЕНИТЬ" },
-  instructions: { phMetr: "docs/ph-metr.pdf", phController: "docs/ph-controller.pdf", blokUniversal: "docs/blok-universal.pdf", blokPower: "docs/blok-power.pdf" },
-  probeInstruction: "docs/probootbornik.pdf",
+  // Telegram-бот инженера: вопросы-ответы и инструкции (PDF открываются прямо в Telegram).
+  // Ссылки с ?start= сразу открывают нужный раздел бота.
+  engineerBot: "https://t.me/dginni_ru",
+  engineerBotManuals: "https://t.me/dginni_ru?start=manuals",
+  engineerBotProbe: "https://t.me/dginni_ru?start=manual_probe",
   requisites: "ИП/ООО ЗАМЕНИТЬ, ИНН ЗАМЕНИТЬ, ОГРН ЗАМЕНИТЬ, адрес ЗАМЕНИТЬ"
 };
 
@@ -1607,10 +1664,11 @@ const CONFIG = {
 const IMAGES = {
   hero: "images/hero.jpg",
   scheme: "images/blok-power-scheme.jpg",
-  phMetr: ["images/ph-metr.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
-  phController: ["images/ph-controller.jpg", "images/ph-controller-2.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
-  blokUniversal: ["images/blok-universal.jpg", "images/blok-universal-2.jpg", "images/blok-universal-3.jpg", "images/blok-universal-4.jpg", "images/blok-universal-5.jpg"],
-  blokPower: ["images/blok-power.jpg", "images/blok-power-2.jpg", "images/blok-power-scheme.jpg"],
+  // первая картинка — вертикальная карточка товара (2:3) для каталога
+  phMetr: ["images/ph-metr-card.jpg", "images/ph-metr.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
+  phController: ["images/ph-controller-card.jpg", "images/ph-controller.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
+  blokUniversal: ["images/blok-universal-card.jpg", "images/blok-universal.jpg", "images/blok-universal-2.jpg", "images/blok-universal-3.jpg", "images/blok-universal-4.jpg", "images/blok-universal-5.jpg"],
+  blokPower: ["images/blok-power-card.jpg", "images/blok-power.jpg", "images/blok-power-2.jpg", "images/blok-power-scheme.jpg"],
   apps: {
     hydro: "images/app-hydro.jpg",
     aqua: "images/app-aqua.jpg",
@@ -1911,14 +1969,22 @@ function showFallback(img) {
   box.innerHTML = icon("i-image") + `<span>${esc(img.alt || "Изображение")}</span>`;
   img.replaceWith(box);
 }
+/* На телефоне берём облегчённые копии из images/m/ (если копии нет — обычное фото) */
+const MOBILE_MQ = window.matchMedia ? matchMedia("(max-width: 600px)") : { matches: false };
+const mobileSrc = src => (MOBILE_MQ.matches && /^images\/[^/]+$/.test(src)) ? src.replace("images/", "images/m/") : src;
 function hydrateImages(root = document) {
   $$("img[data-src], img[data-key]", root).forEach(img => {
     const src = img.dataset.src || IMAGES[img.dataset.key];
     img.removeAttribute("data-src");
     img.removeAttribute("data-key");
     if (!src) { showFallback(img); return; }
-    img.addEventListener("error", () => showFallback(img), { once: true });
-    img.src = src;
+    const first = mobileSrc(src);
+    img.addEventListener("error", function onErr() {
+      if (img.getAttribute("src") !== src) { img.src = src; return; } // мобильной копии нет — пробуем обычную
+      img.removeEventListener("error", onErr);
+      showFallback(img);
+    });
+    img.src = first;
   });
 }
 
@@ -2039,7 +2105,6 @@ function renderCatalog() {
           <a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))}>Купить на Ozon</a>
           <a class="mp-btn mp-btn--wb" ${linkAttrs(marketLink("wildberries", p.id))}>Купить на Wildberries</a>
         </div>
-        <a class="product__pdf" href="${esc(CONFIG.instructions[p.id])}" target="_blank" rel="noopener">${icon("i-file", "i i-sm")}Скачать инструкцию (PDF)</a>
       </div>
     </article>`).join("");
 }
@@ -2071,7 +2136,6 @@ function openProduct(id) {
         <h3>Комплектация</h3>
         <ul class="kit">${p.kit.map(k => `<li>${icon("i-check")}<span>${esc(k)}</span></li>`).join("")}</ul>
         ${p.note ? `<p class="pm__note">${esc(p.note)}</p>` : ""}
-        <p style="margin-top:18px"><a class="product__pdf" href="${esc(CONFIG.instructions[p.id])}" target="_blank" rel="noopener">${icon("i-file", "i i-sm")}Скачать инструкцию (PDF)</a></p>
       </div>
     </div>`;
   hydrateImages($("#pmBody"));
@@ -2343,6 +2407,26 @@ $("#quizBox").addEventListener("click", e => {
 const EQUIP_TYPES = [
   ["lamp", "Лампа"], ["heater", "Обогреватель"], ["fan", "Вентилятор"], ["pump", "Насос"], ["other", "Другое"]
 ];
+/* На телефоне все числа в калькуляторе выбираются из списков */
+const POWER_OPTIONS = [10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 120, 150, 200, 250, 300, 400, 500, 600, 750, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 8000];
+const QTY_OPTIONS = Array.from({ length: 30 }, (_, i) => i + 1);
+const LAMP_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1);
+function numField(id, f, value, opts, unit, attrs) {
+  if (!MOBILE_MQ.matches) return `<input class="input" id="${id}" data-f="${f}" ${attrs} inputmode="numeric" value="${value}">`;
+  const v = +value || opts[0];
+  const list = opts.includes(v) ? opts : opts.concat(v).sort((a, b) => a - b); // своё значение тоже остаётся в списке
+  return `<select class="select" id="${id}" data-f="${f}">${list.map(o =>
+    `<option value="${o}" ${o === v ? "selected" : ""}>${o.toLocaleString("ru-RU")}${unit}</option>`).join("")}</select>`;
+}
+function renderLampN() {
+  const old = $("#lampN"), v = Math.min(12, Math.max(1, Math.floor(+old.value || 4)));
+  const box = document.createElement("div");
+  box.innerHTML = MOBILE_MQ.matches
+    ? `<select class="select" id="lampN">${LAMP_OPTIONS.map(o => `<option value="${o}" ${o === v ? "selected" : ""}>${o}</option>`).join("")}</select>`
+    : `<input class="input" id="lampN" type="number" min="1" max="12" value="${v}" inputmode="numeric">`;
+  old.replaceWith(box.firstElementChild);
+}
+
 const calc = {
   rows: [
     { type: "lamp", w: 600, qty: 2, out: 4 },
@@ -2361,9 +2445,9 @@ const calc = {
         <div><label for="ct${i}">Тип</label>
           <select class="select" id="ct${i}" data-f="type">${EQUIP_TYPES.map(([v, l]) => `<option value="${v}" ${r.type === v ? "selected" : ""}>${l}</option>`).join("")}</select></div>
         <div><label for="cw${i}">Мощность, Вт</label>
-          <input class="input" id="cw${i}" data-f="w" type="number" min="0" step="10" inputmode="numeric" value="${r.w}"></div>
+          ${numField(`cw${i}`, "w", r.w, POWER_OPTIONS, " Вт", 'type="number" min="0" step="10"')}</div>
         <div><label for="cq${i}">Кол-во</label>
-          <input class="input" id="cq${i}" data-f="qty" type="number" min="1" step="1" inputmode="numeric" value="${r.qty}"></div>
+          ${numField(`cq${i}`, "qty", r.qty, QTY_OPTIONS, "", 'type="number" min="1" step="1"')}</div>
         <div class="calc-out"><label for="co${i}">Выход</label>
           <select class="select" id="co${i}" data-f="out">${[1, 2, 3, 4].map(n => `<option value="${n}" ${r.out === n ? "selected" : ""}>${n}</option>`).join("")}</select></div>
         <button class="icon-btn calc-del" type="button" data-del="${i}" aria-label="Удалить строку ${i + 1}">${icon("i-trash", "i i-sm")}</button>
@@ -2423,7 +2507,7 @@ const calc = {
 
     html += `<button class="btn btn--primary btn--block" type="button" id="calcToCart" ${this.recommended ? "" : "disabled"}>${icon("i-cart", "i i-sm")}Добавить блок в корзину</button>`;
     if (total > 0 && !this.recommended) {
-      html += `<a class="btn btn--ghost btn--block" style="margin-top:8px" data-link="whatsapp" target="_blank" rel="noopener">${icon("i-chat", "i i-sm")}Задать вопрос инженеру</a>`;
+      html += `<a class="btn btn--ghost btn--block" style="margin-top:8px" data-link="engineerBot" target="_blank" rel="noopener">${icon("i-chat", "i i-sm")}Задать вопрос инженеру</a>`;
     }
     $("#calcResult").innerHTML = html;
     applyConfigLinks($("#calcResult"));
@@ -2466,6 +2550,8 @@ $("#lampAdd").addEventListener("click", () => {
 $("#calcResult").addEventListener("click", e => {
   if (e.target.closest("#calcToCart") && calc.recommended) cart.add(calc.recommended);
 });
+// переход между мобильной и обычной версией — перестраиваем поля
+if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener("change", () => { calc.renderRows(); renderLampN(); });
 
 /* =========================================================
    13. ГАЛЕРЕЯ И ЛАЙТБОКС
@@ -2708,9 +2794,9 @@ renderCatalog();
 renderGallery();
 renderDoseChart();
 renderFaq();
-$$("[data-probe-pdf]").forEach(a => a.href = CONFIG.probeInstruction);
 quiz.render();
 calc.renderRows();
+renderLampN();
 calc.compute();
 cart.load();
 cart.render();
