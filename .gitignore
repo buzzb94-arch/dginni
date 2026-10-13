@@ -1,0 +1,14 @@
+# Сохранённая страница старого сайта со сторонними скриптами — не публикуем
+ВОПРОСЫ/*.html
+ВОПРОСЫ/*_files/
+
+# Рабочие файлы
+index-light-v1.html
+dginni-landing-prompt.md
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Посторонние файлы в папке проекта
+CODEX/
+mob1.jpg
