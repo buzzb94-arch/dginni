@@ -861,6 +861,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .lb-btn[hidden] { display: none; }
 .lightbox__inner .img-fallback { width: min(640px, 90vw); height: 50vh; border-radius: 14px; }
 .lightbox__cap { margin-top: 14px; color: var(--text); text-align: center; }
+.lightbox__num, .pm__count { white-space: nowrap; }
 .lb-btn {
   position: absolute; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%;
   border: 1px solid var(--border-2); background: rgba(255,255,255,.05); color: #fff;
@@ -2653,7 +2654,15 @@ function showLightbox(i) {
   img.addEventListener("error", () => showFallback(img), { once: true });
   img.src = g.src;
   img.title = "Нажмите, чтобы закрыть";
-  $("#lbCap").textContent = n > 1 ? `${g.caption} · ${lbIndex + 1} / ${n}` : g.caption;
+  // счётчик «2 / 8» — неразрывный: при нехватке места переносится целиком
+  const cap = $("#lbCap");
+  cap.textContent = g.caption;
+  if (n > 1) {
+    const num = document.createElement("span");
+    num.className = "lightbox__num";
+    num.textContent = `· ${lbIndex + 1} / ${n}`;
+    cap.append(" ", num);
+  }
 }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-lb]");
