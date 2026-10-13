@@ -547,7 +547,7 @@ button { cursor: pointer; }
 /* =========================================================
    7. Калькулятор нагрузки
    ========================================================= */
-.calc { display: grid; grid-template-columns: 1.35fr 1fr; gap: 20px; align-items: start; }
+.calc { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
 .panel { border-radius: 22px; padding: 28px; }
 .panel__title { font-size: 20px; font-weight: 500; margin-bottom: 18px; }
 .calc-rows { display: grid; gap: 10px; }
@@ -719,7 +719,7 @@ button { cursor: pointer; }
 /* =========================================================
    Как работает pH-контроллер, пробоотборник
    ========================================================= */
-.dose { display: grid; grid-template-columns: 1fr 1.25fr; gap: 20px; align-items: start; }
+.dose { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
 .dose__chart { margin: 0; }
 .dose > * { min-width: 0; }
 .dose__rules { margin-top: 18px; }
@@ -736,18 +736,7 @@ button { cursor: pointer; }
 .dose__legend span { display: inline-flex; align-items: center; gap: 8px; }
 .dose__swatch { width: 22px; height: 10px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 8px rgba(1,244,199,.6); }
 .dose__gap { width: 22px; height: 0; border-top: 1.5px dashed var(--text-2); }
-.probe { display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; align-items: start; margin-top: 80px; }
-.probe__text .section__eyebrow { margin-bottom: 18px; }
-.probe__title { font-size: clamp(26px, 3vw, 36px); font-weight: 500; margin-bottom: 14px; }
-.probe__text > p { color: var(--text-2); margin-bottom: 12px; }
-.probe__text h4 { font-size: 17px; font-weight: 500; margin: 22px 0 10px; }
-.probe__parts { margin: 0; padding-left: 22px; display: grid; gap: 6px; font-size: 15px; }
-.probe__parts li::marker { color: var(--accent); }
-.probe__text .small-note { margin: 14px 0 20px; color: var(--text-2); }
-.probe__photos { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 190px; gap: 12px; list-style: none; }
-.probe__photos li:first-child, .probe__photos li:nth-child(4) { grid-column: span 2; }
-@media (max-width: 1080px) { .dose, .probe { grid-template-columns: 1fr; } .probe { gap: 28px; margin-top: 56px; } }
-@media (max-width: 480px) { .probe__photos { grid-auto-rows: 130px; } }
+@media (max-width: 1080px) { .dose { grid-template-columns: 1fr; } }
 
 /* =========================================================
    12–13. Дилерам и заявка
@@ -955,8 +944,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .pm__thumb { background: var(--surface-2); }
 .rec__img, .cart-item__img { background: var(--surface-2); }
 .rec__img img, .cart-item__img img { padding: 0; object-fit: cover; object-position: top; mix-blend-mode: normal; }
-.gallery, .probe__photos { grid-auto-rows: auto; }
-.gallery li:nth-child(n), .probe__photos li:nth-child(n) { grid-column: auto; grid-row: auto; aspect-ratio: 3 / 2; }
+.gallery { grid-auto-rows: auto; }
+.gallery li:nth-child(n) { grid-column: auto; grid-row: auto; aspect-ratio: 3 / 2; }
 .gallery__cap { display: none; } /* подписи уже есть на самих картинках; текст остаётся в лайтбоксе */
 .why__media { background: var(--surface-2); }
 .why__media img { object-fit: contain; opacity: 1; }
@@ -986,7 +975,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .uses { margin-top: 28px; }
   .uses__label { margin-bottom: 14px; }
   .apps, .catalog, .why, .reviews, .contacts, .calc, .dose { gap: 12px; }
-  .probe { margin-top: 36px; gap: 20px; }
   .contacts-row { margin-top: 16px; }
   .quiz { padding: 20px 14px; }
   .panel { padding: 18px 14px; }
@@ -1393,26 +1381,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         </figure>
       </div>
 
-      <div class="probe" id="probe">
-        <div class="probe__text reveal">
-          <span class="section__eyebrow">Своими руками</span>
-          <h3 class="probe__title">Пробоотборник для электрода</h3>
-          <p>Пробоотборник повышает достоверность данных о pH, и прибор точнее поддерживает заданное значение. Раствор лучше перемешивается. На электроде меньше оседают мусор и водоросли, его реже нужно чистить.</p>
-          <p>Если добавить в пробоотборник элемент с микрофитингом, pH+ или pH− равномернее перемешивается с раствором.</p>
-          <h4>Детали</h4>
-          <ol class="probe__parts">
-            <li>Муфта переходная ПНД 20 с внутренней резьбой 20 × 1/2″</li>
-            <li>Тройник ПНД 20 × 1/2″, внутренняя или наружная резьба — зависит от переходника</li>
-            <li>Тройник ПНД 20 × 1/2″, внутренняя резьба — для установки электрода</li>
-            <li>Угол ПНД 20 × 20 — 2 шт.</li>
-            <li>Труба ПНД 20 мм — 1,3 м</li>
-            <li>Гермоввод PG 13.5</li>
-          </ol>
-          <p class="small-note">Переходник ищите по фразе «Переходник с 1/2 на 4 мм». Помпа — любая с резьбой 20 мм под трубу (использовалась HAILEA HX8807, 650 л/ч). Производительность помпы должна быть такой, чтобы пробоотборник был полностью заполнен раствором. Детали продаются на маркетплейсах и в магазинах сантехники и электротоваров. Стоимость — около 500 ₽ без помпы.</p>
-          <a class="btn btn--outline" data-link="engineerBotProbe" target="_blank" rel="noopener"><svg class="ico-tg" aria-hidden="true"><use href="#b-telegram"/></svg>Инструкция по сборке в Telegram</a>
-        </div>
-        <ul class="probe__photos reveal" id="probeList"></ul>
-      </div>
     </div>
   </section>
 
@@ -1629,7 +1597,6 @@ const CONFIG = {
   // Ссылки с ?start= сразу открывают нужный раздел бота.
   engineerBot: "https://t.me/dginni_engineer_bot",
   engineerBotManuals: "https://t.me/dginni_engineer_bot?start=manuals",
-  engineerBotProbe: "https://t.me/dginni_engineer_bot?start=manual_probe",
   requisites: "ИП/ООО ЗАМЕНИТЬ, ИНН ЗАМЕНИТЬ, ОГРН ЗАМЕНИТЬ, адрес ЗАМЕНИТЬ"
 };
 
@@ -1659,12 +1626,6 @@ const IMAGES = {
     { src: "images/gallery-6.jpg", caption: "Блок управления в теплице" },
     { src: "images/gallery-7.jpg", caption: "Блок управления и pH-контроллеры в гроубоксе" },
     { src: "images/gallery-8.jpg", caption: "Блок управления универсальный на объекте" }
-  ],
-  probe: [
-    { src: "images/probe-1.jpg", caption: "Детали пробоотборника, помпа и электрод" },
-    { src: "images/probe-2.jpg", caption: "Электрод установлен в тройник через гермоввод" },
-    { src: "images/probe-3.jpg", caption: "Пробоотборник с pH-контроллером на ёмкости" },
-    { src: "images/probe-4.jpg", caption: "Пробоотборник на гидропонной установке" }
   ]
 };
 
@@ -2492,7 +2453,6 @@ function galleryItems(list, set) {
 }
 function renderGallery() {
   $("#galleryList").innerHTML = galleryItems(IMAGES.gallery, "gallery");
-  $("#probeList").innerHTML = galleryItems(IMAGES.probe, "probe");
 }
 function showLightbox(i) {
   const n = lbList.length;

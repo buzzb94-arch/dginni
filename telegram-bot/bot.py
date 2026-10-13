@@ -3,9 +3,10 @@
 Что умеет:
   • «Вопросы и ответы» — разделы и вопросы с сайта, ответ по нажатию кнопки;
   • «Инструкции» — PDF открываются прямо в Telegram;
+  • «Пробоотборник своими руками» — описание, детали, фото сборки и PDF;
   • «Задать вопрос инженеру» — вопрос пересылается инженеру, ответ инженера
     (ответом на пересланное сообщение) бот возвращает покупателю;
-  • ссылки с сайта вида t.me/<бот>?start=manuals или ?start=manual_probe
+  • ссылки вида t.me/<бот>?start=manuals, ?start=diy или ?start=manual_probe
     сразу открывают нужный раздел.
 
 Без сторонних библиотек: только стандартный Python 3.9+.
@@ -39,6 +40,7 @@ log = logging.getLogger("dginni-bot")
 with open(CONTENT_FILE, encoding="utf-8") as f:
     CONTENT = json.load(f)
 FAQ = CONTENT["faq"]
+DIY = CONTENT.get("diy")
 MANUALS = {m["id"]: m for m in CONTENT["manuals"]}
 
 
@@ -108,6 +110,7 @@ def main_kb():
     return kb([
         [btn("❓ Вопросы и ответы", "faq")],
         [btn("📄 Инструкции", "manuals")],
+        *([[btn("🛠 " + DIY["title"], "diy")]] if DIY else []),
         [btn("👷 Задать вопрос инженеру", "ask")],
         [btn("🌐 Сайт и каталог", url=CONTENT["site"])],
     ])
@@ -158,6 +161,29 @@ def send_manual(chat_id, mid):
         # запасной вариант — ссылка на файл
         api("sendMessage", chat_id=chat_id, text=f"Инструкция: {m['title']}\n{m['url']}",
             reply_markup=kb([BACK_MAIN]))
+
+
+def diy_kb():
+    rows = [[btn(f"📷 Фото сборки ({len(DIY['photos'])})", "diy_photos")]] if DIY.get("photos") else []
+    if DIY.get("manual") in MANUALS:
+        rows.append([btn("📄 Инструкция по сборке (PDF)", f"m:{DIY['manual']}")])
+    return kb(rows + [BACK_MAIN])
+
+
+def show_diy(chat_id, message_id=None):
+    if not DIY:
+        show(chat_id, MAIN_TEXT, main_kb(), message_id)
+        return
+    show(chat_id, DIY["text"], diy_kb(), message_id)
+
+
+def send_diy_photos(chat_id):
+    media = [{"type": "photo", "media": ph["url"], "caption": ph.get("caption", "")} for ph in DIY["photos"][:10]]
+    res = api("sendMediaGroup", chat_id=chat_id, media=media)
+    if not res.get("ok"):  # запасной вариант — по одному фото
+        for ph in DIY["photos"]:
+            api("sendPhoto", chat_id=chat_id, photo=ph["url"], caption=ph.get("caption", ""))
+    api("sendMessage", chat_id=chat_id, text="Нужна инструкция или помощь со сборкой?", reply_markup=diy_kb())
 
 
 def start_ask(chat_id, message_id=None):
@@ -220,6 +246,8 @@ def on_start(chat_id, payload):
         send_manual(chat_id, payload[len("manual_"):])
     elif payload == "faq":
         show(chat_id, "Выберите раздел:", faq_groups_kb())
+    elif payload == "diy":
+        show_diy(chat_id)
     elif payload == "ask":
         start_ask(chat_id)
     else:
@@ -273,6 +301,10 @@ def handle_callback(cb):
         show(chat_id, "Инструкции к приборам. Нажмите, чтобы открыть в Telegram:", manuals_kb(), mid)
     elif data.startswith("m:"):
         send_manual(chat_id, data[2:])
+    elif data == "diy":
+        show_diy(chat_id, mid)
+    elif data == "diy_photos" and DIY:
+        send_diy_photos(chat_id)
     elif data == "ask":
         start_ask(chat_id, mid)
 
