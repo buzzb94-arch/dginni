@@ -296,6 +296,7 @@ button { cursor: pointer; }
   transition: border-color .2s, color .2s, background-color .2s;
 }
 .icon-btn .i { width: 20px; height: 20px; }
+.icon-btn svg, .btn svg { pointer-events: none; } /* нажатие всегда приходится на саму кнопку */
 .icon-btn:hover { border-color: var(--border-accent); color: var(--accent); }
 .cart-count {
   position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px;
@@ -1947,13 +1948,16 @@ $$("dialog").forEach(dlg => {
     nav.classList.toggle("is-open", open);
     burger.setAttribute("aria-expanded", String(open));
     burger.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
-    burger.innerHTML = icon(open ? "i-close" : "i-menu");
+    // меняем только рисунок иконки: если заменить сам элемент, клик по нему
+    // посчитался бы «кликом снаружи» и меню сразу закрылось бы
+    burger.querySelector("use").setAttribute("href", open ? "#i-close" : "#i-menu");
   };
   burger.addEventListener("click", () => setOpen(!nav.classList.contains("is-open")));
   nav.addEventListener("click", e => { if (e.target.closest("a")) setOpen(false); });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && nav.classList.contains("is-open")) { setOpen(false); burger.focus(); } });
   document.addEventListener("click", e => {
-    if (nav.classList.contains("is-open") && !nav.contains(e.target) && !burger.contains(e.target)) setOpen(false);
+    const path = e.composedPath ? e.composedPath() : [e.target];
+    if (nav.classList.contains("is-open") && !path.includes(nav) && !path.includes(burger)) setOpen(false);
   });
   // отступ прокрутки под фактическую высоту шапки
   const setOffset = () => document.documentElement.style.setProperty("--header-h", $(".header").offsetHeight + "px");
