@@ -390,7 +390,7 @@ button { cursor: pointer; }
   .hero__frame img, .hero__frame .img-fallback { aspect-ratio: 4 / 3; }
   .glass-chip { padding: 8px 12px 8px 8px; gap: 8px; }
   .glass-chip b { font-size: 15px; }
-  .glass-chip span { font-size: 11px; }
+  .glass-chip span { font-size: 12px; }
   .glass-chip__icon { width: 32px; height: 32px; border-radius: 10px; }
   .glass-chip__icon .i { width: 18px; height: 18px; }
   .glass-chip--tl { left: 16px; top: 16px; }
@@ -686,6 +686,7 @@ button { cursor: pointer; }
 @media (max-width: 920px) {
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 180px; }
   .gallery li:nth-child(6) { grid-column: span 1; }
+  .gallery li:last-child { grid-column: span 2; }
 }
 @media (max-width: 480px) { .gallery { grid-auto-rows: 140px; gap: 10px; } .gallery__cap { font-size: 12px; padding: 20px 10px 8px; } }
 
@@ -1154,7 +1155,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <div class="container">
       <div class="section__head reveal">
         <span class="section__eyebrow">Подбор</span>
-        <h2 class="section__title" id="quiz-title">Подбор прибора <em>за 3 шага</em></h2>
+        <h2 class="section__title" id="quiz-title">Подбор прибора <em>за&nbsp;3&nbsp;шага</em></h2>
         <p class="section__lead">Ответьте на вопросы. Результат — список приборов и общая стоимость.</p>
       </div>
       <div class="quiz reveal" id="quizBox" aria-live="polite"></div>
@@ -1429,7 +1430,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <label class="field full"><span class="field__label">Комментарий</span>
               <textarea class="textarea" name="comment"></textarea></label>
             <label class="check full"><input type="checkbox" name="consent" data-consent>
-              <span>Я согласен на обработку персональных данных в соответствии с <button type="button" class="link-btn" data-doc="policy">политикой обработки персональных данных</button> (152-ФЗ)</span></label>
+              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a> (152‑ФЗ)</span></label>
             <div class="full"><button class="btn btn--primary btn--block" type="submit" disabled>Стать дилером</button></div>
             <div class="form-success full" role="status"><svg class="i"><use href="#i-check"/></svg><span>Заявка сформирована. Мы свяжемся с вами в ближайшее время.</span></div>
           </div>
@@ -1465,7 +1466,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <label class="field full"><span class="field__label">Комментарий</span>
               <textarea class="textarea" name="comment" placeholder="Задача, объём бака, нагрузка и т. п."></textarea></label>
             <label class="check full"><input type="checkbox" name="consent" data-consent>
-              <span>Я согласен на обработку персональных данных в соответствии с <button type="button" class="link-btn" data-doc="policy">политикой обработки персональных данных</button> (152-ФЗ)</span></label>
+              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a> (152‑ФЗ)</span></label>
             <div class="full"><button class="btn btn--primary btn--block" type="submit" disabled>Оформить заявку</button></div>
             <div class="form-success full" role="status"><svg class="i"><use href="#i-check"/></svg><span>Заявка сформирована. Мы свяжемся с вами в ближайшее время.</span></div>
           </div>
@@ -2092,7 +2093,7 @@ document.addEventListener("click", e => {
   const add = e.target.closest("[data-add]");
   if (add) { cart.add(add.dataset.add); return; }
   const doc = e.target.closest("[data-doc]");
-  if (doc) { openDoc(doc.dataset.doc); }
+  if (doc) { e.preventDefault(); openDoc(doc.dataset.doc); }
 });
 
 /* Документы */
