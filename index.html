@@ -856,7 +856,9 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .lightbox { width: 100vw; height: 100vh; max-height: 100vh; margin: 0; }
 .lightbox::backdrop { background: rgba(0,4,3,.94); }
 .lightbox__inner { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 72px 24px; }
-.lightbox__img { max-width: 100%; max-height: calc(100vh - 140px); border-radius: 14px; object-fit: contain; box-shadow: 0 0 60px rgba(1,244,199,.15); }
+.lightbox__img { max-width: 100%; max-height: calc(100vh - 140px); border-radius: 14px; object-fit: contain; box-shadow: 0 0 60px rgba(1,244,199,.15); cursor: zoom-out; animation: lbZoom .28s ease; touch-action: pan-y; user-select: none; -webkit-user-drag: none; }
+@keyframes lbZoom { from { opacity: 0; transform: scale(.86); } to { opacity: 1; transform: none; } }
+.lb-btn[hidden] { display: none; }
 .lightbox__inner .img-fallback { width: min(640px, 90vw); height: 50vh; border-radius: 14px; }
 .lightbox__cap { margin-top: 14px; color: var(--text); text-align: center; }
 .lb-btn {
@@ -947,6 +949,26 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .pm__main { background: var(--surface-2); }
 .pm__main img { mix-blend-mode: normal; }
 .pm__thumb { background: var(--surface-2); }
+/* Окно товара: фото со стрелками, нажатие — увеличить */
+.pm__media { position: relative; }
+.pm__main { display: block; width: 100%; padding: 0; border: 0; cursor: zoom-in; }
+.pm__main img { transition: transform .4s; }
+.pm__main:hover img { transform: scale(1.02); }
+.pm__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25);
+  background: rgba(6,14,12,.6); color: #fff; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: background-color .2s, color .2s, border-color .2s;
+}
+.pm__arrow:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.pm__arrow .i { width: 20px; height: 20px; }
+.pm__arrow--prev { left: 10px; }
+.pm__arrow--next { right: 10px; }
+.pm__count {
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); padding: 4px 10px; border-radius: 999px;
+  background: rgba(6,14,12,.6); color: #fff; font-size: 12px; pointer-events: none;
+}
+
 .rec__img, .cart-item__img { background: var(--surface-2); }
 .rec__img img, .cart-item__img img { padding: 0; object-fit: cover; object-position: top; mix-blend-mode: normal; }
 .why__media { background: var(--surface-2); }
@@ -1917,9 +1939,9 @@ document.addEventListener("click", e => {
 /* =========================================================
    6. МОДАЛЬНЫЕ ОКНА (dialog): Esc, клик вне окна, блок прокрутки
    ========================================================= */
-let lastFocus = null;
+const focusStack = [];
 function openDialog(dlg) {
-  lastFocus = document.activeElement;
+  if (!dlg.open) focusStack.push(document.activeElement);
   if (!dlg.open) dlg.showModal();
   document.documentElement.classList.add("is-locked");
 }
@@ -1930,7 +1952,8 @@ function closeDialog(dlg) { if (dlg.open) dlg.close(); unlockIfIdle(); }
 $$("dialog").forEach(dlg => {
   dlg.addEventListener("close", () => {
     unlockIfIdle();
-    if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+    const back = focusStack.pop();
+    if (back && document.contains(back)) back.focus({ preventScroll: true });
   });
   // клик по подложке (вне содержимого окна)
   dlg.addEventListener("click", e => {
@@ -2018,7 +2041,13 @@ function openProduct(id) {
   $("#pmBody").innerHTML = `
     <div class="pm">
       <div>
-        <div class="pm__main" id="pmMain">${imgTag(p.photos[0], p.name)}</div>
+        <div class="pm__media">
+          <button class="pm__main" type="button" id="pmMain" aria-label="Увеличить фото">${imgTag(p.photos[0], p.name)}</button>
+          ${p.photos.length > 1 ? `
+          <button class="pm__arrow pm__arrow--prev" type="button" id="pmPrev" aria-label="Предыдущее фото">${icon("i-arrow-left")}</button>
+          <button class="pm__arrow pm__arrow--next" type="button" id="pmNext" aria-label="Следующее фото">${icon("i-arrow-right")}</button>
+          <span class="pm__count" id="pmCount">1 / ${p.photos.length}</span>` : ""}
+        </div>
         ${p.photos.length > 1 ? `<div class="pm__thumbs">${p.photos.map((src, i) => `
           <button class="pm__thumb" type="button" data-thumb="${i}" aria-label="Фото ${i + 1}" ${i === 0 ? 'aria-current="true"' : ""}>${imgTag(src, p.name + ", фото " + (i + 1))}</button>`).join("")}
         </div>` : ""}
@@ -2041,14 +2070,26 @@ function openProduct(id) {
       </div>
     </div>`;
   hydrateImages($("#pmBody"));
-  // переключение фото
-  $$("[data-thumb]", $("#pmBody")).forEach(btn => btn.addEventListener("click", () => {
-    const i = +btn.dataset.thumb;
-    $("#pmMain").innerHTML = imgTag(p.photos[i], p.name + ", фото " + (i + 1));
+  // переключение фото: стрелки, миниатюры; нажатие на фото — увеличить
+  const n = p.photos.length;
+  const list = p.photos.map(src => ({ src, caption: p.name })); // номер «2 / 5» добавляет просмотрщик
+  let cur = 0;
+  const setPhoto = i => {
+    cur = (i + n) % n;
+    $("#pmMain").innerHTML = imgTag(p.photos[cur], p.name + ", фото " + (cur + 1));
     hydrateImages($("#pmMain"));
-    $$("[data-thumb]", $("#pmBody")).forEach(b => b.removeAttribute("aria-current"));
-    btn.setAttribute("aria-current", "true");
-  }));
+    $$("[data-thumb]", $("#pmBody")).forEach(b => {
+      if (+b.dataset.thumb === cur) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+    });
+    if ($("#pmCount")) $("#pmCount").textContent = `${cur + 1} / ${n}`;
+  };
+  $$("[data-thumb]", $("#pmBody")).forEach(btn => btn.addEventListener("click", () => setPhoto(+btn.dataset.thumb)));
+  if (n > 1) {
+    $("#pmPrev").addEventListener("click", () => setPhoto(cur - 1));
+    $("#pmNext").addEventListener("click", () => setPhoto(cur + 1));
+  }
+  // после просмотра крупно в окне остаётся то фото, на котором остановились
+  $("#pmMain").addEventListener("click", () => openLightbox(list, cur, setPhoto));
   openDialog($("#productModal"));
   $("#productModal .modal__body").scrollTop = 0;
 }
@@ -2563,12 +2604,7 @@ function renderGallery() {
     const rot = base + scrollRot;
     return ((Math.round(-rot / step) % n) + n) % n;
   };
-  const openPhoto = i => {
-    pause();
-    lbList = IMAGES.gallery;
-    showLightbox(i);
-    openDialog($("#lightbox"));
-  };
+  const openPhoto = i => { pause(); openLightbox(IMAGES.gallery, i); };
   stage.addEventListener("click", e => {
     e.stopPropagation(); e.preventDefault();
     if (moved) { moved = false; return; }
@@ -2595,6 +2631,17 @@ function renderGallery() {
   layout();
   wake();
 }
+let lbOnClose = null, lbSwiped = false;
+/* Открыть фото крупно. list — [{src, caption}], onClose(i) — вызывается при закрытии */
+function openLightbox(list, i, onClose) {
+  lbList = list;
+  lbOnClose = onClose || null;
+  const many = list.length > 1;
+  $("#lbPrev").hidden = !many;
+  $("#lbNext").hidden = !many;
+  showLightbox(i);
+  openDialog($("#lightbox"));
+}
 function showLightbox(i) {
   const n = lbList.length;
   lbIndex = (i + n) % n;
@@ -2605,15 +2652,39 @@ function showLightbox(i) {
   old.replaceWith(img);
   img.addEventListener("error", () => showFallback(img), { once: true });
   img.src = g.src;
-  $("#lbCap").textContent = `${g.caption} · ${lbIndex + 1} / ${n}`;
+  img.title = "Нажмите, чтобы закрыть";
+  $("#lbCap").textContent = n > 1 ? `${g.caption} · ${lbIndex + 1} / ${n}` : g.caption;
 }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-lb]");
   if (!b) return;
-  lbList = IMAGES[b.dataset.set] || IMAGES.gallery;
-  showLightbox(+b.dataset.lb);
-  openDialog($("#lightbox"));
+  openLightbox(IMAGES[b.dataset.set] || IMAGES.gallery, +b.dataset.lb);
 });
+(function initLightboxGestures() {
+  const lb = $("#lightbox"), inner = $("#lbInner");
+  // повторное нажатие на увеличенное фото — вернуть как было
+  inner.addEventListener("click", e => {
+    if (lbSwiped) { lbSwiped = false; e.stopPropagation(); return; } // это был свайп, а не нажатие
+    if (e.target.id === "lbImg") closeDialog(lb);
+  }, true);
+  // свайп влево/вправо — соседнее фото
+  let sx = null, sy = 0;
+  inner.addEventListener("pointerdown", e => { sx = e.clientX; sy = e.clientY; lbSwiped = false; });
+  inner.addEventListener("pointerup", e => {
+    if (sx === null) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    sx = null;
+    if (lbList.length > 1 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      lbSwiped = true;
+      showLightbox(lbIndex + (dx < 0 ? 1 : -1));
+    }
+  });
+  lb.addEventListener("close", () => {
+    const cb = lbOnClose;
+    lbOnClose = null;
+    if (cb) cb(lbIndex);
+  });
+})();
 
 /* =========================================================
    13а. ГРАФИК ДОЗИРОВАНИЯ pH-КОНТРОЛЛЕРА
