@@ -2536,14 +2536,16 @@ function renderGallery() {
   });
 
   // перетаскивание мышью и пальцем; клик без перетаскивания открывает фото
+  let threshold = 6;
   stage.addEventListener("pointerdown", e => {
     if (e.button !== 0) return;
     dragging = true; moved = false; startX = e.clientX; startBase = base; target = null;
+    threshold = e.pointerType === "mouse" ? 6 : 14; // дрожание пальца — не перетаскивание
   });
   window.addEventListener("pointermove", e => {
     if (!dragging) return;
     const dx = e.clientX - startX;
-    if (!moved && Math.abs(dx) > 6) { moved = true; stage.classList.add("is-drag"); }
+    if (!moved && Math.abs(dx) > threshold) { moved = true; stage.classList.add("is-drag"); }
     if (moved) { base = startBase + dx * CGAL.dragFactor; if (!raf) apply(); }
   });
   const endDrag = () => {
@@ -2554,8 +2556,32 @@ function renderGallery() {
   };
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
+  // Нажатие обрабатываем сами, не полагаясь на то, какую 3D-карточку браузер
+  // посчитал нажатой (мобильные браузеры, особенно Safari, ошибаются):
+  // центр карусели — открыть переднее фото, края — повернуть к соседнему.
+  const frontIndex = () => {
+    const rot = base + scrollRot;
+    return ((Math.round(-rot / step) % n) + n) % n;
+  };
+  const openPhoto = i => {
+    pause();
+    lbList = IMAGES.gallery;
+    showLightbox(i);
+    openDialog($("#lightbox"));
+  };
   stage.addEventListener("click", e => {
-    if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; }
+    e.stopPropagation(); e.preventDefault();
+    if (moved) { moved = false; return; }
+    if (e.detail === 0) { // Enter/пробел на карточке с клавиатуры
+      const i = cards.indexOf(e.target.closest(".cgal__card"));
+      if (i >= 0) openPhoto(i);
+      return;
+    }
+    const r = stage.getBoundingClientRect();
+    const x = e.clientX - (r.left + r.width / 2);
+    const half = (parseFloat(getComputedStyle(stage).getPropertyValue("--cw")) || 240) / 2;
+    if (Math.abs(x) <= half) openPhoto(frontIndex());
+    else (x > 0 ? $("#cgalNext") : $("#cgalPrev")).click();
   }, true);
   stage.addEventListener("mouseenter", () => { hover = true; });
   stage.addEventListener("mouseleave", () => { hover = false; });
