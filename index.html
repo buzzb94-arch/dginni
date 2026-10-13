@@ -160,8 +160,8 @@ button { cursor: pointer; }
 .dots > .container { position: relative; z-index: 1; }
 
 /* Секции */
-.section { position: relative; padding: 96px 0; }
-.section--tight { padding: 70px 0 90px; }
+.section { position: relative; padding: 48px 0; }
+.section--tight { padding: 35px 0 45px; }
 .section--alt { background: linear-gradient(180deg, transparent 0%, rgba(3,8,7,.45) 18%, rgba(3,8,7,.45) 82%, transparent 100%); }
 
 /* Живой фон Velaris (WebGL). Если WebGL недоступен, остаётся цвет html */
@@ -188,7 +188,7 @@ button { cursor: pointer; }
 .section__title { font-size: clamp(30px, 4.2vw, 52px); }
 .section__title em, .hero__title em { font-style: normal; color: var(--accent); text-shadow: 0 0 40px rgba(1,244,199,.35); }
 .section__lead { margin-top: 16px; color: var(--text-2); font-size: 17px; max-width: 620px; }
-@media (max-width: 760px) { .section { padding: 72px 0; } .section__head { margin-bottom: 36px; } }
+@media (max-width: 760px) { .section { padding: 48px 0; } .section__head { margin-bottom: 36px; } }
 
 /* Кнопки */
 .btn {
@@ -334,7 +334,7 @@ button { cursor: pointer; }
 /* =========================================================
    3. Главный экран
    ========================================================= */
-.hero { position: relative; padding: 72px 0 40px; overflow: hidden; }
+.hero { position: relative; padding: 72px 0 20px; overflow: hidden; }
 .hero__bg {
   position: absolute; inset: 0; pointer-events: none;
   background:
@@ -964,7 +964,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 
 /* Подвал: блок «Стать дилером» */
 .footer { padding-top: 0; }
-.footer__dealer { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; padding-top: 72px; padding-bottom: 56px; margin-bottom: 36px; border-bottom: 1px solid var(--border); }
+.footer__dealer { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; padding-top: 36px; padding-bottom: 28px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
 .footer__title { font-size: clamp(30px, 3.6vw, 46px); font-weight: 500; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); }
 .footer__title em { font-style: normal; color: var(--accent); text-shadow: 0 0 40px rgba(1,244,199,.35); }
 .footer__dealer .section__lead { margin-top: 14px; }
