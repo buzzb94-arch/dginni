@@ -1381,7 +1381,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <div class="container">
       <div class="section__head reveal">
         <span class="section__eyebrow">Настройка</span>
-        <h2 class="section__title" id="howto-title">Как pH-контроллер <em>дозирует реагент</em></h2>
+        <h2 class="section__title" id="howto-title">Как pH-контроллер <em>дозирует&nbsp;реагент</em></h2>
         <p class="section__lead">В приборе используется ПИД-регулятор. Прибор постоянно сравнивает текущий и заданный pH и подаёт порцию реагента с учётом объёма системы.</p>
       </div>
 
@@ -1404,7 +1404,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           <p class="pm__note">Прибор рассчитан на реагент концентрацией 15%. Если концентрация выше, уменьшите объём в настройках или разбавьте реагент. Концентрация выше 30% разрушает трубку насоса.</p>
         </div>
         <figure class="panel dose__chart">
-          <h3 class="panel__title">Пример работы: заданный pH 6.5</h3>
+          <h3 class="panel__title">Пример работы: заданный pH&nbsp;6.5</h3>
           <p class="dose__hint">Листайте график вбок →</p>
           <div id="doseChart"></div>
           <figcaption class="dose__legend">
@@ -1461,7 +1461,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <label class="field full"><span class="field__label">Комментарий</span>
               <textarea class="textarea" name="comment" placeholder="Задача, объём бака, нагрузка и т. п."></textarea></label>
             <label class="check full"><input type="checkbox" name="consent" data-consent>
-              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a> (152‑ФЗ)</span></label>
+              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a>&nbsp;(152‑ФЗ)</span></label>
             <div class="full"><button class="btn btn--primary btn--block" type="submit" disabled>Оформить заявку</button></div>
             <div class="form-success full" role="status"><svg class="i"><use href="#i-check"/></svg><span>Заявка сформирована. Мы свяжемся с вами в ближайшее время.</span></div>
           </div>
@@ -1542,7 +1542,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <label class="field full"><span class="field__label">Комментарий</span>
               <textarea class="textarea" name="comment"></textarea></label>
             <label class="check full"><input type="checkbox" name="consent" data-consent>
-              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a> (152‑ФЗ)</span></label>
+              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a>&nbsp;(152‑ФЗ)</span></label>
             <div class="full"><button class="btn btn--primary btn--block" type="submit" disabled>Стать дилером</button></div>
             <div class="form-success full" role="status"><svg class="i"><use href="#i-check"/></svg><span>Заявка сформирована. Мы свяжемся с вами в ближайшее время.</span></div>
           </div>
@@ -2674,7 +2674,7 @@ document.addEventListener("click", e => {
   // повторное нажатие на увеличенное фото — вернуть как было
   inner.addEventListener("click", e => {
     if (lbSwiped) { lbSwiped = false; e.stopPropagation(); return; } // это был свайп, а не нажатие
-    if (e.target.id === "lbImg") closeDialog(lb);
+    if (e.target.id === "lbImg") { finish(); closeDialog(lb); }
   }, true);
   // свайп влево/вправо — соседнее фото
   let sx = null, sy = 0;
@@ -2688,11 +2688,15 @@ document.addEventListener("click", e => {
       showLightbox(lbIndex + (dx < 0 ? 1 : -1));
     }
   });
-  lb.addEventListener("close", () => {
+  // сообщить, на каком фото остановились: сразу при закрытии нажатием
+  // и по событию close — для Esc, крестика и нажатия на фон
+  const finish = () => {
     const cb = lbOnClose;
     lbOnClose = null;
     if (cb) cb(lbIndex);
-  });
+  };
+  lb.addEventListener("close", finish);
+  lb.addEventListener("click", e => { if (e.target === lb || e.target.id === "lbInner" || e.target.closest("[data-close]")) finish(); });
 })();
 
 /* =========================================================
