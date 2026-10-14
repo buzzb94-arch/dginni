@@ -2634,7 +2634,7 @@ function renderGallery() {
   layout();
   wake();
 }
-let lbOnClose = null, lbSwiped = false;
+let lbOnClose = null, lbSwipedAt = 0;
 /* Открыть фото крупно. list — [{src, caption}], onClose(i) — вызывается при закрытии */
 function openLightbox(list, i, onClose) {
   lbList = list;
@@ -2675,18 +2675,20 @@ document.addEventListener("click", e => {
   const lb = $("#lightbox"), inner = $("#lbInner");
   // повторное нажатие на увеличенное фото — вернуть как было
   inner.addEventListener("click", e => {
-    if (lbSwiped) { lbSwiped = false; e.stopPropagation(); return; } // это был свайп, а не нажатие
+    // нажатие сразу после свайпа — часть свайпа, а не «закрыть». Метка живёт 0,4 с:
+    // браузер может и не прислать нажатие после свайпа, и тогда она не должна «съесть» следующее
+    if (performance.now() - lbSwipedAt < 400) { lbSwipedAt = 0; e.stopPropagation(); return; }
     if (e.target.id === "lbImg") { finish(); closeDialog(lb); }
   }, true);
   // свайп влево/вправо — соседнее фото
   let sx = null, sy = 0;
-  inner.addEventListener("pointerdown", e => { sx = e.clientX; sy = e.clientY; lbSwiped = false; });
+  inner.addEventListener("pointerdown", e => { sx = e.clientX; sy = e.clientY; });
   inner.addEventListener("pointerup", e => {
     if (sx === null) return;
     const dx = e.clientX - sx, dy = e.clientY - sy;
     sx = null;
     if (lbList.length > 1 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-      lbSwiped = true;
+      lbSwipedAt = performance.now();
       showLightbox(lbIndex + (dx < 0 ? 1 : -1));
     }
   });
