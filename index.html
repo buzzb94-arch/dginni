@@ -613,6 +613,27 @@ button { cursor: pointer; }
 }
 .input::placeholder, .textarea::placeholder { color: var(--text-3); }
 .select option { background: var(--surface); color: var(--text); }
+/* Свой выпадающий список (калькулятор на телефоне) */
+.csel { position: relative; }
+.csel__native { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
+.csel__btn {
+  display: flex; align-items: center; width: 100%; text-align: left; padding-right: 36px;
+  background: rgba(255,255,255,.03) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239DABA7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 12px center / 16px no-repeat;
+}
+.csel.is-open .csel__btn { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(1,244,199,.15); }
+.csel__value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.csel__list {
+  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30;
+  max-height: 264px; overflow-y: auto; overscroll-behavior: contain; margin: 0; padding: 6px; list-style: none;
+  background: #0B1916; border: 1px solid var(--border-accent); border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.6), 0 0 24px rgba(1,244,199,.12); outline: none;
+}
+.csel--up .csel__list { top: auto; bottom: calc(100% + 6px); }
+.csel__opt { padding: 11px 12px; border-radius: 10px; color: var(--text); cursor: pointer; font-size: 15px; }
+.csel__opt.is-active { background: rgba(255,255,255,.05); }
+.csel__opt[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.lamp-quick .csel { width: 92px; flex: 0 0 auto; }
+.lamp-quick .csel .csel__btn { border-radius: 999px; }
 .textarea { min-height: 100px; resize: vertical; }
 .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--accent); background: rgba(1,244,199,.04); box-shadow: 0 0 0 3px rgba(1,244,199,.15); }
 .field.is-invalid .input, .field.is-invalid .textarea { border-color: var(--red); }
@@ -2364,13 +2385,104 @@ function numField(id, f, value, opts, unit, attrs) {
   return `<select class="select" id="${id}" data-f="${f}">${list.map(o =>
     `<option value="${o}" ${o === v ? "selected" : ""}>${o.toLocaleString("ru-RU")}${unit}</option>`).join("")}</select>`;
 }
+/* Свой выпадающий список для калькулятора на телефоне.
+   Системный список на Android для длинных перечней открывает белое окно
+   с радиокнопками; здесь — тёмный список под полем, в стиле сайта.
+   Настоящий <select> остаётся (скрыт): калькулятор работает с ним как раньше. */
+let cselOpen = null;
+function cselClose(focusBtn) {
+  if (!cselOpen) return;
+  const box = cselOpen;
+  cselOpen = null;
+  box.classList.remove("is-open", "csel--up");
+  const btn = box.querySelector(".csel__btn");
+  btn.setAttribute("aria-expanded", "false");
+  box.querySelector(".csel__list").hidden = true;
+  if (focusBtn) btn.focus();
+}
+function cselPick(box, value) {
+  const sel = box.querySelector("select");
+  if (sel.value !== value) {
+    sel.value = value;
+    sel.dispatchEvent(new Event("input", { bubbles: true }));
+    sel.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+  box.querySelector(".csel__value").textContent = sel.selectedOptions[0].textContent;
+  cselClose(true);
+}
+function cselOpenList(box) {
+  if (cselOpen && cselOpen !== box) cselClose(false);
+  const sel = box.querySelector("select"), list = box.querySelector(".csel__list");
+  list.innerHTML = [...sel.options].map((o, i) =>
+    `<li role="option" class="csel__opt" id="${sel.id}-o${i}" data-v="${esc(o.value)}" aria-selected="${o.selected}">${esc(o.textContent)}</li>`).join("");
+  list.hidden = false;
+  box.classList.add("is-open");
+  box.querySelector(".csel__btn").setAttribute("aria-expanded", "true");
+  cselOpen = box;
+  // не помещается вниз — раскрываем вверх
+  const r = box.getBoundingClientRect();
+  box.classList.toggle("csel--up", innerHeight - r.bottom < 200 && r.top > innerHeight - r.bottom);
+  const cur = list.querySelector('[aria-selected="true"]') || list.firstElementChild;
+  if (cur) { list.scrollTop = cur.offsetTop - list.clientHeight / 2 + cur.offsetHeight / 2; cselActive(list, cur); }
+}
+function cselActive(list, li) {
+  list.querySelectorAll(".is-active").forEach(x => x.classList.remove("is-active"));
+  li.classList.add("is-active");
+  list.setAttribute("aria-activedescendant", li.id);
+  const top = li.offsetTop, bottom = top + li.offsetHeight;
+  if (top < list.scrollTop) list.scrollTop = top;
+  else if (bottom > list.scrollTop + list.clientHeight) list.scrollTop = bottom - list.clientHeight;
+}
+function enhanceSelects(root) {
+  if (!MOBILE_MQ.matches) return;
+  $$("select", root).forEach(sel => {
+    if (sel.closest(".csel")) return;
+    const label = root.querySelector(`label[for="${sel.id}"]`) || document.querySelector(`label[for="${sel.id}"]`);
+    const name = label ? label.textContent.trim() : "Выбор";
+    const box = document.createElement("div");
+    box.className = "csel";
+    sel.replaceWith(box);
+    box.innerHTML = `<button type="button" class="select csel__btn" aria-haspopup="listbox" aria-expanded="false" aria-label="${esc(name)}"><span class="csel__value"></span></button><ul class="csel__list" role="listbox" aria-label="${esc(name)}" tabindex="-1" hidden></ul>`;
+    sel.tabIndex = -1;
+    sel.setAttribute("aria-hidden", "true");
+    sel.classList.add("csel__native");
+    box.appendChild(sel);
+    box.querySelector(".csel__value").textContent = sel.selectedOptions[0] ? sel.selectedOptions[0].textContent : "";
+    if (label) label.htmlFor = "";
+    if (label) label.addEventListener("click", () => box.querySelector(".csel__btn").click());
+  });
+}
+document.addEventListener("click", e => {
+  const btn = e.target.closest(".csel__btn");
+  if (btn) {
+    const box = btn.parentElement;
+    if (cselOpen === box) cselClose(false); else { cselOpenList(box); box.querySelector(".csel__list").focus({ preventScroll: true }); }
+    return;
+  }
+  const opt = e.target.closest(".csel__opt");
+  if (opt) { cselPick(opt.closest(".csel"), opt.dataset.v); return; }
+  if (cselOpen && !e.target.closest(".csel")) cselClose(false);
+});
+document.addEventListener("keydown", e => {
+  if (!cselOpen) return;
+  const list = cselOpen.querySelector(".csel__list"), items = [...list.children];
+  let i = items.findIndex(x => x.classList.contains("is-active"));
+  if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); cselClose(true); }
+  else if (e.key === "ArrowDown") { e.preventDefault(); cselActive(list, items[Math.min(items.length - 1, i + 1)]); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); cselActive(list, items[Math.max(0, i - 1)]); }
+  else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (items[i]) cselPick(cselOpen, items[i].dataset.v); }
+  else if (e.key === "Tab") cselClose(false);
+}, true);
+window.addEventListener("resize", () => cselClose(false));
+
 function renderLampN() {
-  const old = $("#lampN"), v = Math.min(12, Math.max(1, Math.floor(+old.value || 4)));
+  const cur = $("#lampN"), old = cur.closest(".csel") || cur, v = Math.min(12, Math.max(1, Math.floor(+cur.value || 4)));
   const box = document.createElement("div");
   box.innerHTML = MOBILE_MQ.matches
     ? `<select class="select" id="lampN">${LAMP_OPTIONS.map(o => `<option value="${o}" ${o === v ? "selected" : ""}>${o}</option>`).join("")}</select>`
     : `<input class="input" id="lampN" type="number" min="1" max="12" value="${v}" inputmode="numeric">`;
   old.replaceWith(box.firstElementChild);
+  enhanceSelects($(".lamp-quick"));
 }
 
 const calc = {
@@ -2398,7 +2510,12 @@ const calc = {
           <select class="select" id="co${i}" data-f="out">${[1, 2, 3, 4].map(n => `<option value="${n}" ${r.out === n ? "selected" : ""}>${n}</option>`).join("")}</select></div>
         <button class="icon-btn calc-del" type="button" data-del="${i}" aria-label="Удалить строку ${i + 1}">${icon("i-trash", "i i-sm")}</button>
       </div>`).join("");
-    if (focusLast) { const sel = $(`#ct${this.rows.length - 1}`); if (sel) sel.focus(); }
+    enhanceSelects(wrap);
+    if (focusLast) {
+      const sel = $(`#ct${this.rows.length - 1}`);
+      const target = sel && (sel.closest(".csel") ? sel.closest(".csel").querySelector(".csel__btn") : sel);
+      if (target) target.focus();
+    }
   },
   loads() {
     const outs = [0, 0, 0, 0];
