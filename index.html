@@ -645,6 +645,8 @@ button { cursor: pointer; }
 .why__item:nth-child(5)::before { background: radial-gradient(45% 55% at 60% 55%, rgba(1,244,199,.18), transparent 70%); }
 .why__item:hover { border-color: var(--border-accent); }
 .why__item--wide { grid-column: span 2; display: grid; grid-template-columns: 1fr 1.1fr; padding: 0; }
+.why__item--flip { grid-template-columns: 1.1fr 1fr; } /* картинка слева, текст справа */
+.why__item--flip .why__media { order: -1; }
 .why__body { position: relative; display: flex; flex-direction: column; padding: 26px; }
 .why__media { position: relative; overflow: hidden; }
 .why__media img, .why__media .img-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .85; transition: transform .6s, opacity .4s; }
@@ -1292,18 +1294,18 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           </div>
           <div class="why__media"><img data-src="images/ph-controller-3.jpg" alt="pH-контроллер «Джинн» на гидропонной установке" loading="lazy"></div>
         </li>
-        <li class="why__item reveal">
-          <div class="why__icon"><svg class="i"><use href="#i-plug"/></svg></div>
-          <h3>Стандартные комплектующие</h3>
-          <p>pH-электрод с разъёмом BNC. Автоматический выключатель Schneider Electric в блоках управления.</p>
-        </li>
-        <li class="why__item why__item--wide reveal">
+        <li class="why__item why__item--wide why__item--flip reveal">
           <div class="why__body">
             <div class="why__icon"><svg class="i"><use href="#i-lang"/></svg></div>
             <h3>Меню на русском языке</h3>
             <p>pH-метр и pH-контроллер — также на английском.</p>
           </div>
           <div class="why__media"><img data-src="images/ph-metr-3.jpg" alt="Меню настроек pH-метра: калибровка, язык, автоотключение" loading="lazy"></div>
+        </li>
+        <li class="why__item reveal">
+          <div class="why__icon"><svg class="i"><use href="#i-plug"/></svg></div>
+          <h3>Стандартные комплектующие</h3>
+          <p>pH-электрод с разъёмом BNC. Автоматический выключатель Schneider Electric в блоках управления.</p>
         </li>
       </ul>
     </div>
