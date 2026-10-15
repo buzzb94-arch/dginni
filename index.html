@@ -996,7 +996,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .rec__img, .cart-item__img { background: var(--surface-2); }
 .rec__img img, .cart-item__img img { padding: 0; object-fit: cover; object-position: top; mix-blend-mode: normal; }
 .why__media { background: var(--surface-2); }
-.why__media img { object-fit: contain; opacity: 1; }
+.why__media img { object-fit: cover; opacity: 1; } /* фото заполняет плашку до краёв */
 .why__media::after { display: none; }
 
 /* Подвал: блок «Стать дилером» */
@@ -1295,7 +1295,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <h3>Собственное производство</h3>
             <p>Приборы разрабатываем и собираем в Перми с 2008 года.</p>
           </div>
-          <div class="why__media"><img data-src="images/blok-universal-3.jpg" alt="Панель блока управления «Джинн»: дисплей, индикаторы выходов, автомат" loading="lazy"></div>
+          <div class="why__media"><img data-src="images/about-production.jpg" alt="Инженер «Джинн» собирает и проверяет плату блока управления" loading="lazy"></div>
         </li>
         <li class="why__item reveal">
           <div class="why__icon"><svg class="i"><use href="#i-shield"/></svg></div>
@@ -1313,7 +1313,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <h3>Сервис</h3>
             <p>Поможем разобраться, отремонтируем, обменяем или доработаем под ваши нужды.</p>
           </div>
-          <div class="why__media"><img data-src="images/ph-controller-3.jpg" alt="pH-контроллер «Джинн» на гидропонной установке" loading="lazy"></div>
+          <div class="why__media"><img data-src="images/about-service.jpg" alt="Специалист сервиса «Джинн» показывает клиенту pH-контроллер" loading="lazy"></div>
         </li>
         <li class="why__item why__item--wide why__item--flip reveal">
           <div class="why__body">
