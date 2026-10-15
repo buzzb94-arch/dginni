@@ -473,9 +473,6 @@ button { cursor: pointer; }
 .calc-row label { display: block; font-size: 12px; color: var(--text-2); margin-bottom: 4px; }
 .calc-row .icon-btn { width: 44px; height: 44px; }
 .calc-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
-.lamp-quick { display: inline-flex; align-items: center; gap: 10px; padding: 5px 5px 5px 16px; border: 1px dashed var(--border-2); border-radius: 999px; }
-.lamp-quick__label { font-size: 14px; color: var(--text-2); white-space: nowrap; }
-.lamp-quick input { width: 70px; min-height: 38px; border-radius: 999px; text-align: center; }
 .calc-scheme { margin-top: 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-2); }
 .calc-scheme img { cursor: zoom-in; }
 .calc-scheme figcaption { padding: 10px 14px; font-size: 13px; color: var(--text-2); background: var(--surface-2); }
@@ -546,8 +543,6 @@ button { cursor: pointer; }
 .csel__opt { padding: 11px 12px; border-radius: 10px; color: var(--text); cursor: pointer; font-size: 15px; }
 .csel__opt.is-active { background: rgba(255,255,255,.05); }
 .csel__opt[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-.lamp-quick .csel { width: 92px; flex: 0 0 auto; }
-.lamp-quick .csel .csel__btn { border-radius: 999px; }
 .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--accent); background: rgba(1,244,199,.04); box-shadow: 0 0 0 3px rgba(1,244,199,.15); }
 
 /* =========================================================
@@ -907,9 +902,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .apps, .catalog, .why, .reviews, .contacts, .calc, .dose { gap: 12px; }
   .contacts-row { margin-top: 16px; }
   .panel { padding: 18px 14px; }
-  .lamp-quick { display: flex; width: 100%; border-radius: 16px; }
-  .lamp-quick__label { flex: 1; }
-  .lamp-quick .select { width: 92px; flex: 0 0 auto; border-radius: 999px; }
   .footer { padding-bottom: 32px; }
 }
 </style>
@@ -1094,10 +1086,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           <div class="calc-rows" id="calcRows"></div>
           <div class="calc-tools">
             <button class="btn btn--outline btn--sm" type="button" id="calcAdd"><svg class="i i-sm"><use href="#i-plus"/></svg>Добавить оборудование</button>
-            <div class="lamp-quick" title="Задаёт количество в строке «Лампа 600 Вт» в списке оборудования">
-              <label class="lamp-quick__label" for="lampN">Лампы 600 Вт, шт.</label>
-              <input class="input" id="lampN" type="number" min="1" max="30" value="2" inputmode="numeric">
-            </div>
           </div>
           <figure class="calc-scheme" style="margin:24px 0 0">
             <img data-key="scheme" alt="Подключение блока управления «Джинн»: автомат в электрощите, вентилятор, насос полива, обогреватель, лампа и два датчика температуры" loading="lazy">
@@ -2017,7 +2005,6 @@ const EQUIP_TYPES = [
 /* На телефоне все числа в калькуляторе выбираются из списков */
 const POWER_OPTIONS = [10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 120, 150, 200, 250, 300, 400, 500, 600, 750, 800, 1000, 1200, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 8000];
 const QTY_OPTIONS = Array.from({ length: 30 }, (_, i) => i + 1);
-const LAMP_OPTIONS = Array.from({ length: 30 }, (_, i) => i + 1);
 function numField(id, f, value, opts, unit, attrs) {
   if (!MOBILE_MQ.matches) return `<input class="input" id="${id}" data-f="${f}" ${attrs} inputmode="numeric" value="${value}">`;
   const v = +value || opts[0];
@@ -2114,17 +2101,6 @@ document.addEventListener("keydown", e => {
   else if (e.key === "Tab") cselClose(false);
 }, true);
 window.addEventListener("resize", () => cselClose(false));
-
-function renderLampN() {
-  const cur = $("#lampN"), old = cur.closest(".csel") || cur, lr = lampRow();
-  const v = Math.min(30, Math.max(1, Math.floor(+(lr ? lr.qty : cur.value) || 2)));
-  const box = document.createElement("div");
-  box.innerHTML = MOBILE_MQ.matches
-    ? `<select class="select" id="lampN">${LAMP_OPTIONS.map(o => `<option value="${o}" ${o === v ? "selected" : ""}>${o}</option>`).join("")}</select>`
-    : `<input class="input" id="lampN" type="number" min="1" max="30" value="${v}" inputmode="numeric">`;
-  old.replaceWith(box.firstElementChild);
-  enhanceSelects($(".lamp-quick"));
-}
 
 const calc = {
   rows: [
@@ -2238,7 +2214,6 @@ $("#calcRows").addEventListener("input", e => {
   const r = calc.rows[+row.dataset.row];
   r[f] = (f === "type") ? e.target.value : (f === "out" ? +e.target.value : e.target.value);
   calc.compute();
-  syncLampN();
 });
 $("#calcRows").addEventListener("change", e => {
   // нормализация чисел после ввода
@@ -2258,33 +2233,11 @@ $("#calcRows").addEventListener("click", e => {
   const next = $("#calcAdd"); if (next) next.focus();
 });
 $("#calcAdd").addEventListener("click", () => calc.add());
-/* «Лампы 600 Вт, шт.» — быстро задать освещение: число меняет количество в строке
-   «Лампа 600 Вт» (не добавляет новые строки); если такой строки нет — она появляется на выходе 4 */
-const isLamp600 = r => r.type === "lamp" && +r.w === 600;
-const lampRow = () => calc.rows.find(r => isLamp600(r) && +r.out === 4) || calc.rows.find(isLamp600);
-$(".lamp-quick").addEventListener("change", e => {
-  if (e.target.id !== "lampN") return;
-  const n = Math.min(30, Math.max(1, Math.floor(+e.target.value || 1)));
-  const r = lampRow();
-  if (r) r.qty = n; else calc.rows.push({ type: "lamp", w: 600, qty: n, out: 4 });
-  calc.renderRows();
-  calc.compute();
-});
-// и наоборот: количество в строке ламп меняется — поле обновляется
-function syncLampN() {
-  const r = lampRow(), el = $("#lampN");
-  if (!r || !el) return;
-  const q = Math.floor(+r.qty || 0);
-  if (q < 1 || q > 30 || +el.value === q) return;
-  el.value = q;
-  const box = el.closest(".csel");
-  if (box) box.querySelector(".csel__value").textContent = el.selectedOptions[0].textContent;
-}
 $("#calcResult").addEventListener("click", e => {
   if (e.target.closest("#calcToCart") && calc.recommended) cart.add(calc.recommended);
 });
 // переход между мобильной и обычной версией — перестраиваем поля
-if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener("change", () => { calc.renderRows(); renderLampN(); });
+if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener("change", () => calc.renderRows());
 
 /* =========================================================
    13. ГАЛЕРЕЯ И ЛАЙТБОКС
@@ -2598,7 +2551,6 @@ renderCatalog();
 renderGallery();
 renderDoseChart();
 calc.renderRows();
-renderLampN();
 calc.compute();
 cart.load();
 cart.render();
