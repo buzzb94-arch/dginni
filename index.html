@@ -517,9 +517,6 @@ button { cursor: pointer; }
 /* =========================================================
    Поля форм
    ========================================================= */
-.field { display: block; }
-.field__label { display: block; font-size: 14px; font-weight: 400; color: var(--text-2); margin-bottom: 6px; }
-.field__label .req { color: var(--accent); }
 .input, .select, .textarea {
   width: 100%; min-height: 46px; padding: 10px 14px;
   background: rgba(255,255,255,.03); border: 1px solid var(--border-2); border-radius: 12px; color: var(--text);
@@ -548,22 +545,7 @@ button { cursor: pointer; }
 .csel__opt[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 .lamp-quick .csel { width: 92px; flex: 0 0 auto; }
 .lamp-quick .csel .csel__btn { border-radius: 999px; }
-.textarea { min-height: 100px; resize: vertical; }
 .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--accent); background: rgba(1,244,199,.04); box-shadow: 0 0 0 3px rgba(1,244,199,.15); }
-.field.is-invalid .input, .field.is-invalid .textarea { border-color: var(--red); }
-.field__error { display: none; margin-top: 4px; font-size: 13px; color: var(--red); }
-.field.is-invalid .field__error { display: block; }
-.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text-2); }
-.check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: 0 0 auto; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-grid .full { grid-column: 1 / -1; }
-.form-success {
-  display: none; align-items: flex-start; gap: 12px; padding: 16px; border-radius: 14px;
-  background: var(--accent-soft); border: 1px solid var(--border-accent); color: var(--text);
-}
-.form-success .i { color: var(--accent); }
-.form-success.is-shown { display: flex; }
-@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
 
 /* =========================================================
    8. Почему мы — bento
@@ -912,13 +894,14 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .why__media img { object-fit: cover; opacity: 1; } /* фото заполняет плашку до краёв */
 .why__media::after { display: none; }
 
-/* Подвал: блок «Стать дилером» */
-.footer { padding-top: 0; }
-.footer__dealer { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: start; padding-top: 36px; padding-bottom: 28px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
-.footer__title { font-size: clamp(30px, 3.6vw, 46px); font-weight: 500; line-height: 1.15; letter-spacing: -0.02em; color: var(--text); }
-.footer__title em { font-style: normal; color: var(--accent); text-shadow: 0 0 40px rgba(1,244,199,.35); }
-.footer__dealer .section__lead { margin-top: 14px; }
-@media (max-width: 920px) { .footer__dealer { grid-template-columns: 1fr; gap: 24px; } }
+/* Контакты: карточка «Стать дилером» — связь без анкеты */
+.dealer-card { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: center; margin-top: 24px; padding: 28px; border-radius: var(--radius); }
+.dealer-card__tag { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font-size: 14px; font-weight: 500; }
+.dealer-card__title { margin: 10px 0 8px; font-size: 26px; font-weight: 500; }
+.dealer-card p { color: var(--text-2); }
+.dealer-card .dealer-points { margin-top: 18px; gap: 10px; }
+.dealer-card__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 760px) { .dealer-card { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px; } .dealer-card__title { font-size: 22px; } }
 
 /* =========================================================
    18. Мобильная версия: короче промежутки между модулями
@@ -936,7 +919,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .apps, .catalog, .why, .reviews, .contacts, .calc, .dose { gap: 12px; }
   .contacts-row { margin-top: 16px; }
   .panel { padding: 18px 14px; }
-  .footer__dealer { padding-top: 44px; padding-bottom: 32px; margin-bottom: 24px; }
   .lamp-quick { display: flex; width: 100%; border-radius: 16px; }
   .lamp-quick .select { width: 92px; flex: 0 0 auto; border-radius: 999px; }
   .lamp-quick .btn { flex: 1; white-space: nowrap; }
@@ -1336,7 +1318,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <div class="container">
       <div class="section__head reveal">
         <span class="section__eyebrow">Контакты</span>
-        <h2 class="section__title" id="contacts-title"><em>Контакты</em></h2>
+        <h2 class="section__title" id="contacts-title">Свяжитесь <em>с нами</em></h2>
       </div>
       <div class="contacts">
         <div class="contact-card reveal">
@@ -1365,6 +1347,24 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         </ul>
         <a class="btn btn--blue" data-link="engineerBot" target="_blank" rel="noopener"><svg class="i i-sm"><use href="#i-chat"/></svg>Задать вопрос инженеру</a>
       </div>
+      <div class="dealer-card glass reveal" id="dealers" aria-labelledby="dealers-title">
+        <div>
+          <span class="dealer-card__tag"><svg class="i i-sm"><use href="#i-store"/></svg>Дилерам</span>
+          <h3 class="dealer-card__title" id="dealers-title">Стать дилером «Джинн»</h3>
+          <p>Работаем с магазинами и дилерами. Напишите нам — обсудим условия, цены и поставки. Без анкет: просто выберите, как удобнее связаться.</p>
+          <ul class="dealer-points">
+            <li><svg class="i"><use href="#i-factory"/></svg><span>Собственное производство в Перми с 2008 года.</span></li>
+            <li><svg class="i"><use href="#i-chat"/></svg><span>Консультация инженера по подключению и настройке.</span></li>
+            <li><svg class="i"><use href="#i-wrench"/></svg><span>Ремонт, обмен и доработка приборов.</span></li>
+          </ul>
+        </div>
+        <div class="dealer-card__actions">
+          <a class="checkout__btn" id="dealerWhatsapp" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-whatsapp"/></svg>WhatsApp</a>
+          <a class="checkout__btn" data-link="telegram" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Telegram</a>
+          <a class="checkout__btn" id="dealerEmail"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Почта</a>
+          <a class="checkout__btn" data-phone-link><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -1373,42 +1373,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
      ФУТЕР
      ========================================================= -->
 <footer class="footer">
-  <!-- Стать дилером (перенесено в подвал) -->
-  <div class="container footer__dealer" id="dealers" aria-labelledby="dealers-title">
-    <div class="footer__dealer-text reveal">
-      <span class="section__eyebrow">Дилерам</span>
-      <h2 class="footer__title" id="dealers-title">Стать <em>дилером</em></h2>
-      <p class="section__lead">Работаем с магазинами и дилерами. Условия: <span class="placeholder-mark">[заполнить: условия]</span></p>
-      <ul class="dealer-points">
-        <li><svg class="i"><use href="#i-factory"/></svg><span>Собственное производство в Перми с 2008 года.</span></li>
-        <li><svg class="i"><use href="#i-chat"/></svg><span>Консультация инженера по подключению и настройке.</span></li>
-        <li><svg class="i"><use href="#i-wrench"/></svg><span>Ремонт, обмен и доработка приборов.</span></li>
-      </ul>
-    </div>
-    <div class="panel reveal">
-        <form id="dealerForm" novalidate>
-          <div class="form-grid">
-            <label class="field"><span class="field__label">Компания <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="company" required autocomplete="organization"><span class="field__error">Укажите компанию</span></label>
-            <label class="field"><span class="field__label">Город <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="city" required autocomplete="address-level2"><span class="field__error">Укажите город</span></label>
-            <label class="field"><span class="field__label">Имя <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="name" required autocomplete="name"><span class="field__error">Укажите имя</span></label>
-            <label class="field"><span class="field__label">Телефон <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="phone" type="tel" required data-phone autocomplete="tel" placeholder="+7 (___) ___-__-__"><span class="field__error">Введите телефон полностью</span></label>
-            <label class="field full"><span class="field__label">E-mail <span class="req" aria-hidden="true">*</span></span>
-              <input class="input" name="email" type="email" required autocomplete="email" placeholder="name@company.ru"><span class="field__error">Введите корректный e-mail</span></label>
-            <label class="field full"><span class="field__label">Комментарий</span>
-              <textarea class="textarea" name="comment"></textarea></label>
-            <label class="check full"><input type="checkbox" name="consent" data-consent>
-              <span>Я согласен на обработку персональных данных в соответствии с <a href="#" class="link-btn" data-doc="policy">политикой обработки персональных данных</a>&nbsp;(152‑ФЗ)</span></label>
-            <div class="full"><button class="btn btn--primary btn--block" type="submit" disabled>Стать дилером</button></div>
-            <div class="form-success full" role="status"><svg class="i"><use href="#i-check"/></svg><span>Заявка сформирована. Мы свяжемся с вами в ближайшее время.</span></div>
-          </div>
-        </form>
-    </div>
-  </div>
-
   <div class="container footer__inner">
     <a class="logo" href="#top" aria-label="Джинн — наверх"><span class="logo__mark" aria-hidden="true"></span><span class="logo__name">Джинн</span><span class="logo__sub">dginni.ru</span></a>
     <ul class="footer__docs">
@@ -2600,106 +2564,12 @@ $("#lightbox").addEventListener("keydown", e => {
 });
 
 /* =========================================================
-   15. ФОРМЫ: маска телефона, валидация, отправка
+   15. ДИЛЕРАМ: связь без анкеты — готовый текст в WhatsApp и письмо
    ========================================================= */
-function formatPhone(digits) {
-  const d = digits.slice(0, 10);
-  let out = "+7";
-  if (d.length) out += " (" + d.slice(0, 3);
-  if (d.length >= 3) out += ")";
-  if (d.length > 3) out += " " + d.slice(3, 6);
-  if (d.length > 6) out += "-" + d.slice(6, 8);
-  if (d.length > 8) out += "-" + d.slice(8, 10);
-  return out;
-}
-function phoneDigits(value) {
-  let d = value.replace(/\D/g, "");
-  if (d.length > 10 && (d[0] === "7" || d[0] === "8")) d = d.slice(1);
-  else if (d.length === 11 && d[0] === "8") d = d.slice(1);
-  return d.slice(0, 10);
-}
-$$("[data-phone]").forEach(input => {
-  input.dataset.digits = "";
-  input.addEventListener("focus", () => { if (!input.value) input.value = "+7 "; });
-  input.addEventListener("blur", () => { if (!input.dataset.digits) input.value = ""; });
-  input.addEventListener("input", e => {
-    // первая «7» или «8» в пустом поле — код страны, не часть номера
-    let raw = input.value.replace(/^\+7\s?/, "");
-    let d = raw.replace(/\D/g, "");
-    if (!input.dataset.digits && d.length === 1 && (d === "8" || d === "7") && raw.length === 1) d = "";
-    if (d.length > 10) d = phoneDigits(d);
-    // удаление символа форматирования — убираем последнюю цифру
-    if (e.inputType && e.inputType.startsWith("delete") && d === input.dataset.digits) d = d.slice(0, -1);
-    input.dataset.digits = d.slice(0, 10);
-    input.value = d.length ? formatPhone(input.dataset.digits) : "+7 ";
-  });
-  input.addEventListener("paste", e => {
-    e.preventDefault();
-    const text = (e.clipboardData || window.clipboardData).getData("text");
-    input.dataset.digits = phoneDigits(text);
-    input.value = formatPhone(input.dataset.digits);
-  });
-});
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-function validateField(input) {
-  let ok = true;
-  const v = input.value.trim();
-  if (input.hasAttribute("data-phone")) ok = (input.dataset.digits || "").length === 10;
-  else if (input.type === "email") ok = EMAIL_RE.test(v);
-  else if (input.required) ok = v.length > 0;
-  const field = input.closest(".field");
-  if (field) field.classList.toggle("is-invalid", !ok);
-  input.setAttribute("aria-invalid", String(!ok));
-  return ok;
-}
-
-/**
- * Отправка заявки дилера.
- * TODO: подключить Telegram-бота / Formspree / CRM.
- * Сейчас функция формирует письмо на CONFIG.email через mailto:
- * с данными формы.
- */
-function sendLead(data) {
-  const lines = [];
-  lines.push("Заявка: стать дилером");
-  lines.push("");
-  Object.entries(data.fields).forEach(([k, v]) => { if (v) lines.push(`${k}: ${v}`); });
-  const subject = "Стать дилером — dginni.ru";
-  const href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
-  try { window.location.href = href; } catch (e) { /* почтовый клиент недоступен */ }
-  return Promise.resolve(true);
-}
-
-function initForm(form, type) {
-  const submit = form.querySelector('[type="submit"]');
-  const consent = form.querySelector("[data-consent]");
-  const success = form.querySelector(".form-success");
-  consent.addEventListener("change", () => { submit.disabled = !consent.checked; });
-  $$(".input, .textarea", form).forEach(inp => {
-    inp.addEventListener("blur", () => { if (inp.required && (inp.value.trim() || inp.closest(".field").classList.contains("is-invalid"))) validateField(inp); });
-    inp.addEventListener("input", () => { if (inp.closest(".field") && inp.closest(".field").classList.contains("is-invalid")) validateField(inp); });
-  });
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    if (!consent.checked) return;
-    const required = $$("[required]", form);
-    const results = required.map(validateField);
-    const firstBad = required[results.indexOf(false)];
-    if (firstBad) { firstBad.focus(); return; }
-
-    const f = new FormData(form);
-    const fields = { "Компания": f.get("company"), "Город": f.get("city"), "Имя": f.get("name"), "Телефон": f.get("phone"), "E-mail": f.get("email"), "Комментарий": f.get("comment") };
-    const data = { type, fields };
-
-    sendLead(data).then(() => {
-      success.classList.add("is-shown");
-      form.reset();
-      $$("[data-phone]", form).forEach(i => i.dataset.digits = "");
-      submit.disabled = true;
-      toast("Заявка сформирована. Мы свяжемся с вами в ближайшее время.");
-    });
-  });
+function initDealerLinks() {
+  const text = "Здравствуйте! Хотим стать дилером «Джинн».\nКомпания: \nГород: ";
+  $("#dealerWhatsapp").href = `${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
+  $("#dealerEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Стать дилером — dginni.ru")}&body=${encodeURIComponent(text)}`;
 }
 
 /* =========================================================
@@ -2730,7 +2600,7 @@ renderLampN();
 calc.compute();
 cart.load();
 cart.render();
-initForm($("#dealerForm"), "dealer");
+initDealerLinks();
 applyConfigLinks();
 hydrateImages();
 initReveal();
