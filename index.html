@@ -473,7 +473,8 @@ button { cursor: pointer; }
 .calc-row label { display: block; font-size: 12px; color: var(--text-2); margin-bottom: 4px; }
 .calc-row .icon-btn { width: 44px; height: 44px; }
 .calc-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
-.lamp-quick { display: inline-flex; align-items: center; gap: 8px; padding: 5px; border: 1px dashed var(--border-2); border-radius: 999px; }
+.lamp-quick { display: inline-flex; align-items: center; gap: 10px; padding: 5px 5px 5px 16px; border: 1px dashed var(--border-2); border-radius: 999px; }
+.lamp-quick__label { font-size: 14px; color: var(--text-2); white-space: nowrap; }
 .lamp-quick input { width: 70px; min-height: 38px; border-radius: 999px; text-align: center; }
 .calc-scheme { margin-top: 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-2); }
 .calc-scheme img { cursor: zoom-in; }
@@ -906,8 +907,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .contacts-row { margin-top: 16px; }
   .panel { padding: 18px 14px; }
   .lamp-quick { display: flex; width: 100%; border-radius: 16px; }
+  .lamp-quick__label { flex: 1; }
   .lamp-quick .select { width: 92px; flex: 0 0 auto; border-radius: 999px; }
-  .lamp-quick .btn { flex: 1; white-space: nowrap; }
   .footer { padding-bottom: 32px; }
 }
 </style>
@@ -1092,10 +1093,9 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           <div class="calc-rows" id="calcRows"></div>
           <div class="calc-tools">
             <button class="btn btn--outline btn--sm" type="button" id="calcAdd"><svg class="i i-sm"><use href="#i-plus"/></svg>Добавить оборудование</button>
-            <div class="lamp-quick">
-              <label class="visually-hidden" for="lampN">Количество ламп по 600 Вт</label>
-              <input class="input" id="lampN" type="number" min="1" max="12" value="4" inputmode="numeric">
-              <button class="btn btn--ghost btn--sm" type="button" id="lampAdd">Лампы 600 Вт × N</button>
+            <div class="lamp-quick" title="Задаёт количество в строке «Лампа 600 Вт» в списке оборудования">
+              <label class="lamp-quick__label" for="lampN">Лампы 600 Вт, шт.</label>
+              <input class="input" id="lampN" type="number" min="1" max="12" value="2" inputmode="numeric">
             </div>
           </div>
           <figure class="calc-scheme" style="margin:24px 0 0">
@@ -2115,7 +2115,8 @@ document.addEventListener("keydown", e => {
 window.addEventListener("resize", () => cselClose(false));
 
 function renderLampN() {
-  const cur = $("#lampN"), old = cur.closest(".csel") || cur, v = Math.min(12, Math.max(1, Math.floor(+cur.value || 4)));
+  const cur = $("#lampN"), old = cur.closest(".csel") || cur, lr = calc.rows.find(r => r.type === "lamp" && +r.w === 600);
+  const v = Math.min(12, Math.max(1, Math.floor(+(lr ? lr.qty : cur.value) || 2)));
   const box = document.createElement("div");
   box.innerHTML = MOBILE_MQ.matches
     ? `<select class="select" id="lampN">${LAMP_OPTIONS.map(o => `<option value="${o}" ${o === v ? "selected" : ""}>${o}</option>`).join("")}</select>`
@@ -2225,6 +2226,7 @@ $("#calcRows").addEventListener("input", e => {
   const r = calc.rows[+row.dataset.row];
   r[f] = (f === "type") ? e.target.value : (f === "out" ? +e.target.value : e.target.value);
   calc.compute();
+  syncLampN();
 });
 $("#calcRows").addEventListener("change", e => {
   // нормализация чисел после ввода
@@ -2244,11 +2246,27 @@ $("#calcRows").addEventListener("click", e => {
   const next = $("#calcAdd"); if (next) next.focus();
 });
 $("#calcAdd").addEventListener("click", () => calc.add());
-$("#lampAdd").addEventListener("click", () => {
-  const n = Math.min(12, Math.max(1, Math.floor(+$("#lampN").value || 1)));
-  $("#lampN").value = n;
-  calc.add({ type: "lamp", w: 600, qty: n, out: 4 });
+/* «Лампы 600 Вт, шт.» — быстро задать освещение: число меняет количество в строке
+   «Лампа 600 Вт» (не добавляет новые строки); если такой строки нет — она появляется на выходе 4 */
+const lampRow = () => calc.rows.find(r => r.type === "lamp" && +r.w === 600);
+$(".lamp-quick").addEventListener("change", e => {
+  if (e.target.id !== "lampN") return;
+  const n = Math.min(12, Math.max(1, Math.floor(+e.target.value || 1)));
+  const r = lampRow();
+  if (r) r.qty = n; else calc.rows.push({ type: "lamp", w: 600, qty: n, out: 4 });
+  calc.renderRows();
+  calc.compute();
 });
+// и наоборот: количество в строке ламп меняется — поле обновляется
+function syncLampN() {
+  const r = lampRow(), el = $("#lampN");
+  if (!r || !el) return;
+  const q = Math.floor(+r.qty || 0);
+  if (q < 1 || q > 12 || +el.value === q) return;
+  el.value = q;
+  const box = el.closest(".csel");
+  if (box) box.querySelector(".csel__value").textContent = el.selectedOptions[0].textContent;
+}
 $("#calcResult").addEventListener("click", e => {
   if (e.target.closest("#calcToCart") && calc.recommended) cart.add(calc.recommended);
 });
