@@ -808,6 +808,11 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .lightbox__inner { padding: 64px 12px 80px; }
   .lb-prev, .lb-next { top: auto; bottom: 16px; transform: none; }
   .lb-prev { left: calc(50% - 60px); } .lb-next { right: calc(50% - 60px); }
+  /* титульный баннер 16:9: крупно по высоте, по ширине — пролистывание пальцем */
+  .lightbox--wide .lightbox__inner { position: static; display: grid; align-content: center; justify-content: start; overflow-x: auto; overscroll-behavior: contain; padding: 64px 0 80px; }
+  .lightbox--wide .lightbox__img { max-width: none; max-height: none; width: auto; height: min(62vh, 560px); border-radius: 0; touch-action: pan-x pan-y; }
+  .lightbox--wide .lightbox__cap { display: none; }
+  .hero__frame img { cursor: zoom-in; }
 }
 
 /* Корзина */
@@ -2486,8 +2491,10 @@ function renderGallery() {
   wake();
 }
 let lbOnClose = null, lbSwipedAt = 0;
-/* Открыть фото крупно. list — [{src, caption}], onClose(i) — вызывается при закрытии */
-function openLightbox(list, i, onClose) {
+/* Открыть фото крупно. list — [{src, caption}], onClose(i) — вызывается при закрытии,
+   wide — широкий баннер: на телефоне крупно по высоте с пролистыванием по ширине */
+function openLightbox(list, i, onClose, wide = false) {
+  $("#lightbox").classList.toggle("lightbox--wide", wide);
   lbList = list;
   lbOnClose = onClose || null;
   const many = list.length > 1;
@@ -2517,6 +2524,14 @@ function showLightbox(i) {
     cap.append(" ", num);
   }
 }
+// титул на телефоне: нажатие — крупно, повторное нажатие — вернуть как было
+$(".hero__frame").addEventListener("click", () => {
+  if (!MOBILE_MQ.matches) return;
+  openLightbox([{ src: IMAGES.hero, caption: $(".hero__frame img").alt }], 0, null, true);
+  const inner = $("#lbInner"), img = $("#lbImg");
+  const center = () => { inner.scrollLeft = (inner.scrollWidth - inner.clientWidth) / 2; };
+  if (img.complete && img.naturalWidth) center(); else img.addEventListener("load", center, { once: true });
+});
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-lb]");
   if (!b) return;
