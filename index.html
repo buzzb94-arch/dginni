@@ -1331,7 +1331,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         </div>
         <div class="dealer-card__actions">
           <a class="checkout__btn" id="dealerWhatsapp" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-whatsapp"/></svg>WhatsApp</a>
-          <a class="checkout__btn" data-link="telegram" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Telegram</a>
+          <a class="checkout__btn" id="dealerTelegram" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Telegram</a>
           <a class="checkout__btn" id="dealerEmail"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Почта</a>
           <a class="checkout__btn" data-phone-link><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
         </div>
@@ -1992,8 +1992,8 @@ $("#cartBody").addEventListener("click", e => {
   const r = e.target.closest("[data-remove]");
   if (r) cart.remove(r.dataset.remove);
 });
-/* Оформление прямо в корзине: текст заказа уходит в WhatsApp или письмо готовым,
-   в Telegram — копируется (Telegram не даёт заранее вписать сообщение в чат) */
+/* Оформление прямо в корзине: текст заказа уже вписан в сообщение WhatsApp и Telegram
+   (ссылка на аккаунт по номеру t.me/+номер?text=…) и в письмо */
 function orderText() {
   return ["Здравствуйте! Хочу заказать:",
     ...cart.lines().map(l => `— ${l.name} × ${l.qty} — ${formatPrice(l.sum)}`),
@@ -2003,26 +2003,9 @@ function orderText() {
 function updateCheckoutLinks() {
   const text = orderText();
   $("#coWhatsapp").href = `${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
-  $("#coTelegram").href = CONFIG.telegram;
+  $("#coTelegram").href = `${CONFIG.telegram}?text=${encodeURIComponent(text)}`;
   $("#coEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Заказ с сайта dginni.ru")}&body=${encodeURIComponent(text)}`;
 }
-function copyText(text) {
-  // запасной способ — для старых браузеров и когда буфер обмена недоступен
-  const legacy = () => {
-    const ta = document.createElement("textarea");
-    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
-    $("#cartDrawer").append(ta); ta.select();
-    const ok = document.execCommand("copy"); ta.remove();
-    return ok ? Promise.resolve() : Promise.reject();
-  };
-  return navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(text).catch(legacy) : legacy();
-}
-$("#coTelegram").addEventListener("click", () => {
-  copyText(orderText())
-    .then(() => toast("Состав заказа скопирован — вставьте его в чат Telegram"))
-    .catch(() => toast("Напишите нам в Telegram, что хотите заказать"));
-});
-
 /* =========================================================
    12. КАЛЬКУЛЯТОР НАГРУЗКИ
    ========================================================= */
@@ -2535,11 +2518,12 @@ $("#lightbox").addEventListener("keydown", e => {
 });
 
 /* =========================================================
-   15. ДИЛЕРАМ: связь без анкеты — готовый текст в WhatsApp и письмо
+   15. ДИЛЕРАМ: связь без анкеты — готовый текст в WhatsApp, Telegram и письмо
    ========================================================= */
 function initDealerLinks() {
   const text = "Здравствуйте! Хотим стать дилером «Джинн».\nКомпания: \nГород: ";
   $("#dealerWhatsapp").href = `${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
+  $("#dealerTelegram").href = `${CONFIG.telegram}?text=${encodeURIComponent(text)}`;
   $("#dealerEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Стать дилером — dginni.ru")}&body=${encodeURIComponent(text)}`;
 }
 
