@@ -825,6 +825,17 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .drawer__foot { padding: 18px 20px 22px; border-top: 1px solid var(--border); background: var(--bg-2); }
 .drawer__total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; color: var(--text-2); }
 .drawer__total b { font-size: 26px; font-weight: 500; color: #fff; }
+/* оформление заказа прямо в корзине: мессенджер, почта или звонок — без форм */
+.checkout__lead { margin-bottom: 12px; font-size: 13.5px; color: var(--text-2); }
+.checkout { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.checkout__btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 12px;
+  border-radius: 14px; border: 1px solid var(--border-2); background: rgba(255,255,255,.03);
+  color: var(--text); font-size: 15px; font-weight: 500; text-decoration: none; transition: border-color .2s, background-color .2s;
+}
+.checkout__btn:hover { border-color: var(--border-accent); background: var(--accent-soft); color: var(--text); }
+.checkout__btn svg { width: 22px; height: 22px; flex: 0 0 auto; }
+.checkout__btn .i { color: var(--accent); }
 .cart-item { display: grid; grid-template-columns: 72px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
 .cart-item__img { width: 72px; height: 72px; border-radius: 12px; overflow: hidden; background: var(--plate); }
 .cart-item__img img { width: 100%; height: 100%; object-fit: contain; padding: 4px; mix-blend-mode: multiply; }
@@ -1497,7 +1508,13 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <div class="drawer__body" id="cartBody"></div>
     <div class="drawer__foot" id="cartFoot">
       <div class="drawer__total"><span>Итого</span><b id="cartTotal">0 ₽</b></div>
-      <button class="btn btn--primary btn--block" type="button" id="cartCheckout">Оформить заявку</button>
+      <p class="checkout__lead">Отправьте заказ удобным способом — состав и сумма подставятся сами. Мы ответим и согласуем оплату и доставку.</p>
+      <div class="checkout">
+        <a class="checkout__btn" id="coWhatsapp" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-whatsapp"/></svg>WhatsApp</a>
+        <a class="checkout__btn" id="coTelegram" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Telegram</a>
+        <a class="checkout__btn" id="coEmail"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Почта</a>
+        <a class="checkout__btn" data-phone-link><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+      </div>
     </div>
   </div>
 </dialog>
@@ -2073,6 +2090,7 @@ const cart = {
       }).join("");
       $("#cartFoot").hidden = false;
       $("#cartTotal").textContent = formatPrice(this.total());
+      updateCheckoutLinks();
       hydrateImages(body);
     }
     renderOrderSummary();
@@ -2086,10 +2104,35 @@ $("#cartBody").addEventListener("click", e => {
   const r = e.target.closest("[data-remove]");
   if (r) cart.remove(r.dataset.remove);
 });
-$("#cartCheckout").addEventListener("click", () => {
-  closeDialog($("#cartDrawer"));
-  $("#order").scrollIntoView({ behavior: "smooth" });
-  setTimeout(() => $("#orderName").focus({ preventScroll: true }), 500);
+/* Оформление прямо в корзине: текст заказа уходит в WhatsApp или письмо готовым,
+   в Telegram — копируется (Telegram не даёт заранее вписать сообщение в чат) */
+function orderText() {
+  return ["Здравствуйте! Хочу заказать:",
+    ...cart.lines().map(l => `— ${l.name} × ${l.qty} — ${formatPrice(l.sum)}`),
+    `Итого: ${formatPrice(cart.total())}`,
+    "", "Заказ с сайта dginni.ru"].join("\n");
+}
+function updateCheckoutLinks() {
+  const text = orderText();
+  $("#coWhatsapp").href = `${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
+  $("#coTelegram").href = CONFIG.telegram;
+  $("#coEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Заказ с сайта dginni.ru")}&body=${encodeURIComponent(text)}`;
+}
+function copyText(text) {
+  // запасной способ — для старых браузеров и когда буфер обмена недоступен
+  const legacy = () => {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    $("#cartDrawer").append(ta); ta.select();
+    const ok = document.execCommand("copy"); ta.remove();
+    return ok ? Promise.resolve() : Promise.reject();
+  };
+  return navigator.clipboard && window.isSecureContext ? navigator.clipboard.writeText(text).catch(legacy) : legacy();
+}
+$("#coTelegram").addEventListener("click", () => {
+  copyText(orderText())
+    .then(() => toast("Состав заказа скопирован — вставьте его в чат Telegram"))
+    .catch(() => toast("Напишите нам в Telegram, что хотите заказать"));
 });
 
 /* Состав заказа в форме заявки */
