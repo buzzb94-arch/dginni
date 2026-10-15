@@ -475,7 +475,7 @@ button { cursor: pointer; }
 .calc-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
 .lamp-quick { display: inline-flex; align-items: center; gap: 8px; padding: 5px; border: 1px dashed var(--border-2); border-radius: 999px; }
 .lamp-quick input { width: 70px; min-height: 38px; border-radius: 999px; text-align: center; }
-.calc-scheme { margin-top: 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: #fff; }
+.calc-scheme { margin-top: 24px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-2); }
 .calc-scheme figcaption { padding: 10px 14px; font-size: 13px; color: var(--text-2); background: var(--surface-2); }
 .out-list { display: grid; gap: 14px; margin-bottom: 18px; }
 .out-item__top { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; margin-bottom: 6px; }
@@ -1098,8 +1098,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             </div>
           </div>
           <figure class="calc-scheme" style="margin:24px 0 0">
-            <img data-key="scheme" alt="Схема подключения блока высокой мощности: блок, розетки, датчики температуры и электрощит" loading="lazy">
-            <figcaption>Схема подключения блока управления с высокой выходной мощностью к электрощиту.</figcaption>
+            <img data-key="scheme" alt="Подключение блока управления «Джинн»: автомат в электрощите, вентилятор, насос полива, обогреватель, лампа и два датчика температуры" loading="lazy">
+            <figcaption>Фото подключения блока управления: питание через автомат в электрощите, к выходам — вентиляция, полив, обогрев и свет, плюс два датчика температуры.</figcaption>
           </figure>
         </div>
 
@@ -1439,7 +1439,7 @@ const CONFIG = {
    ========================================================= */
 const IMAGES = {
   hero: "images/hero-lineup.jpg",
-  scheme: "images/blok-power-scheme.jpg",
+  scheme: "images/calc-connection.jpg",
   // первая картинка — вертикальная карточка товара (2:3) для каталога
   phMetr: ["images/ph-metr-card.jpg", "images/ph-metr.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
   phController: ["images/ph-controller-card.jpg", "images/ph-controller.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
