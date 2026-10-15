@@ -14,7 +14,7 @@
 <meta property="og:title" content="Джинн — pH-метры, pH-контроллеры и блоки управления для гидропоники и теплиц">
 <meta property="og:description" content="Собственное производство в Перми с 2008 года. Гарантия 1 год. Ремонт, обмен и доработка приборов под задачу.">
 <meta property="og:url" content="https://dginni.ru/">
-<meta property="og:image" content="https://dginni.ru/images/hero-banner.jpg">
+<meta property="og:image" content="https://dginni.ru/images/hero-lineup.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +27,7 @@
   "@type": "Organization",
   "name": "Джинн (DGINNI)",
   "url": "https://dginni.ru/",
-  "logo": "https://dginni.ru/images/hero-banner.jpg",
+  "logo": "https://dginni.ru/images/hero-lineup.jpg",
   "foundingDate": "2008",
   "email": "help@dginni.ru",
   "telephone": "+79655716155",
@@ -372,29 +372,10 @@ button { cursor: pointer; }
 .hero__frame img, .hero__frame .img-fallback {
   width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: center; border-radius: 16px; background: var(--surface);
 }
-.glass-chip {
-  position: absolute; display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; text-align: left;
-  border-radius: 16px; border: 1px solid rgba(255,255,255,.14);
-  background: rgba(6,14,12,.62); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 16px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
-}
-.glass-chip b { display: block; font-size: 18px; font-weight: 600; color: #fff; }
-.glass-chip span { font-size: 13px; color: var(--text-2); }
-.glass-chip__icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(1,244,199,.3); }
-.glass-chip--tl { left: -28px; top: 44%; }
-.glass-chip--br { right: -28px; bottom: 28px; }
-@media (max-width: 1120px) { .glass-chip--tl { left: 20px; } .glass-chip--br { right: 20px; } }
 @media (max-width: 760px) {
   .hero { padding-top: 44px; }
   .hero__stage { padding-top: 70px; margin-top: 24px; }
   .hero__beam { width: 300px; height: 160px; }
-  .glass-chip { padding: 8px 12px 8px 8px; gap: 8px; }
-  .glass-chip b { font-size: 15px; }
-  .glass-chip span { font-size: 12px; }
-  .glass-chip__icon { width: 32px; height: 32px; border-radius: 10px; }
-  .glass-chip__icon .i { width: 18px; height: 18px; }
-  .glass-chip--tl { left: 16px; top: 16px; }
-  .glass-chip--br { right: 16px; bottom: 16px; }
 }
 @media (max-width: 480px) { .hero__cta .btn { width: 100%; } .hero__subtitle { font-size: 16px; } }
 
@@ -761,7 +742,6 @@ a.contact-card__value:hover { color: var(--accent); }
 @media (max-width: 600px) {
   .pill { font-size: 12px; padding-right: 12px; gap: 8px; }
   .pill__mark, .section__eyebrow::before { width: 22px; height: 22px; border-radius: 7px; background-size: 13px, auto; }
-  .glass-chip { display: none; } /* на телефоне баннер 16:9 низкий — плашки закрывали бы прибор */
   .uses { margin-top: 44px; }
   .chip { min-height: 36px; padding: 8px 12px; }
   .footer__docs button { padding: 8px 0; }
@@ -902,9 +882,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
    ========================================================= */
 .ico-tg { width: 20px; height: 20px; flex: 0 0 auto; }
 .hero__stage { max-width: 960px; }
-.glass-chip--tl { left: -64px; top: 40%; }
-.glass-chip--br { right: -64px; bottom: 20%; }
-@media (max-width: 1120px) { .glass-chip { display: none; } }
 .app-card__img { aspect-ratio: 3 / 2; }
 .app-card__img::after { display: none; }
 .app-card__img img { filter: none; }
@@ -1089,15 +1066,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <div class="hero__stage reveal">
         <div class="hero__beam" aria-hidden="true"></div>
         <div class="hero__frame">
-          <img data-key="hero" alt="pH-метр «Джинн» с электродом, на дисплее pH 3.4" fetchpriority="high">
-          <div class="glass-chip glass-chip--tl">
-            <span class="glass-chip__icon"><svg class="i"><use href="#i-gauge"/></svg></span>
-            <div><b>pH 2.0–12.0</b><span>диапазон измерения</span></div>
-          </div>
-          <div class="glass-chip glass-chip--br">
-            <span class="glass-chip__icon"><svg class="i"><use href="#i-bolt"/></svg></span>
-            <div><b>до 10 ч</b><span>работы от аккумулятора</span></div>
-          </div>
+          <img data-key="hero" alt="Приборы «Джинн»: универсальный блок управления, pH-контроллер, pH-метр и блок высокой мощности" fetchpriority="high">
         </div>
       </div>
     </div>
@@ -1588,7 +1557,7 @@ const CONFIG = {
    2. ИЗОБРАЖЕНИЯ — все пути в одном месте
    ========================================================= */
 const IMAGES = {
-  hero: "images/hero-banner.jpg",
+  hero: "images/hero-lineup.jpg",
   scheme: "images/blok-power-scheme.jpg",
   // первая картинка — вертикальная карточка товара (2:3) для каталога
   phMetr: ["images/ph-metr-card.jpg", "images/ph-metr.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
