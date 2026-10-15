@@ -473,7 +473,8 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 /* =========================================================
    5. Каталог
    ========================================================= */
-.catalog { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+/* по 2 крупные карточки в ряд: товар крупно, все характеристики помещаются на фото */
+.catalog { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .product { display: flex; flex-direction: column; border-radius: var(--radius); overflow: hidden; transition: border-color .3s, box-shadow .3s; }
 .product:hover { border-color: var(--border-accent); box-shadow: var(--shadow), 0 0 50px rgba(1,244,199,.12); }
 .product:target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 50px rgba(1,244,199,.25); }
@@ -496,8 +497,7 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 }
 .mp-btn--ozon:hover { background: #005BFF; color: #fff; border-color: #005BFF; }
 .mp-btn--wb:hover { background: #A0119F; color: #fff; border-color: #A0119F; }
-@media (max-width: 1200px) { .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); } .product__img { aspect-ratio: 4 / 3; } }
-@media (max-width: 600px) { .catalog { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .catalog { grid-template-columns: 1fr; max-width: 560px; margin-left: auto; margin-right: auto; } }
 
 /* =========================================================
    7. Калькулятор нагрузки
@@ -896,14 +896,16 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .product__media { position: relative; }
 .product__media .product__img, .product__img { aspect-ratio: 4 / 5; }
 .product__chips {
-  position: absolute; left: 14px; right: 14px; top: 14px; display: flex; flex-wrap: wrap; gap: 5px; list-style: none; pointer-events: none;
+  position: absolute; left: 12px; right: 12px; top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; list-style: none; pointer-events: none;
 }
 .product__chips li {
-  display: flex; flex-direction: column; padding: 4px 9px; border-radius: 10px; line-height: 1.18;
+  display: flex; flex-direction: column; justify-content: center; padding: 4px 8px; border-radius: 10px; line-height: 1.18;
   background: rgba(6,14,12,.66); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 .product__chips span { font-size: 10.5px; color: var(--text-2); }
 .product__chips b { font-size: 12.5px; font-weight: 500; color: var(--text); }
+@media (max-width: 360px) { .product__chips li { padding: 3px 7px; } .product__chips span { font-size: 9.5px; } .product__chips b { font-size: 11.5px; } }
+@media (min-width: 1200px) { .product__chips { left: 16px; right: 16px; top: 16px; gap: 6px; } .product__chips li { padding: 6px 11px; } .product__chips span { font-size: 12px; } .product__chips b { font-size: 14.5px; } }
 .pm__main { background: var(--surface-2); }
 .pm__main img { mix-blend-mode: normal; }
 .pm__thumb { background: var(--surface-2); }
@@ -1498,7 +1500,8 @@ const IMAGES = {
   scheme: "images/calc-connection.jpg",
   // первая картинка — вертикальная карточка товара (2:3) для каталога
   // фото для карточек каталога: прибор у нижнего края, сверху место под характеристики
-  cards: { phMetr: "images/ph-metr-card45.jpg", phController: "images/ph-controller-card45.jpg", blokUniversal: "images/blok-universal-card45.jpg", blokPower: "images/blok-power-card45.jpg" },
+  // на ПК (2 колонки) под плашки характеристик 29% высоты, на телефоне (images/m/) — 37–40%: прибор занимает всё остальное
+  cards: { phMetr: "images/ph-metr-card5.jpg", phController: "images/ph-controller-card5.jpg", blokUniversal: "images/blok-universal-card5.jpg", blokPower: "images/blok-power-card5.jpg" },
   phMetr: ["images/ph-metr-card.jpg", "images/ph-metr.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
   phController: ["images/ph-controller-card.jpg", "images/ph-controller.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
   blokUniversal: ["images/blok-universal-card.jpg", "images/blok-universal.jpg", "images/blok-universal-2.jpg", "images/blok-universal-3.jpg", "images/blok-universal-4.jpg", "images/blok-universal-5.jpg"],
@@ -1877,7 +1880,7 @@ function renderCatalog() {
           ${imgTag(IMAGES.cards[p.id] || p.photos[0], p.name)}
         </button>
         <ul class="product__chips" aria-label="Главные характеристики">
-          ${p.keySpecs.slice(0, 3).map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join("")}
+          ${p.keySpecs.map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join("")}
         </ul>
       </div>
       <div class="product__body">
