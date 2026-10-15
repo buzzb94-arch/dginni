@@ -160,8 +160,8 @@ button { cursor: pointer; }
 .dots > .container { position: relative; z-index: 1; }
 
 /* Секции */
-.section { position: relative; padding: 48px 0; }
-.section--tight { padding: 35px 0 45px; }
+.section { position: relative; padding: 44px 0; } /* между блоками везде 88 px: 44 + 44, на ПК и на телефоне */
+.section--tight { padding: 44px 0; }
 .section--alt { background: linear-gradient(180deg, transparent 0%, rgba(3,8,7,.45) 18%, rgba(3,8,7,.45) 82%, transparent 100%); }
 
 /* Живой фон Velaris (WebGL). Если WebGL недоступен, остаётся цвет html */
@@ -188,7 +188,7 @@ button { cursor: pointer; }
 .section__title { font-size: clamp(30px, 4.2vw, 52px); }
 .section__title em, .hero__title em { font-style: normal; color: var(--accent); text-shadow: 0 0 40px rgba(1,244,199,.35); }
 .section__lead { margin-top: 16px; color: var(--text-2); font-size: 17px; max-width: 620px; }
-@media (max-width: 760px) { .section { padding: 48px 0; } .section__head { margin-bottom: 36px; } }
+@media (max-width: 760px) { .section__head { margin-bottom: 36px; } }
 
 /* Кнопки */
 .btn {
@@ -335,7 +335,7 @@ button { cursor: pointer; }
 /* =========================================================
    3. Главный экран
    ========================================================= */
-.hero { position: relative; padding: 72px 0 64px; overflow: hidden; }
+.hero { position: relative; padding: 72px 0 44px; overflow: hidden; }
 .hero__bg {
   position: absolute; inset: 0; pointer-events: none;
   background:
@@ -674,7 +674,7 @@ a.contact-card__value:hover { color: var(--accent); }
 }
 .social:hover { border-color: var(--border-accent); color: #fff; background: var(--accent-soft); }
 .social svg { width: 22px; height: 22px; }
-.footer { position: relative; background: rgba(3,8,7,.8); color: var(--text-2); padding: 44px 0; font-size: 14px; border-top: 1px solid var(--border); overflow: hidden; }
+.footer { position: relative; background: rgba(3,8,7,.8); color: var(--text-2); padding: 43px 0 44px; font-size: 14px; border-top: 1px solid var(--border); overflow: hidden; }
 .footer::before { content: ""; position: absolute; left: 50%; top: -1px; width: 60%; height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--accent), transparent); box-shadow: 0 0 20px 2px rgba(1,244,199,.4); }
 .footer__inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; }
 .footer__docs { display: flex; flex-wrap: wrap; gap: 6px 20px; list-style: none; }
@@ -894,12 +894,10 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
    18. Мобильная версия: короче промежутки между модулями
    ========================================================= */
 @media (max-width: 600px) {
-  .section { padding: 44px 0; }
-  .section--tight { padding: 32px 0 40px; }
   .section__head { margin-bottom: 22px; }
   .section__lead { margin-top: 10px; font-size: 16px; }
   .pill, .section__eyebrow { margin-bottom: 14px; }
-  .hero { padding: 24px 0 32px; }
+  .hero { padding: 24px 0 44px; }
   .hero__cta { margin-top: 24px; }
   .hero__stage { padding-top: 44px; margin-top: 12px; }
   .hero__beam { height: 110px; }
