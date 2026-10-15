@@ -2108,7 +2108,21 @@ const calc = {
     { type: "fan", w: 60, qty: 1, out: 2 }
   ],
   recommended: null,
-  add(row = { type: "other", w: 100, qty: 1, out: 1 }) { this.rows.push(row); this.renderRows(true); this.compute(); },
+  add(row = { type: "other", w: 100, qty: 1 }) {
+    if (!row.out) row.out = this.freeOut(row.w * row.qty);
+    this.rows.push(row); this.renderRows(true); this.compute();
+  },
+  // выход для нового оборудования: первый, где оно ещё помещается — сначала в лимиты
+  // универсального блока, потом блока высокой мощности; иначе — самый свободный выход
+  freeOut(w) {
+    const outs = this.loads();
+    for (const id of ["blokUniversal", "blokPower"]) {
+      const lim = byId(id).outputs, i = outs.findIndex((v, k) => v + w <= lim[k]);
+      if (i >= 0) return i + 1;
+    }
+    const lim = byId("blokPower").outputs, free = outs.map((v, k) => lim[k] - v);
+    return free.indexOf(Math.max(...free)) + 1;
+  },
   renderRows(focusLast = false) {
     const wrap = $("#calcRows");
     if (!this.rows.length) {
