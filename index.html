@@ -335,7 +335,7 @@ button { cursor: pointer; }
 /* =========================================================
    3. Главный экран
    ========================================================= */
-.hero { position: relative; padding: 72px 0 20px; overflow: hidden; }
+.hero { position: relative; padding: 72px 0 64px; overflow: hidden; }
 .hero__bg {
   position: absolute; inset: 0; pointer-events: none;
   background:
@@ -380,18 +380,6 @@ button { cursor: pointer; }
 @media (max-width: 480px) { .hero__cta .btn { width: 100%; } .hero__subtitle { font-size: 16px; } }
 
 /* Строка «Где работают приборы» */
-.uses { margin-top: 64px; }
-.uses__label { display: flex; align-items: center; gap: 18px; justify-content: center; color: var(--text-3); font-size: 14px; margin-bottom: 24px; }
-.uses__label::before, .uses__label::after { content: ""; flex: 1; max-width: 260px; height: 1px; background: linear-gradient(90deg, transparent, var(--border-2)); }
-.uses__label::after { transform: scaleX(-1); }
-.uses__label span { position: relative; padding: 0 14px; }
-.uses__label span::before, .uses__label span::after { content: ""; position: absolute; top: 50%; width: 5px; height: 5px; border-radius: 50%; background: var(--text); transform: translateY(-50%); }
-.uses__label span::before { left: -2px; } .uses__label span::after { right: -2px; }
-.uses__list { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 28px; }
-.uses__list li { display: inline-flex; align-items: center; gap: 10px; color: #8C9A96; font-size: 17px; font-weight: 400; transition: color .2s; }
-.uses__list li:hover { color: var(--text); }
-.uses__list .i { width: 22px; height: 22px; color: currentColor; }
-@media (max-width: 600px) { .uses__list { gap: 10px 20px; } .uses__list li { font-size: 15px; } }
 
 /* В цифрах */
 .stats { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -742,7 +730,6 @@ a.contact-card__value:hover { color: var(--accent); }
 @media (max-width: 600px) {
   .pill { font-size: 12px; padding-right: 12px; gap: 8px; }
   .pill__mark, .section__eyebrow::before { width: 22px; height: 22px; border-radius: 7px; background-size: 13px, auto; }
-  .uses { margin-top: 44px; }
   .chip { min-height: 36px; padding: 8px 12px; }
   .footer__docs button { padding: 8px 0; }
   .why__item h3 { margin-top: 24px; }
@@ -936,12 +923,10 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .section__head { margin-bottom: 22px; }
   .section__lead { margin-top: 10px; font-size: 16px; }
   .pill, .section__eyebrow { margin-bottom: 14px; }
-  .hero { padding: 24px 0 8px; }
+  .hero { padding: 24px 0 32px; }
   .hero__cta { margin-top: 24px; }
   .hero__stage { padding-top: 44px; margin-top: 12px; }
   .hero__beam { height: 110px; }
-  .uses { margin-top: 28px; }
-  .uses__label { margin-bottom: 14px; }
   .apps, .catalog, .why, .reviews, .contacts, .calc, .dose { gap: 12px; }
   .contacts-row { margin-top: 16px; }
   .panel { padding: 18px 14px; }
@@ -1068,21 +1053,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <div class="hero__frame">
           <img data-key="hero" alt="Приборы «Джинн»: универсальный блок управления, pH-контроллер, pH-метр и блок высокой мощности" fetchpriority="high">
         </div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="uses reveal">
-        <p class="uses__label"><span>Где работают приборы</span></p>
-        <ul class="uses__list">
-          <li><svg class="i"><use href="#i-leaf"/></svg>Гидропоника</li>
-          <li><svg class="i"><use href="#i-layers"/></svg>Сити-фермы</li>
-          <li><svg class="i"><use href="#i-fish"/></svg>Аквариумы</li>
-          <li><svg class="i"><use href="#i-greenhouse"/></svg>Теплицы</li>
-          <li><svg class="i"><use href="#i-sun"/></svg>Оранжереи</li>
-          <li><svg class="i"><use href="#i-box"/></svg>Гроубоксы</li>
-          <li><svg class="i"><use href="#i-wheat"/></svg>Сельское хозяйство</li>
-        </ul>
       </div>
     </div>
   </section>
