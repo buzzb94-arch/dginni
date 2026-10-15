@@ -704,11 +704,16 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 .contact-card__icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #0B2A24; color: var(--accent); margin-bottom: 16px; box-shadow: inset 0 0 0 1px rgba(1,244,199,.3), 0 0 20px rgba(1,244,199,.2); }
 .contact-card__label { font-size: 13px; color: var(--text-2); }
 .contact-card__value { font-size: 22px; font-weight: 500; color: var(--text); text-decoration: none; word-break: break-word; }
+/* виджет «Задать вопрос инженеру — Написать в чат»: открывает чат-бот в Telegram */
+.contact-card--chat { display: block; text-decoration: none; color: inherit; border-color: var(--border-accent);
+  background: radial-gradient(120% 90% at 0% 0%, rgba(1,244,199,.18), transparent 60%), var(--surface); transition: opacity .7s ease, transform .7s ease, box-shadow .2s; }
+.contact-card--chat.is-visible:hover { transform: translateY(-2px); transition: transform .2s, box-shadow .2s; box-shadow: var(--shadow), 0 0 40px rgba(1,244,199,.2); }
+.contact-card--chat .contact-card__icon svg { width: 30px; height: 30px; }
+.contact-card--chat .contact-card__value { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); }
+.social--accent { border-color: var(--border-accent); }
 a.contact-card__value:hover { color: var(--accent); }
 .contacts-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-top: 28px; }
 .socials { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; }
-.contacts-help { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; width: 100%; padding-top: 20px; border-top: 1px solid var(--border); }
-@media (max-width: 600px) { .contacts-help .btn { flex: 1 1 100%; } }
 .social {
   display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px 0 12px; border-radius: 999px;
   background: rgba(255,255,255,.02); border: 1px solid var(--border-2); color: var(--text); font-size: 14px; text-decoration: none;
@@ -1349,11 +1354,11 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <h2 class="section__title" id="contacts-title">Свяжитесь <em>с нами</em></h2>
       </div>
       <div class="contacts">
-        <div class="contact-card reveal">
-          <div class="contact-card__icon"><svg class="i"><use href="#i-pin"/></svg></div>
-          <div class="contact-card__label">Адрес</div>
-          <div class="contact-card__value">Пермь, Россия</div>
-        </div>
+        <a class="contact-card contact-card--chat reveal" data-link="engineerBot" target="_blank" rel="noopener" title="Чат-бот инженера «Джинн» в Telegram">
+          <div class="contact-card__icon"><svg aria-hidden="true"><use href="#b-telegram"/></svg></div>
+          <div class="contact-card__label">Задать вопрос инженеру</div>
+          <div class="contact-card__value">Написать в чат<svg class="i i-sm" aria-hidden="true"><use href="#i-arrow-right"/></svg></div>
+        </a>
         <div class="contact-card reveal">
           <div class="contact-card__icon"><svg class="i"><use href="#i-phone"/></svg></div>
           <div class="contact-card__label">Телефон</div>
@@ -1372,11 +1377,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           <li><a class="social" data-link="whatsapp" target="_blank" rel="noopener"><svg><use href="#b-whatsapp"/></svg>WhatsApp</a></li>
           <li><a class="social" data-link="ozonStore" target="_blank" rel="noopener"><svg><use href="#b-ozon"/></svg>Ozon</a></li>
           <li><a class="social" data-link="wildberriesStore" target="_blank" rel="noopener"><svg><use href="#b-wb"/></svg>Wildberries</a></li>
+          <li><a class="social social--accent" data-link="engineerBotManuals" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Инструкции в Telegram</a></li>
         </ul>
-        <div class="contacts-help">
-          <a class="btn btn--blue" data-link="engineerBot" target="_blank" rel="noopener"><svg class="i i-sm"><use href="#i-chat"/></svg>Задать вопрос инженеру в чат-боте Telegram</a>
-          <a class="btn btn--line-white" data-link="engineerBotManuals" target="_blank" rel="noopener"><svg class="i i-sm" aria-hidden="true"><use href="#i-file"/></svg>Инструкции в Telegram</a>
-        </div>
       </div>
       <div class="dealer-card glass reveal" id="dealers" aria-labelledby="dealers-title">
         <div>
