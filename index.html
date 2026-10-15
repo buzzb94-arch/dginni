@@ -370,7 +370,7 @@ button { cursor: pointer; }
   box-shadow: 0 0 60px rgba(1,244,199,.35), 0 0 140px rgba(1,244,199,.15), 0 40px 80px rgba(0,0,0,.6);
 }
 .hero__frame img, .hero__frame .img-fallback {
-  width: 100%; aspect-ratio: 16 / 7; object-fit: cover; object-position: 45% 50%; border-radius: 16px; background: var(--surface);
+  width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: center; border-radius: 16px; background: var(--surface);
 }
 .glass-chip {
   position: absolute; display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; text-align: left;
@@ -388,7 +388,6 @@ button { cursor: pointer; }
   .hero { padding-top: 44px; }
   .hero__stage { padding-top: 70px; margin-top: 24px; }
   .hero__beam { width: 300px; height: 160px; }
-  .hero__frame img, .hero__frame .img-fallback { aspect-ratio: 4 / 3; }
   .glass-chip { padding: 8px 12px 8px 8px; gap: 8px; }
   .glass-chip b { font-size: 15px; }
   .glass-chip span { font-size: 12px; }
@@ -762,8 +761,7 @@ a.contact-card__value:hover { color: var(--accent); }
 @media (max-width: 600px) {
   .pill { font-size: 12px; padding-right: 12px; gap: 8px; }
   .pill__mark, .section__eyebrow::before { width: 22px; height: 22px; border-radius: 7px; background-size: 13px, auto; }
-  .glass-chip--tl { display: none; }
-  .hero__frame img, .hero__frame .img-fallback { aspect-ratio: 5 / 4; }
+  .glass-chip { display: none; } /* на телефоне баннер 16:9 низкий — плашки закрывали бы прибор */
   .uses { margin-top: 44px; }
   .chip { min-height: 36px; padding: 8px 12px; }
   .footer__docs button { padding: 8px 0; }
@@ -904,7 +902,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
    ========================================================= */
 .ico-tg { width: 20px; height: 20px; flex: 0 0 auto; }
 .hero__stage { max-width: 960px; }
-.hero__frame img, .hero__frame .img-fallback { aspect-ratio: 3 / 2; object-position: center; }
 .glass-chip--tl { left: -64px; top: 40%; }
 .glass-chip--br { right: -64px; bottom: 20%; }
 @media (max-width: 1120px) { .glass-chip { display: none; } }
@@ -1092,7 +1089,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <div class="hero__stage reveal">
         <div class="hero__beam" aria-hidden="true"></div>
         <div class="hero__frame">
-          <img data-key="hero" alt="pH-метр «Джинн» на гидропонной установке с клубникой, на дисплее pH 5.9" fetchpriority="high">
+          <img data-key="hero" alt="pH-метр «Джинн» с электродом, на дисплее pH 3.4" fetchpriority="high">
           <div class="glass-chip glass-chip--tl">
             <span class="glass-chip__icon"><svg class="i"><use href="#i-gauge"/></svg></span>
             <div><b>pH 2.0–12.0</b><span>диапазон измерения</span></div>
