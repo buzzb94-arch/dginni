@@ -14,7 +14,7 @@
 <meta property="og:title" content="Джинн — pH-метры, pH-контроллеры и блоки управления для гидропоники и теплиц">
 <meta property="og:description" content="Собственное производство в Перми с 2008 года. Гарантия 1 год. Ремонт, обмен и доработка приборов под задачу.">
 <meta property="og:url" content="https://dginni.ru/">
-<meta property="og:image" content="https://dginni.ru/images/hero-lineup.jpg">
+<meta property="og:image" content="https://dginni.ru/images/hero-lineup-2.jpg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +27,7 @@
   "@type": "Organization",
   "name": "Джинн (DGINNI)",
   "url": "https://dginni.ru/",
-  "logo": "https://dginni.ru/images/hero-lineup.jpg",
+  "logo": "https://dginni.ru/images/hero-lineup-2.jpg",
   "foundingDate": "2008",
   "email": "help@dginni.ru",
   "telephone": "+79655716155",
@@ -348,8 +348,12 @@ button { cursor: pointer; }
 .hero__text { max-width: 1080px; }
 .hero__title { font-size: clamp(32px, 4.8vw, 60px); font-weight: 500; line-height: 1.06; letter-spacing: -0.03em; }
 .hero__title em { display: block; }
-.hero__subtitle { margin: 22px auto 0; font-size: 18px; color: var(--text-2); max-width: 620px; }
-.hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 36px; }
+/* подпись поверх баннера — в тёмной верхней части, над приборами */
+.hero__overlay {
+  position: absolute; left: 8px; right: 8px; top: 8px; margin: 0 auto; padding: 5% 10% 0; pointer-events: none;
+  font-size: clamp(13px, 2.1vw, 22px); line-height: 1.35; color: var(--text); text-align: center; text-shadow: 0 2px 14px rgba(0,0,0,.7);
+}
+.hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 32px; width: 100%; }
 .hero__cta .btn { min-height: 54px; font-size: 16px; }
 
 .hero__stage { position: relative; width: 100%; max-width: 1040px; margin-top: 40px; padding-top: 120px; }
@@ -377,7 +381,7 @@ button { cursor: pointer; }
   .hero__stage { padding-top: 70px; margin-top: 24px; }
   .hero__beam { width: 300px; height: 160px; }
 }
-@media (max-width: 480px) { .hero__cta .btn { width: 100%; } .hero__subtitle { font-size: 16px; } }
+@media (max-width: 480px) { .hero__cta .btn { width: 100%; } .hero__overlay { padding: 4% 6% 0; } }
 
 /* Строка «Где работают приборы» */
 
@@ -392,6 +396,42 @@ button { cursor: pointer; }
 .stat__num { font-size: clamp(42px, 5.4vw, 72px); font-weight: 300; line-height: 1; letter-spacing: -0.03em; color: #F2F2F2; white-space: nowrap; }
 .stat__num small { font-size: .38em; font-weight: 400; color: var(--text-2); margin-left: 6px; letter-spacing: 0; }
 .stat__label { font-size: 14px; color: var(--text-2); max-width: 200px; }
+/* значок «!» на плашках «в цифрах»: наведение (ПК) или нажатие (телефон) — картинка */
+.stat__info {
+  position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 26px; height: 26px; padding: 0;
+  border-radius: 50%; border: 1px solid var(--border-accent); background: var(--accent-soft); color: var(--accent);
+  font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer; transition: background-color .2s, color .2s;
+}
+.stat__info:hover, .stat.is-open .stat__info { background: var(--accent); color: var(--on-accent); }
+.stat__pop {
+  position: absolute; z-index: 90; left: 50%; bottom: calc(100% + 8px); width: 300px; padding: 10px;
+  transform: translate(-50%, 6px); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s, transform .2s, visibility .2s;
+  background: #0B1916; border: 1px solid var(--border-accent); border-radius: 16px; box-shadow: 0 18px 40px rgba(0,0,0,.6), 0 0 24px rgba(1,244,199,.15);
+  text-align: left;
+}
+.stat__pop img, .stat__chart { display: block; width: 100%; height: auto; border-radius: 10px; }
+.stat__pop img { aspect-ratio: 16 / 10; object-fit: cover; }
+.stat__pop span { display: block; margin-top: 8px; font-size: 13px; line-height: 1.35; color: var(--text-2); }
+.stat.is-open .stat__pop { opacity: 1; visibility: visible; transform: translate(-50%, 0); pointer-events: auto; }
+@media (hover: hover) { .stat__info:hover + .stat__pop, .stat__info:focus-visible + .stat__pop { opacity: 1; visibility: visible; transform: translate(-50%, 0); } }
+.stats .stat:first-child .stat__pop { left: 0; transform: translate(0, 6px); }
+.stats .stat:first-child.is-open .stat__pop, .stats .stat:first-child .stat__info:hover + .stat__pop { transform: none; }
+.stats .stat:last-child .stat__pop { left: auto; right: 0; transform: translate(0, 6px); }
+.stats .stat:last-child.is-open .stat__pop, .stats .stat:last-child .stat__info:hover + .stat__pop { transform: none; }
+@media (max-width: 860px) {
+  /* на телефоне и планшете — карточкой внизу экрана */
+  .stat__pop, .stats .stat:first-child .stat__pop, .stats .stat:last-child .stat__pop {
+    position: fixed; left: 16px; right: 16px; bottom: 16px; width: auto; max-width: 420px; margin: 0 auto; transform: translateY(12px);
+  }
+  .stat.is-open .stat__pop, .stats .stat:first-child.is-open .stat__pop, .stats .stat:last-child.is-open .stat__pop { transform: none; }
+}
+/* пока открыта картинка «в цифрах», кнопка «Наверх» не перекрывает её */
+body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
+@media (max-width: 600px) {
+  /* узкая колонка: значок над цифрой, чтобы не наезжал на неё */
+  .stat { padding-top: 40px; }
+  .stat__info { top: 6px; right: 8px; }
+}
 @media (max-width: 860px) {
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
   .stat:nth-child(3)::before { display: none; }
@@ -416,6 +456,7 @@ button { cursor: pointer; }
 .app-card__title { font-size: 19px; }
 .app-card__text { color: var(--text-2); font-size: 15px; }
 .app-card__links { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.app-card__cta { align-self: stretch; justify-content: center; margin-top: 6px; }
 .chip {
   display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 999px;
   background: rgba(255,255,255,.03); border: 1px solid var(--border-2); color: var(--text);
@@ -440,11 +481,6 @@ button { cursor: pointer; }
 .product:hover .product__img img { transform: scale(1.04); }
 .product__body { display: flex; flex-direction: column; gap: 12px; padding: 20px; flex: 1; }
 .product__title { font-size: 18px; line-height: 1.3; font-weight: 500; }
-.product__purpose { color: var(--text-2); font-size: 14px; }
-.specs-mini { list-style: none; display: grid; font-size: 13.5px; border-top: 1px solid var(--border); }
-.specs-mini li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.specs-mini span { color: var(--text-2); }
-.specs-mini b { font-weight: 500; text-align: right; color: var(--text); }
 .product__price { margin-top: auto; padding-top: 8px; font-size: 28px; font-weight: 500; letter-spacing: -0.02em; color: #fff; }
 .product__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .product__actions .btn { padding: 8px 10px; white-space: nowrap; }
@@ -783,6 +819,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .drawer__total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; color: var(--text-2); }
 .drawer__total b { font-size: 26px; font-weight: 500; color: #fff; }
 /* оформление заказа прямо в корзине: мессенджер, почта или звонок — без форм */
+.checkout__order { margin: -6px 0 8px; font-size: 14px; color: var(--text-2); }
+.checkout__order b { color: var(--text); font-weight: 600; letter-spacing: .02em; }
 .checkout__lead { margin-bottom: 12px; font-size: 13.5px; color: var(--text-2); }
 .checkout { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .checkout__btn {
@@ -847,9 +885,21 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .app-card__img img { filter: none; }
 .app-card__body { padding: 20px 20px 22px; }
 .app-card__icon { position: static; margin-bottom: 4px; }
-.product__img { aspect-ratio: 2 / 3; padding: 0; background: var(--surface-2); }
+.product__img { padding: 0; background: var(--surface-2); }
 .product__img img { object-fit: cover; mix-blend-mode: normal; }
-@media (max-width: 1200px) { .product__img { aspect-ratio: 2 / 3; } }
+/* карточка каталога: характеристики плашками поверх фото, вся карточка открывает товар */
+.product { cursor: pointer; }
+.product__media { position: relative; }
+.product__media .product__img, .product__img { aspect-ratio: 4 / 5; }
+.product__chips {
+  position: absolute; left: 14px; right: 14px; top: 14px; display: flex; flex-wrap: wrap; gap: 5px; list-style: none; pointer-events: none;
+}
+.product__chips li {
+  display: flex; flex-direction: column; padding: 4px 9px; border-radius: 10px; line-height: 1.18;
+  background: rgba(6,14,12,.66); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.product__chips span { font-size: 10.5px; color: var(--text-2); }
+.product__chips b { font-size: 12.5px; font-weight: 500; color: var(--text); }
 .pm__main { background: var(--surface-2); }
 .pm__main img { mix-blend-mode: normal; }
 .pm__thumb { background: var(--surface-2); }
@@ -1009,17 +1059,16 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <div class="hero__text reveal">
         <span class="pill"><span class="pill__mark" aria-hidden="true"></span>Собственное производство в Перми с 2008 года</span>
         <h1 class="hero__title" id="hero-title">Приборы контроля pH и&nbsp;микроклимата <em>для гидропоники, теплиц и&nbsp;аквариумов</em></h1>
-        <p class="hero__subtitle">pH-метры, pH-контроллеры и блоки управления «Джинн». Ремонт и доработка под вашу задачу.</p>
-        <div class="hero__cta">
-          <a class="btn btn--glow" href="#catalog">Каталог и цены<span class="btn__arrow" aria-hidden="true"><svg class="i i-sm"><use href="#i-arrow-right"/></svg></span></a>
-          <a class="btn btn--outline" href="#calc">Рассчитать нагрузку</a>
-        </div>
       </div>
       <div class="hero__stage reveal">
         <div class="hero__beam" aria-hidden="true"></div>
         <div class="hero__frame">
           <img data-key="hero" alt="Приборы «Джинн»: универсальный блок управления, pH-контроллер, pH-метр и блок высокой мощности" fetchpriority="high">
+          <p class="hero__overlay">pH-метры, pH-контроллеры и блоки управления «Джинн». Ремонт и доработка под вашу задачу.</p>
         </div>
+      </div>
+      <div class="hero__cta reveal">
+        <a class="btn btn--glow" href="#catalog">Каталог и цены<span class="btn__arrow" aria-hidden="true"><svg class="i i-sm"><use href="#i-arrow-right"/></svg></span></a>
       </div>
     </div>
   </section>
@@ -1030,14 +1079,25 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   <section class="section section--tight dots" id="numbers" aria-labelledby="numbers-title">
     <div class="container">
       <div class="section__head reveal">
-        <span class="section__eyebrow">Цифры</span>
         <h2 class="section__title" id="numbers-title">«Джинн» <em>в цифрах</em></h2>
       </div>
       <ul class="stats reveal">
-        <li class="stat"><b class="stat__num">2008</b><span class="stat__label">год основания производства в Перми</span></li>
-        <li class="stat"><b class="stat__num">1<small>год</small></b><span class="stat__label">гарантия на все приборы</span></li>
-        <li class="stat"><b class="stat__num">2–12<small>pH</small></b><span class="stat__label">диапазон измерения и регулирования</span></li>
-        <li class="stat"><b class="stat__num">12<small>× 600 Вт</small></b><span class="stat__label">ламп на один блок высокой мощности</span></li>
+        <li class="stat"><b class="stat__num">2008</b><span class="stat__label">год основания производства в Перми</span>
+          <button class="stat__info" type="button" aria-label="Фото производства" aria-expanded="false">!</button>
+          <div class="stat__pop" role="tooltip"><img data-src="images/about-production.jpg" alt="Сборка блока управления на производстве «Джинн» в Перми" loading="lazy"><span>Собственное производство в Перми</span></div>
+        </li>
+        <li class="stat"><b class="stat__num">1<small>год</small></b><span class="stat__label">гарантия на все приборы</span>
+          <button class="stat__info" type="button" aria-label="Какие приборы на гарантии" aria-expanded="false">!</button>
+          <div class="stat__pop" role="tooltip"><img data-src="images/hero-lineup.jpg" alt="Все приборы «Джинн»: блоки управления, pH-контроллер и pH-метр" loading="lazy"><span>Гарантия 1 год — на все приборы «Джинн»</span></div>
+        </li>
+        <li class="stat"><b class="stat__num">2–12<small>pH</small></b><span class="stat__label">диапазон измерения и регулирования</span>
+          <button class="stat__info" type="button" aria-label="График pH" aria-expanded="false">!</button>
+          <div class="stat__pop" role="tooltip"><svg class="stat__chart" viewBox="0 0 280 150" role="img" aria-label="pH раствора по шкале 2–12: контроллер доводит pH с 7,4 до заданных 6,0"><g font-size="10" fill="#9DABA7"><line x1="30" x2="274" y1="124.0" y2="124.0" stroke="rgba(255,255,255,.08)"/><text x="24" y="128.0" text-anchor="end">2</text><line x1="30" x2="274" y1="102.0" y2="102.0" stroke="rgba(255,255,255,.08)"/><text x="24" y="106.0" text-anchor="end">4</text><line x1="30" x2="274" y1="80.0" y2="80.0" stroke="rgba(255,255,255,.08)"/><text x="24" y="84.0" text-anchor="end">6</text><line x1="30" x2="274" y1="58.0" y2="58.0" stroke="rgba(255,255,255,.08)"/><text x="24" y="62.0" text-anchor="end">8</text><line x1="30" x2="274" y1="36.0" y2="36.0" stroke="rgba(255,255,255,.08)"/><text x="24" y="40.0" text-anchor="end">10</text><line x1="30" x2="274" y1="14.0" y2="14.0" stroke="rgba(255,255,255,.08)"/><text x="24" y="18.0" text-anchor="end">12</text></g><rect x="30" y="74.5" width="244" height="11.0" fill="rgba(1,244,199,.10)"/><rect x="33.0" y="64.6" width="15.8" height="59.4" rx="3" fill="#3E8F80"/><rect x="54.8" y="67.9" width="15.8" height="56.1" rx="3" fill="#3E8F80"/><rect x="76.6" y="71.2" width="15.8" height="52.8" rx="3" fill="#3E8F80"/><rect x="98.5" y="74.5" width="15.8" height="49.5" rx="3" fill="#3E8F80"/><rect x="120.3" y="76.7" width="15.8" height="47.3" rx="3" fill="#3E8F80"/><rect x="142.1" y="78.9" width="15.8" height="45.1" rx="3" fill="#01F4C7"/><rect x="163.9" y="80.0" width="15.8" height="44.0" rx="3" fill="#01F4C7"/><rect x="185.7" y="80.0" width="15.8" height="44.0" rx="3" fill="#01F4C7"/><rect x="207.5" y="81.1" width="15.8" height="42.9" rx="3" fill="#01F4C7"/><rect x="229.4" y="80.0" width="15.8" height="44.0" rx="3" fill="#01F4C7"/><rect x="251.2" y="80.0" width="15.8" height="44.0" rx="3" fill="#01F4C7"/><text x="30" y="142" font-size="10" fill="#9DABA7">время →</text><text x="274" y="142" font-size="10" fill="#01F4C7" text-anchor="end">заданный pH 6.0</text></svg><span>Шкала pH 2–12: прибор измеряет во всём диапазоне, контроллер удерживает заданное значение</span></div>
+        </li>
+        <li class="stat"><b class="stat__num">12<small>× 600 Вт</small></b><span class="stat__label">ламп на один блок высокой мощности</span>
+          <button class="stat__info" type="button" aria-label="Фото лампы 600 Вт" aria-expanded="false">!</button>
+          <div class="stat__pop" role="tooltip"><img data-src="images/lamp-600.jpg" alt="Лампа 600 Вт в отражателе" loading="lazy"><span>До 12 таких ламп по 600 Вт на один блок высокой мощности</span></div>
+        </li>
       </ul>
     </div>
   </section>
@@ -1048,7 +1108,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   <section class="section" id="apps" aria-labelledby="apps-title">
     <div class="container">
       <div class="section__head reveal">
-        <span class="section__eyebrow">Применение</span>
         <h2 class="section__title" id="apps-title">Где применяют <em>приборы «Джинн»</em></h2>
       </div>
       <div class="apps" id="appsList"></div>
@@ -1061,7 +1120,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   <section class="section section--alt" id="catalog" aria-labelledby="catalog-title">
     <div class="container">
       <div class="section__head reveal">
-        <span class="section__eyebrow">Каталог</span>
         <h2 class="section__title" id="catalog-title">Приборы <em>и цены</em></h2>
         <p class="section__lead">Производитель — Россия.</p>
       </div>
@@ -1387,6 +1445,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <div class="drawer__body" id="cartBody"></div>
     <div class="drawer__foot" id="cartFoot">
       <div class="drawer__total"><span>Итого</span><b id="cartTotal">0 ₽</b></div>
+      <p class="checkout__order">Номер заказа: <b id="orderNo">—</b></p>
       <p class="checkout__lead">Отправьте заказ удобным способом — состав и сумма подставятся сами. Мы ответим и согласуем оплату и доставку.</p>
       <div class="checkout">
         <a class="checkout__btn" id="coWhatsapp" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-whatsapp"/></svg>WhatsApp</a>
@@ -1428,9 +1487,11 @@ const CONFIG = {
    2. ИЗОБРАЖЕНИЯ — все пути в одном месте
    ========================================================= */
 const IMAGES = {
-  hero: "images/hero-lineup.jpg",
+  hero: "images/hero-lineup-2.jpg",
   scheme: "images/calc-connection.jpg",
   // первая картинка — вертикальная карточка товара (2:3) для каталога
+  // фото для карточек каталога: прибор у нижнего края, сверху место под характеристики
+  cards: { phMetr: "images/ph-metr-card45.jpg", phController: "images/ph-controller-card45.jpg", blokUniversal: "images/blok-universal-card45.jpg", blokPower: "images/blok-power-card45.jpg" },
   phMetr: ["images/ph-metr-card.jpg", "images/ph-metr.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
   phController: ["images/ph-controller-card.jpg", "images/ph-controller.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
   blokUniversal: ["images/blok-universal-card.jpg", "images/blok-universal.jpg", "images/blok-universal-2.jpg", "images/blok-universal-3.jpg", "images/blok-universal-4.jpg", "images/blok-universal-5.jpg"],
@@ -1793,6 +1854,7 @@ function renderApps() {
         <div class="app-card__links">
           ${a.products.map(id => `<a class="chip" href="#product-${id}" data-open-product="${id}">${esc(byId(id).short)}</a>`).join("")}
         </div>
+        <a class="btn btn--outline btn--sm app-card__cta" href="#catalog">Каталог и цены${icon("i-arrow-right", "i i-sm")}</a>
       </div>
     </article>`).join("");
 }
@@ -1803,15 +1865,16 @@ function renderApps() {
 function renderCatalog() {
   $("#catalogList").innerHTML = PRODUCTS.map(p => `
     <article class="product reveal" id="product-${p.id}">
-      <button class="product__img" type="button" data-open-product="${p.id}" aria-label="Подробнее: ${esc(p.name)}">
-        ${imgTag(p.photos[0], p.name)}
-      </button>
+      <div class="product__media">
+        <button class="product__img" type="button" data-open-product="${p.id}" aria-label="Подробнее: ${esc(p.name)}">
+          ${imgTag(IMAGES.cards[p.id] || p.photos[0], p.name)}
+        </button>
+        <ul class="product__chips" aria-label="Главные характеристики">
+          ${p.keySpecs.slice(0, 3).map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join("")}
+        </ul>
+      </div>
       <div class="product__body">
         <h3 class="product__title">${esc(p.name)}</h3>
-        <p class="product__purpose">${esc(p.purpose)}</p>
-        <ul class="specs-mini">
-          ${p.keySpecs.map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join("")}
-        </ul>
         <div class="product__price">${formatPrice(p.price)}</div>
         <div class="product__actions">
           <button class="btn btn--primary btn--sm" type="button" data-add="${p.id}">${icon("i-cart", "i i-sm")}В корзину</button>
@@ -1825,6 +1888,12 @@ function renderCatalog() {
     </article>`).join("");
 }
 
+// карточка каталога целиком: нажатие в любом месте, кроме кнопок и ссылок, открывает товар
+$("#catalogList").addEventListener("click", e => {
+  if (e.target.closest("button, a")) return;
+  const card = e.target.closest(".product");
+  if (card) openProduct(card.id.replace("product-", ""));
+});
 function openProduct(id) {
   const p = byId(id);
   if (!p) return;
@@ -1947,6 +2016,7 @@ const cart = {
       body.innerHTML = `<div class="cart-empty">${icon("i-cart")}<p>Корзина пуста.</p>
         <a class="btn btn--outline btn--sm" href="#catalog" data-close>Перейти в каталог</a></div>`;
       $("#cartFoot").hidden = true;
+      storage.set(ORDER_KEY, ""); // корзина опустела — следующий заказ получит новый номер
     } else {
       body.innerHTML = this.items.map(i => {
         const p = byId(i.id);
@@ -1984,8 +2054,21 @@ $("#cartBody").addEventListener("click", e => {
 });
 /* Оформление прямо в корзине: текст заказа уже вписан в сообщение WhatsApp и Telegram
    (ссылка на аккаунт по номеру t.me/+номер?text=…) и в письмо */
+/* Номер заказа: DG-ГГММДД-XXXX. Появляется с первым товаром и не меняется,
+   пока корзина не опустеет, — по нему заказ легко найти в переписке и по телефону */
+const ORDER_KEY = "dginni_order";
+function orderNo() {
+  let no = storage.get(ORDER_KEY, "");
+  if (!no) {
+    const d = new Date(), p2 = n => String(n).padStart(2, "0");
+    const rnd = Array.from({ length: 4 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
+    no = `DG-${String(d.getFullYear()).slice(2)}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${rnd}`;
+    storage.set(ORDER_KEY, no);
+  }
+  return no;
+}
 function orderText() {
-  return ["Здравствуйте! Хочу заказать:",
+  return [`Здравствуйте! Заказ № ${orderNo()}`, "Хочу заказать:",
     ...cart.lines().map(l => `— ${l.name} × ${l.qty} — ${formatPrice(l.sum)}`),
     `Итого: ${formatPrice(cart.total())}`,
     "", "Заказ с сайта dginni.ru"].join("\n");
@@ -1994,7 +2077,8 @@ function updateCheckoutLinks() {
   const text = orderText();
   $("#coWhatsapp").href = `${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
   $("#coTelegram").href = `${CONFIG.telegram}?text=${encodeURIComponent(text)}`;
-  $("#coEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Заказ с сайта dginni.ru")}&body=${encodeURIComponent(text)}`;
+  $("#coEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(`Заказ № ${orderNo()} с сайта dginni.ru`)}&body=${encodeURIComponent(text)}`;
+  $("#orderNo").textContent = orderNo();
 }
 /* =========================================================
    12. КАЛЬКУЛЯТОР НАГРУЗКИ
@@ -2431,6 +2515,16 @@ function openWidePhoto(src, caption) {
   const center = () => { inner.scrollLeft = (inner.scrollWidth - inner.clientWidth) / 2; };
   if (img.complete && img.naturalWidth) center(); else img.addEventListener("load", center, { once: true });
 }
+// «в цифрах»: значок «!» — нажатие открывает/закрывает картинку, нажатие мимо — закрывает
+document.addEventListener("click", e => {
+  const btn = e.target.closest(".stat__info");
+  $$(".stat.is-open").forEach(li => { if (!btn || li !== btn.parentElement) { li.classList.remove("is-open"); li.querySelector(".stat__info").setAttribute("aria-expanded", "false"); } });
+  if (!btn) return;
+  const li = btn.parentElement, open = li.classList.toggle("is-open");
+  btn.setAttribute("aria-expanded", String(open));
+  hydrateImages(li);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") $$(".stat.is-open").forEach(li => li.classList.remove("is-open")); });
 // титул на телефоне: нажатие — крупно, повторное нажатие — вернуть как было
 $(".hero__frame").addEventListener("click", () => {
   if (MOBILE_MQ.matches) openWidePhoto(IMAGES.hero, $(".hero__frame img").alt);
