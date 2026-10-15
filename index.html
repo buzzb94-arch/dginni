@@ -622,23 +622,8 @@ button { cursor: pointer; }
 .review__text { padding: 14px; border-radius: 12px; background: rgba(255,209,102,.07); border: 1px solid rgba(255,209,102,.25); color: var(--warn); font-size: 14px; }
 @media (max-width: 920px) { .reviews { grid-template-columns: 1fr; } }
 
-/* =========================================================
-   11. Вопросы инженеру (плашка со ссылками на Telegram-бот)
-   ========================================================= */
-.ask-card {
-  position: sticky; top: calc(var(--header-h) + 20px); padding: 28px; border-radius: 22px; overflow: hidden;
-  background: radial-gradient(120% 80% at 50% 0%, rgba(1,244,199,.25), transparent 60%), var(--surface);
-  border: 1px solid var(--border-accent); box-shadow: 0 0 50px rgba(1,244,199,.12);
-}
-.ask-card h3 { font-size: 24px; font-weight: 500; margin-bottom: 10px; }
-.ask-card p { color: var(--text-2); font-size: 15px; margin-bottom: 20px; }
-.ask-card .btn { width: 100%; margin-top: 8px; }
+/* Заглушки «заменить» в документах */
 .placeholder-mark { background: rgba(255,209,102,.12); color: var(--warn); padding: 0 6px; border-radius: 6px; }
-.ask-wrap { display: flex; justify-content: center; }
-.ask-card { position: static; width: 100%; max-width: 560px; text-align: center; padding: 36px 32px; }
-.ask-card h2 { font-size: clamp(24px, 3vw, 30px); font-weight: 500; margin-bottom: 12px; }
-.ask-card p { max-width: 440px; margin-left: auto; margin-right: auto; }
-@media (max-width: 600px) { .ask-card { padding: 26px 18px; } }
 
 /* =========================================================
    Как работает pH-контроллер, пробоотборник
@@ -681,6 +666,9 @@ button { cursor: pointer; }
 a.contact-card__value:hover { color: var(--accent); }
 .contacts-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-top: 28px; }
 .socials { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; }
+.contacts-help { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; width: 100%; padding-top: 20px; border-top: 1px solid var(--border); }
+.contacts-help__note { margin-right: auto; color: var(--text-2); font-size: 15px; }
+@media (max-width: 600px) { .contacts-help__note { width: 100%; } .contacts-help .btn { flex: 1 1 100%; } }
 .social {
   display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px 0 12px; border-radius: 999px;
   background: rgba(255,255,255,.02); border: 1px solid var(--border-2); color: var(--text); font-size: 14px; text-decoration: none;
@@ -998,7 +986,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <ul class="nav__list">
         <li><a class="nav__link" href="#catalog">Каталог</a></li>
         <li><a class="nav__link" href="#calc">Калькулятор</a></li>
-        <li><a class="nav__link" href="#faq">Вопросы</a></li>
         <li><a class="nav__link" href="#dealers">Дилерам</a></li>
         <li><a class="nav__link" href="#contacts">Контакты</a></li>
       </ul>
@@ -1296,25 +1283,9 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   </section>
 
   <!-- =========================================================
-       ВОПРОСЫ ИНЖЕНЕРУ (сами вопросы и ответы — в Telegram-боте)
-       ========================================================= -->
-  <section class="section dots" id="faq" aria-labelledby="ask-title">
-    <div class="container">
-      <div class="ask-wrap">
-        <aside class="ask-card reveal" aria-labelledby="ask-title">
-          <h2 id="ask-title">Есть вопрос по прибору?</h2>
-          <p>Ответы на частые вопросы, инструкции к приборам и переписка с инженером — в нашем Telegram-боте.</p>
-          <a class="btn btn--primary" data-link="engineerBot" target="_blank" rel="noopener"><svg class="ico-tg" aria-hidden="true"><use href="#b-telegram"/></svg>Задать вопрос инженеру</a>
-          <a class="btn btn--line-white" data-link="engineerBotManuals" target="_blank" rel="noopener"><svg class="i i-sm" aria-hidden="true"><use href="#i-file"/></svg>Инструкции в Telegram</a>
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================
        КОНТАКТЫ
        ========================================================= -->
-  <section class="section section--alt dots" id="contacts" aria-labelledby="contacts-title">
+  <section class="section dots" id="contacts" aria-labelledby="contacts-title">
     <div class="container">
       <div class="section__head reveal">
         <span class="section__eyebrow">Контакты</span>
@@ -1345,7 +1316,11 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           <li><a class="social" data-link="ozonStore" target="_blank" rel="noopener"><svg><use href="#b-ozon"/></svg>Ozon</a></li>
           <li><a class="social" data-link="wildberriesStore" target="_blank" rel="noopener"><svg><use href="#b-wb"/></svg>Wildberries</a></li>
         </ul>
-        <a class="btn btn--blue" data-link="engineerBot" target="_blank" rel="noopener"><svg class="i i-sm"><use href="#i-chat"/></svg>Задать вопрос инженеру</a>
+        <div class="contacts-help">
+          <span class="contacts-help__note">Технический вопрос по прибору — инженеру в Telegram</span>
+          <a class="btn btn--blue" data-link="engineerBot" target="_blank" rel="noopener"><svg class="i i-sm"><use href="#i-chat"/></svg>Задать вопрос инженеру</a>
+          <a class="btn btn--line-white" data-link="engineerBotManuals" target="_blank" rel="noopener"><svg class="i i-sm" aria-hidden="true"><use href="#i-file"/></svg>Инструкции в Telegram</a>
+        </div>
       </div>
       <div class="dealer-card glass reveal" id="dealers" aria-labelledby="dealers-title">
         <div>
