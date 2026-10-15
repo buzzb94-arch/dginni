@@ -490,13 +490,16 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 .product__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .product__actions .btn { padding: 8px 10px; white-space: nowrap; }
 .product__market { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* кнопки маркетплейсов — фирменными значками Ozon и Wildberries */
 .mp-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  min-height: 38px; padding: 6px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 500;
-  text-decoration: none; border: 1px solid var(--border-2); line-height: 1.15; text-align: center; color: var(--text-2);
+  display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 12px;
+  border-radius: 999px; border: 0; color: #fff; text-decoration: none; transition: filter .2s, box-shadow .2s, transform .2s;
 }
-.mp-btn--ozon:hover { background: #005BFF; color: #fff; border-color: #005BFF; }
-.mp-btn--wb:hover { background: #A0119F; color: #fff; border-color: #A0119F; }
+.mp-btn--ozon { background: #005BFF; }
+.mp-btn--wb { background: linear-gradient(90deg, #CB11AB 0%, #7B1FA2 55%, #481173 100%); }
+.mp-btn:hover { filter: brightness(1.12); box-shadow: 0 6px 18px rgba(0,0,0,.35); color: #fff; }
+.mp-logo { display: block; height: 15px; width: auto; }
+.mp-logo--wb { height: 14px; }
 @media (max-width: 900px) { .catalog { grid-template-columns: 1fr; max-width: 560px; margin-left: auto; margin-right: auto; } }
 
 /* =========================================================
@@ -935,13 +938,16 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .why__media img { object-fit: cover; opacity: 1; } /* фото заполняет плашку до краёв */
 .why__media::after { display: none; }
 
-/* Контакты: карточка «Стать дилером» — связь без анкеты */
+/* Контакты: карточка «Стать представителем» — связь без анкеты */
 .dealer-card { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: center; margin-top: 24px; padding: 28px; border-radius: var(--radius); }
 .dealer-card__tag { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font-size: 14px; font-weight: 500; }
 .dealer-card__title { margin: 10px 0 8px; font-size: 26px; font-weight: 500; }
 .dealer-card p { color: var(--text-2); }
 .dealer-card .dealer-points { margin-top: 18px; gap: 10px; }
 .dealer-card__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dealer-card__for { margin: 0 0 10px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); border: 1px solid var(--border-accent); color: var(--text) !important; font-size: 14px; }
+.dealer-card.is-flash { animation: dealerFlash 1.6s ease; }
+@keyframes dealerFlash { 0%, 100% { box-shadow: var(--shadow); } 30% { box-shadow: 0 0 0 2px var(--accent), 0 0 60px rgba(1,244,199,.35); } }
 @media (max-width: 760px) { .dealer-card { grid-template-columns: 1fr; gap: 20px; padding: 20px 16px; } .dealer-card__title { font-size: 22px; } }
 
 /* =========================================================
@@ -1377,7 +1383,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <div class="dealer-card glass reveal" id="dealers" aria-labelledby="dealers-title">
         <div>
           <span class="dealer-card__tag"><svg class="i i-sm"><use href="#i-store"/></svg>Дилерам</span>
-          <h3 class="dealer-card__title" id="dealers-title">Стать дилером «Джинн»</h3>
+          <h3 class="dealer-card__title" id="dealers-title">Стать представителем «Джинн»</h3>
+          <p class="dealer-card__for" id="dealerFor" hidden></p>
           <p>Работаем с магазинами и дилерами. Напишите нам — обсудим условия, цены и поставки. Без анкет: просто выберите, как удобнее связаться.</p>
           <ul class="dealer-points">
             <li><svg class="i"><use href="#i-factory"/></svg><span>Собственное производство в Перми с 2008 года.</span></li>
@@ -1888,11 +1895,11 @@ function renderCatalog() {
         <div class="product__price">${formatPrice(p.price)}</div>
         <div class="product__actions">
           <button class="btn btn--primary btn--sm" type="button" data-add="${p.id}">${icon("i-cart", "i i-sm")}В корзину</button>
-          <button class="btn btn--outline btn--sm" type="button" data-open-product="${p.id}">Подробнее</button>
+          <button class="btn btn--outline btn--sm" type="button" data-wholesale="${p.id}">Заказать оптом</button>
         </div>
         <div class="product__market">
-          <a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))}>Купить на Ozon</a>
-          <a class="mp-btn mp-btn--wb" ${linkAttrs(marketLink("wildberries", p.id))}>Купить на Wildberries</a>
+          <a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))} aria-label="Купить на Ozon" title="Купить на Ozon"><svg class="mp-logo" viewBox="0 0 64 16" aria-hidden="true"><text x="32" y="12.6" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="14" font-weight="900" letter-spacing="-.4" fill="currentColor">OZON</text></svg></a>
+          <a class="mp-btn mp-btn--wb" ${linkAttrs(marketLink("wildberries", p.id))} aria-label="Купить на Wildberries" title="Купить на Wildberries"><svg class="mp-logo mp-logo--wb" viewBox="0 0 120 16" aria-hidden="true"><text x="60" y="12.4" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="12.5" font-weight="900" letter-spacing=".3" fill="currentColor">WILDBERRIES</text></svg></a>
         </div>
       </div>
     </article>`).join("");
@@ -1927,8 +1934,8 @@ function openProduct(id) {
         <div class="pm__price">${formatPrice(p.price)}</div>
         <div class="pm__actions">
           <button class="btn btn--primary" type="button" data-add="${p.id}">${icon("i-cart", "i i-sm")}В корзину</button>
-          <a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))}>Купить на Ozon</a>
-          <a class="mp-btn mp-btn--wb" ${linkAttrs(marketLink("wildberries", p.id))}>Купить на Wildberries</a>
+          <a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))} aria-label="Купить на Ozon" title="Купить на Ozon"><svg class="mp-logo" viewBox="0 0 64 16" aria-hidden="true"><text x="32" y="12.6" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="14" font-weight="900" letter-spacing="-.4" fill="currentColor">OZON</text></svg></a>
+          <a class="mp-btn mp-btn--wb" ${linkAttrs(marketLink("wildberries", p.id))} aria-label="Купить на Wildberries" title="Купить на Wildberries"><svg class="mp-logo mp-logo--wb" viewBox="0 0 120 16" aria-hidden="true"><text x="60" y="12.4" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="12.5" font-weight="900" letter-spacing=".3" fill="currentColor">WILDBERRIES</text></svg></a>
         </div>
         <h3>Характеристики</h3>
         <table class="spec-table"><tbody>
@@ -2638,12 +2645,29 @@ $("#lightbox").addEventListener("keydown", e => {
 /* =========================================================
    15. ДИЛЕРАМ: связь без анкеты — готовый текст в WhatsApp, Telegram и письмо
    ========================================================= */
-function initDealerLinks() {
-  const text = "Здравствуйте! Хотим стать дилером «Джинн».\nКомпания: \nГород: ";
+// без товара — «стать представителем»; с товаром (кнопка «Заказать оптом» в каталоге) — оптовый заказ этого прибора
+function initDealerLinks(productId) {
+  const p = productId && byId(productId);
+  const text = p
+    ? `Здравствуйте! Хотим заказать оптом: ${p.name}.\nКоличество: \nКомпания: \nГород: `
+    : "Здравствуйте! Хотим стать представителем «Джинн».\nКомпания: \nГород: ";
+  const subject = p ? `Оптовый заказ: ${p.short} — dginni.ru` : "Стать представителем — dginni.ru";
   $("#dealerWhatsapp").href = `${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
   $("#dealerTelegram").href = `${CONFIG.telegram}?text=${encodeURIComponent(text)}`;
-  $("#dealerEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent("Стать дилером — dginni.ru")}&body=${encodeURIComponent(text)}`;
+  $("#dealerEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+  const note = $("#dealerFor");
+  note.hidden = !p;
+  if (p) note.innerHTML = `Оптовый заказ: <b>${esc(p.name)}</b> — выберите, как удобнее связаться`;
 }
+// «Заказать оптом» в каталоге: товар подставляется в сообщения, страница переходит к карточке связи
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-wholesale]");
+  if (!b) return;
+  initDealerLinks(b.dataset.wholesale);
+  const card = $("#dealers");
+  card.scrollIntoView({ behavior: "smooth", block: "center" });
+  card.classList.remove("is-flash"); void card.offsetWidth; card.classList.add("is-flash");
+});
 
 /* =========================================================
    16. ПОЯВЛЕНИЕ БЛОКОВ ПРИ ПРОКРУТКЕ
