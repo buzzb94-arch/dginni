@@ -227,7 +227,7 @@ button { cursor: pointer; }
 .btn[disabled], .btn[aria-disabled="true"] { opacity: .35; cursor: not-allowed; box-shadow: none; }
 
 /* Стеклянная карточка — базовый вид */
-.glass, .panel, .product, .app-card, .why__item, .review, .contact-card, .quiz, .rec {
+.glass, .panel, .product, .app-card, .why__item, .review, .contact-card {
   background: linear-gradient(180deg, rgba(255,255,255,.035) 0%, rgba(255,255,255,.012) 100%), var(--surface);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -490,60 +490,6 @@ button { cursor: pointer; }
 .mp-btn--wb:hover { background: #A0119F; color: #fff; border-color: #A0119F; }
 @media (max-width: 1200px) { .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); } .product__img { aspect-ratio: 4 / 3; } }
 @media (max-width: 600px) { .catalog { grid-template-columns: 1fr; } }
-
-/* =========================================================
-   6. Подбор прибора (квиз)
-   ========================================================= */
-.quiz { position: relative; border-radius: 24px; padding: 40px; max-width: 980px; margin: 0 auto; overflow: hidden; }
-.quiz::before {
-  content: ""; position: absolute; left: 50%; top: -160px; width: 600px; height: 300px; transform: translateX(-50%); pointer-events: none;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(1,244,199,.16), transparent 70%);
-}
-.quiz > * { position: relative; }
-.quiz__top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; font-size: 14px; color: var(--text-2); }
-.progress { height: 6px; background: rgba(255,255,255,.06); border-radius: 6px; overflow: hidden; margin-bottom: 32px; }
-.progress__bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent-2), var(--accent)); border-radius: 6px; box-shadow: 0 0 14px rgba(1,244,199,.7); transition: width .4s ease; }
-.quiz__q { font-size: 26px; font-weight: 500; margin-bottom: 22px; }
-.quiz__options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.option {
-  display: flex; align-items: center; gap: 14px; width: 100%; padding: 18px; text-align: left;
-  background: rgba(255,255,255,.02); border: 1px solid var(--border-2); border-radius: 16px; font-weight: 400; font-size: 16px; line-height: 1.35; color: var(--text);
-  transition: border-color .2s, background-color .2s, box-shadow .2s;
-}
-.option:hover { border-color: var(--border-accent); background: var(--accent-soft); }
-.option[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 24px rgba(1,244,199,.18); }
-.option__icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px; background: #0B2A24; color: var(--accent); flex: 0 0 auto; box-shadow: inset 0 0 0 1px rgba(1,244,199,.25); }
-.option small { display: block; color: var(--text-2); font-size: 13px; margin-top: 2px; }
-.quiz__nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 28px; }
-.quiz__result-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
-.quiz__result-head p { color: var(--text-2); margin-top: 6px; }
-.rec-list { display: grid; gap: 12px; }
-.rec { display: grid; grid-template-columns: 110px 1fr auto; gap: 20px; align-items: center; padding: 14px; border-radius: 18px; }
-.rec__img { width: 110px; height: 110px; border-radius: 12px; overflow: hidden; background: var(--plate); }
-.rec__img img { width: 100%; height: 100%; object-fit: contain; padding: 8px; mix-blend-mode: multiply; }
-.rec__img .img-fallback { min-height: 0; padding: 6px; font-size: 11px; }
-.rec__title { font-size: 17px; font-weight: 500; }
-.rec__title a { color: var(--text); text-decoration: none; }
-.rec__title a:hover { color: var(--accent); }
-.rec__why { display: flex; gap: 8px; margin-top: 6px; color: var(--text-2); font-size: 14px; }
-.rec__why .i { color: var(--accent); width: 18px; height: 18px; margin-top: 2px; }
-.rec__side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
-.rec__price { font-size: 20px; font-weight: 500; white-space: nowrap; }
-.quiz__total {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
-  margin-top: 16px; padding: 18px 20px; border-radius: 18px; background: var(--accent-soft); border: 1px solid var(--border-accent);
-}
-.quiz__total b { font-size: 24px; font-weight: 500; color: #fff; }
-.quiz__note { margin-top: 16px; padding: 14px 16px; border-left: 2px solid var(--accent); background: rgba(1,244,199,.05); border-radius: 0 12px 12px 0; font-size: 14px; color: var(--text); }
-.quiz__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-@media (max-width: 760px) {
-  .quiz { padding: 24px 16px; border-radius: 20px; }
-  .quiz__q { font-size: 21px; }
-  .quiz__options { grid-template-columns: 1fr; }
-  .rec { grid-template-columns: 80px 1fr; gap: 14px; }
-  .rec__img { width: 80px; height: 80px; }
-  .rec__side { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; }
-}
 
 /* =========================================================
    7. Калькулятор нагрузки
@@ -993,8 +939,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   background: rgba(6,14,12,.6); color: #fff; font-size: 12px; pointer-events: none;
 }
 
-.rec__img, .cart-item__img { background: var(--surface-2); }
-.rec__img img, .cart-item__img img { padding: 0; object-fit: cover; object-position: top; mix-blend-mode: normal; }
+.cart-item__img { background: var(--surface-2); }
+.cart-item__img img { padding: 0; object-fit: cover; object-position: top; mix-blend-mode: normal; }
 .why__media { background: var(--surface-2); }
 .why__media img { object-fit: cover; opacity: 1; } /* фото заполняет плашку до краёв */
 .why__media::after { display: none; }
@@ -1024,7 +970,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .uses__label { margin-bottom: 14px; }
   .apps, .catalog, .why, .reviews, .contacts, .calc, .dose { gap: 12px; }
   .contacts-row { margin-top: 16px; }
-  .quiz { padding: 20px 14px; }
   .panel { padding: 18px 14px; }
   .footer__dealer { padding-top: 44px; padding-bottom: 32px; margin-bottom: 24px; }
   .lamp-quick { display: flex; width: 100%; border-radius: 16px; }
@@ -1105,7 +1050,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <nav class="nav" id="nav" aria-label="Основное меню">
       <ul class="nav__list">
         <li><a class="nav__link" href="#catalog">Каталог</a></li>
-        <li><a class="nav__link" href="#quiz">Подбор</a></li>
         <li><a class="nav__link" href="#calc">Калькулятор</a></li>
         <li><a class="nav__link" href="#faq">Вопросы</a></li>
         <li><a class="nav__link" href="#dealers">Дилерам</a></li>
@@ -1141,8 +1085,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <h1 class="hero__title" id="hero-title">Приборы контроля pH и&nbsp;микроклимата <em>для гидропоники, теплиц и&nbsp;аквариумов</em></h1>
         <p class="hero__subtitle">pH-метры, pH-контроллеры и блоки управления «Джинн». Гарантия 1&nbsp;год, ремонт и доработка под вашу задачу.</p>
         <div class="hero__cta">
-          <a class="btn btn--glow" href="#quiz">Подобрать прибор<span class="btn__arrow" aria-hidden="true"><svg class="i i-sm"><use href="#i-arrow-right"/></svg></span></a>
-          <a class="btn btn--outline" href="#catalog">Каталог и цены</a>
+          <a class="btn btn--glow" href="#catalog">Каталог и цены<span class="btn__arrow" aria-hidden="true"><svg class="i i-sm"><use href="#i-arrow-right"/></svg></span></a>
+          <a class="btn btn--outline" href="#calc">Рассчитать нагрузку</a>
         </div>
       </div>
       <div class="hero__stage reveal">
@@ -1223,23 +1167,9 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   </section>
 
   <!-- =========================================================
-       ПОДБОР ПРИБОРА
-       ========================================================= -->
-  <section class="section" id="quiz" aria-labelledby="quiz-title">
-    <div class="container">
-      <div class="section__head reveal">
-        <span class="section__eyebrow">Подбор</span>
-        <h2 class="section__title" id="quiz-title">Подбор прибора <em>за&nbsp;3&nbsp;шага</em></h2>
-        <p class="section__lead">Ответьте на вопросы. Результат — список приборов и общая стоимость.</p>
-      </div>
-      <div class="quiz reveal" id="quizBox" aria-live="polite"></div>
-    </div>
-  </section>
-
-  <!-- =========================================================
        КАЛЬКУЛЯТОР НАГРУЗКИ
        ========================================================= -->
-  <section class="section section--alt" id="calc" aria-labelledby="calc-title">
+  <section class="section" id="calc" aria-labelledby="calc-title">
     <div class="container">
       <div class="section__head reveal">
         <span class="section__eyebrow">Калькулятор</span>
@@ -1688,7 +1618,7 @@ const IMAGES = {
 
 /* =========================================================
    3. КАТАЛОГ — единый источник данных для карточек, окон,
-      подбора, калькулятора и корзины
+      калькулятора и корзины
    ========================================================= */
 const COMMON_BLOCK_SPECS = [
   ["Питание", "220 В"],
@@ -2235,138 +2165,6 @@ function renderOrderSummary() {
     <div class="order-summary__total"><span>Итого</span><span>${formatPrice(cart.total())}</span></div>`;
   $("#summaryEdit").addEventListener("click", () => cart.open());
 }
-
-/* =========================================================
-   11. ПОДБОР ПРИБОРА (КВИЗ)
-   ========================================================= */
-const QUIZ_STEPS = {
-  place: {
-    q: "Где будет работать прибор?",
-    options: [
-      { v: "hydro", label: "Гидропоника", icon: "i-leaf" },
-      { v: "aqua", label: "Аквариум", icon: "i-fish" },
-      { v: "greenhouse", label: "Теплица или оранжерея", icon: "i-greenhouse" },
-      { v: "other", label: "Другое", icon: "i-help" }
-    ]
-  },
-  task: {
-    q: "Какая задача?",
-    options: [
-      { v: "measure", label: "Измерять pH вручную", icon: "i-gauge" },
-      { v: "maintain", label: "Автоматически поддерживать pH", icon: "i-drop" },
-      { v: "climate", label: "Управлять светом, температурой, вентиляцией и поливом", icon: "i-sliders" },
-      { v: "multi", label: "Несколько задач", sub: "pH и микроклимат", icon: "i-layers" }
-    ]
-  },
-  power: {
-    q: "Суммарная мощность оборудования?",
-    options: [
-      { v: "low", label: "До 5 кВт", sub: "и ни один прибор не мощнее 2 кВт", icon: "i-bolt" },
-      { v: "high", label: "Больше 5 кВт", sub: "или есть нагрузка мощнее 2 кВт", icon: "i-bolt" },
-      { v: "unknown", label: "Не знаю", sub: "посчитаю в калькуляторе", icon: "i-calc" }
-    ]
-  }
-};
-const PLACE_TEXT = { hydro: "в гидропонной установке", aqua: "в аквариуме", greenhouse: "в теплице", other: "в растворе" };
-
-const quiz = {
-  state: { step: 0, answers: {} },
-  steps() {
-    const t = this.state.answers.task;
-    return (!t || t === "climate" || t === "multi") ? ["place", "task", "power"] : ["place", "task"];
-  },
-  restart() { this.state = { step: 0, answers: {} }; this.render(); },
-  choose(key, v) {
-    this.state.answers[key] = v;
-    if (key === "task" && v !== "climate" && v !== "multi") delete this.state.answers.power;
-    this.state.step++;
-    this.render(true);
-  },
-  back() { if (this.state.step > 0) { this.state.step--; this.render(true); } },
-  result() {
-    const a = this.state.answers, where = PLACE_TEXT[a.place] || "в растворе";
-    const recs = [];
-    let note = "";
-    const block = () => {
-      if (a.power === "high") return { id: "blokPower", why: "Выход 4 — до 8 кВт, всего до 12 ламп по 600 Вт. Подключается к силовому щиту через отдельный автомат." };
-      if (a.power === "unknown") { note = "Блок универсальный рассчитан на нагрузку до 5 кВт: выходы 1–3 до 1 кВт, выход 4 до 2 кВт. Проверьте нагрузку в калькуляторе."; }
-      return { id: "blokUniversal", why: "4 выхода: 3 × 1 кВт и 1 × 2 кВт, всего до 5 кВт. Таймер, время, температура." };
-    };
-    if (a.task === "measure") recs.push({ id: "phMetr", why: `Ручное измерение pH ${where}. Диапазон pH 2.0–12.0, до 10 ч работы от аккумулятора.` });
-    if (a.task === "maintain") {
-      recs.push({ id: "phController", why: `Поддерживает заданный pH ${where}: дозирует один реагент, пока pH не вернётся к заданному значению.` });
-      recs.push({ id: "phMetr", why: "Для ручного контроля показаний и проверки раствора." });
-      note = "Один pH-контроллер работает с одним реагентом. Для кислоты и щёлочи одновременно нужны два прибора.";
-    }
-    if (a.task === "climate") recs.push(block());
-    if (a.task === "multi") {
-      recs.push({ id: "phController", why: `Автоматически поддерживает pH ${where}.` });
-      recs.push({ id: "phMetr", why: "Для ручного контроля pH и проверки раствора." });
-      recs.push(block());
-    }
-    return { recs, note };
-  },
-  render(focus = false) {
-    const box = $("#quizBox"), steps = this.steps(), s = this.state.step;
-    const isResult = s >= steps.length;
-    const pct = isResult ? 100 : Math.round(s / steps.length * 100);
-    let html = `<div class="quiz__top"><span>${isResult ? "Результат подбора" : `Шаг ${s + 1} из ${steps.length}`}</span><span>${pct}%</span></div>
-      <div class="progress" role="progressbar" aria-label="Прогресс подбора" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><div class="progress__bar" style="width:${pct}%"></div></div>`;
-
-    if (!isResult) {
-      const key = steps[s], step = QUIZ_STEPS[key], cur = this.state.answers[key];
-      html += `<h3 class="quiz__q" tabindex="-1" id="quizQ">${step.q}</h3>
-        <div class="quiz__options">${step.options.map(o => `
-          <button class="option" type="button" data-choose="${key}" data-v="${o.v}" aria-pressed="${cur === o.v}">
-            <span class="option__icon">${icon(o.icon)}</span>
-            <span>${esc(o.label)}${o.sub ? `<small>${esc(o.sub)}</small>` : ""}</span>
-          </button>`).join("")}
-        </div>
-        <div class="quiz__nav">
-          ${s > 0 ? `<button class="btn btn--ghost btn--sm" type="button" data-quiz="back">${icon("i-arrow-left", "i i-sm")}Назад</button>` : "<span></span>"}
-          ${key === "power" ? `<a class="link-btn" href="#calc">Открыть калькулятор нагрузки</a>` : ""}
-        </div>`;
-    } else {
-      const { recs, note } = this.result();
-      const sum = recs.reduce((t, r) => t + byId(r.id).price, 0);
-      html += `<div class="quiz__result-head"><div><h3 class="quiz__q" tabindex="-1" id="quizQ" style="margin:0">${recs.length > 1 ? "Рекомендуемый комплект" : "Рекомендуемый прибор"}</h3>
-          <p>Подобрано по вашим ответам.</p></div></div>
-        <div class="rec-list">${recs.map(r => { const p = byId(r.id); return `
-          <div class="rec">
-            <div class="rec__img">${imgTag(p.photos[0], p.short)}</div>
-            <div>
-              <h4 class="rec__title"><a href="#product-${p.id}" data-open-product="${p.id}">${esc(p.name)}</a></h4>
-              <p class="rec__why">${icon("i-check")}<span>${esc(r.why)}</span></p>
-            </div>
-            <div class="rec__side">
-              <span class="rec__price">${formatPrice(p.price)}</span>
-              ${recs.length === 1 ? `<button class="btn btn--primary btn--sm" type="button" data-add="${p.id}">Добавить в корзину</button>` : ""}
-            </div>
-          </div>`; }).join("")}
-        </div>
-        ${recs.length > 1 ? `<div class="quiz__total"><span>Сумма комплекта: <b>${formatPrice(sum)}</b></span>
-          <button class="btn btn--primary" type="button" data-quiz="addall" data-ids="${recs.map(r => r.id).join(",")}">${icon("i-cart", "i i-sm")}Добавить всё</button></div>` : ""}
-        ${note ? `<p class="quiz__note">${esc(note)}</p>` : ""}
-        <div class="quiz__actions">
-          <button class="btn btn--ghost" type="button" data-quiz="back">${icon("i-arrow-left", "i i-sm")}Назад</button>
-          <button class="btn btn--ghost" type="button" data-quiz="restart">${icon("i-refresh", "i i-sm")}Пройти заново</button>
-          ${this.state.answers.power === "unknown" ? `<a class="btn btn--outline" href="#calc">${icon("i-calc", "i i-sm")}Открыть калькулятор</a>` : ""}
-        </div>`;
-    }
-    box.innerHTML = html;
-    hydrateImages(box);
-    if (focus) { const q = $("#quizQ"); if (q) q.focus({ preventScroll: true }); }
-  }
-};
-$("#quizBox").addEventListener("click", e => {
-  const c = e.target.closest("[data-choose]");
-  if (c) { quiz.choose(c.dataset.choose, c.dataset.v); return; }
-  const q = e.target.closest("[data-quiz]");
-  if (!q) return;
-  if (q.dataset.quiz === "back") quiz.back();
-  if (q.dataset.quiz === "restart") quiz.restart();
-  if (q.dataset.quiz === "addall") cart.addMany(q.dataset.ids.split(","));
-});
 
 /* =========================================================
    12. КАЛЬКУЛЯТОР НАГРУЗКИ
@@ -3004,7 +2802,6 @@ renderApps();
 renderCatalog();
 renderGallery();
 renderDoseChart();
-quiz.render();
 calc.renderRows();
 renderLampN();
 calc.compute();
