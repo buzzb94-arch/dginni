@@ -1104,7 +1104,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           </figure>
         </div>
 
-        <div class="panel reveal" aria-live="polite">
+        <div class="panel reveal" id="calcResultPanel" aria-live="polite">
           <h3 class="panel__title">Результат</h3>
           <div id="calcResult"></div>
           <table class="breaker-table" id="breakerTable">
@@ -2439,6 +2439,14 @@ $(".hero__frame").addEventListener("click", () => {
 });
 // фото подключения в калькуляторе: нажатие — крупно (на ПК и на телефоне)
 $(".calc-scheme img").addEventListener("click", () => openWidePhoto(IMAGES.scheme, $(".calc-scheme figcaption").textContent));
+// в одну колонку (телефон, планшет) фото подключения уходит в конец «Результата»,
+// чтобы результат стоял сразу под оборудованием и было видно, как меняются выходы
+(function placeCalcPhoto() {
+  const fig = $(".calc-scheme"), home = fig.parentElement, mq = matchMedia("(max-width: 1080px)");
+  const place = () => (mq.matches ? $("#calcResultPanel") : home).append(fig);
+  place();
+  mq.addEventListener ? mq.addEventListener("change", place) : mq.addListener(place);
+})();
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-lb]");
   if (!b) return;
