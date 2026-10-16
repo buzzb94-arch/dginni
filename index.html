@@ -809,6 +809,15 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: none; } }
 .drawer__head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--border); }
 .drawer__head h2 { font-size: 22px; font-weight: 500; }
+.drawer__tools { display: flex; align-items: center; gap: 8px; }
+/* «Очистить» — в два нажатия: первое спрашивает, второе очищает */
+.cart-clear {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid var(--border-2); background: transparent; color: var(--text-2); font-size: 14px; transition: color .2s, border-color .2s, background-color .2s;
+}
+.cart-clear:hover { color: var(--text); border-color: var(--border-accent); }
+.cart-clear.is-confirm { color: #fff; border-color: var(--red); background: var(--red-soft); }
+.cart-clear[hidden] { display: none; }
 .drawer__body { flex: 1; overflow-y: auto; padding: 8px 20px; }
 .drawer__foot { padding: 18px 20px 22px; border-top: 1px solid var(--border); background: var(--bg-2); }
 .drawer__total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; color: var(--text-2); }
@@ -1415,7 +1424,10 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   <div class="drawer__box">
     <div class="drawer__head">
       <h2 id="cartTitle">Корзина</h2>
-      <button class="icon-btn" type="button" data-close aria-label="Закрыть корзину"><svg class="i"><use href="#i-close"/></svg></button>
+      <div class="drawer__tools">
+        <button class="cart-clear" type="button" id="cartClear" hidden><svg class="i i-sm" aria-hidden="true"><use href="#i-trash"/></svg><span>Очистить</span></button>
+        <button class="icon-btn" type="button" data-close aria-label="Закрыть корзину"><svg class="i"><use href="#i-close"/></svg></button>
+      </div>
     </div>
     <div class="drawer__body" id="cartBody"></div>
     <div class="drawer__foot" id="cartFoot">
@@ -1993,6 +2005,7 @@ const cart = {
       body.innerHTML = `<div class="cart-empty">${icon("i-cart")}<p>Корзина пуста.</p>
         <a class="btn btn--outline btn--sm" href="#catalog" data-close>Перейти в каталог</a></div>`;
       $("#cartFoot").hidden = true;
+      $("#cartClear").hidden = true;
       storage.set(ORDER_KEY, ""); // корзина опустела — следующий заказ получит новый номер
     } else {
       body.innerHTML = this.items.map(i => {
@@ -2015,6 +2028,7 @@ const cart = {
         </div>`;
       }).join("");
       $("#cartFoot").hidden = false;
+      $("#cartClear").hidden = false;
       $("#cartTotal").textContent = formatPrice(this.total());
       updateCheckoutLinks();
       hydrateImages(body);
@@ -2023,6 +2037,23 @@ const cart = {
 };
 
 $("#cartOpen").addEventListener("click", () => cart.open());
+// «Очистить корзину»: первое нажатие — «Точно очистить?», второе (в течение 3 с) — очистка
+(function initCartClear() {
+  const btn = $("#cartClear"), label = btn.querySelector("span");
+  let timer = 0;
+  const reset = () => { clearTimeout(timer); btn.classList.remove("is-confirm"); label.textContent = "Очистить"; };
+  btn.addEventListener("click", () => {
+    if (!btn.classList.contains("is-confirm")) {
+      btn.classList.add("is-confirm"); label.textContent = "Точно очистить?";
+      timer = setTimeout(reset, 3000);
+      return;
+    }
+    reset();
+    cart.clear();
+    toast("Корзина очищена");
+  });
+  $("#cartDrawer").addEventListener("close", reset);
+})();
 $("#cartBody").addEventListener("click", e => {
   const q = e.target.closest("[data-qty]");
   if (q) { cart.change(q.dataset.id, +q.dataset.qty); return; }
