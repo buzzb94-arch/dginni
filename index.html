@@ -1420,7 +1420,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <div class="drawer__body" id="cartBody"></div>
     <div class="drawer__foot" id="cartFoot">
       <div class="drawer__total"><span>Итого</span><b id="cartTotal">0 ₽</b></div>
-      <p class="checkout__order">Номер заказа: <b id="orderNo">—</b></p>
+      <p class="checkout__order">Заказ от <b id="orderNo">—</b></p>
       <p class="checkout__lead">Отправьте заказ удобным способом — состав и сумма подставятся сами. Мы ответим и согласуем оплату и доставку.</p>
       <div class="checkout">
         <a class="checkout__btn" id="coWhatsapp" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-whatsapp"/></svg>WhatsApp</a>
@@ -2031,21 +2031,22 @@ $("#cartBody").addEventListener("click", e => {
 });
 /* Оформление прямо в корзине: текст заказа уже вписан в сообщение WhatsApp и Telegram
    (ссылка на аккаунт по номеру t.me/+номер?text=…) и в письмо */
-/* Номер заказа: DG-ГГММДД-XXXX. Появляется с первым товаром и не меняется,
-   пока корзина не опустеет, — по нему заказ легко найти в переписке и по телефону */
+/* Метка заказа: дата и время, например «16.10.2026, 14:35». Ставится, когда в корзину
+   кладут первый товар, и не меняется, пока корзина не опустеет. Порядковые номера
+   ведёт продавец сам, когда заказ приходит */
 const ORDER_KEY = "dginni_order";
 function orderNo() {
   let no = storage.get(ORDER_KEY, "");
+  if (!/^\d{2}\.\d{2}\.\d{4}, \d{2}:\d{2}$/.test(no)) no = "";   // метка старого формата — ставим новую
   if (!no) {
-    const d = new Date(), p2 = n => String(n).padStart(2, "0");
-    const rnd = Array.from({ length: 4 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
-    no = `DG-${String(d.getFullYear()).slice(2)}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${rnd}`;
+    const d = new Date();
+    no = `${d.toLocaleDateString("ru-RU")}, ${d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}`;
     storage.set(ORDER_KEY, no);
   }
   return no;
 }
 function orderText() {
-  return [`Здравствуйте! Заказ № ${orderNo()}`, "Хочу заказать:",
+  return [`Здравствуйте! Заказ от ${orderNo()}`, "Хочу заказать:",
     ...cart.lines().map(l => `— ${l.name} × ${l.qty} — ${formatPrice(l.sum)}`),
     `Итого: ${formatPrice(cart.total())}`,
     "", "Заказ с сайта dginni.ru"].join("\n");
@@ -2054,7 +2055,7 @@ function updateCheckoutLinks() {
   const text = orderText();
   $("#coWhatsapp").href = `${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`;
   $("#coTelegram").href = `${CONFIG.telegram}?text=${encodeURIComponent(text)}`;
-  $("#coEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(`Заказ № ${orderNo()} с сайта dginni.ru`)}&body=${encodeURIComponent(text)}`;
+  $("#coEmail").href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(`Заказ от ${orderNo()} с сайта dginni.ru`)}&body=${encodeURIComponent(text)}`;
   $("#orderNo").textContent = orderNo();
 }
 /* =========================================================
