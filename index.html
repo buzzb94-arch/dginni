@@ -895,7 +895,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 /* Уведомление */
 .toast {
   position: fixed; left: 50%; bottom: 24px; z-index: 300; transform: translate(-50%, 120%);
-  max-width: calc(100vw - 32px); padding: 14px 20px; border-radius: 999px; background: var(--surface-2); color: var(--text); font-size: 15px;
+  width: max-content; max-width: min(560px, calc(100vw - 48px));   /* ширина по тексту — и внутри окна товара тоже */
+  padding: 12px 20px; border-radius: 22px; text-align: center; background: var(--surface-2); color: var(--text); font-size: 15px; line-height: 1.35;
   border: 1px solid var(--border-accent); box-shadow: 0 12px 30px rgba(0,0,0,.5), 0 0 30px rgba(1,244,199,.15); opacity: 0; transition: transform .3s, opacity .3s; pointer-events: none;
 }
 .toast.is-shown { transform: translate(-50%, 0); opacity: 1; }
@@ -1744,6 +1745,10 @@ const icon = (id, cls = "i") => `<svg class="${cls}" aria-hidden="true"><use hre
 let toastTimer;
 function toast(msg) {
   const t = $("#toast");
+  // открытое модальное окно (товар, корзина) лежит в верхнем слое поверх страницы —
+  // уведомление переносим внутрь него, иначе его не видно
+  const dlgs = $$("dialog[open]"), host = dlgs.length ? dlgs[dlgs.length - 1] : document.body;
+  if (t.parentElement !== host) host.appendChild(t);
   t.textContent = msg;
   t.classList.add("is-shown");
   clearTimeout(toastTimer);
