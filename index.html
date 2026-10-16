@@ -348,30 +348,33 @@ button { cursor: pointer; }
 .hero__text { max-width: 1080px; }
 .hero__title { font-size: clamp(32px, 4.8vw, 60px); font-weight: 500; line-height: 1.06; letter-spacing: -0.03em; }
 .hero__title em { display: block; }
-/* баннер: приборы — приглушённым фоном на всю площадь, заголовок и подпись поверх, по центру.
-   Размер текста считается от ширины баннера (cqw). Перед каждым cqw — то же значение от ширины экрана:
-   браузеры без cqw (старые Safari, Яндекс, Samsung) иначе отбрасывают правило */
+/* баннер: все четыре прибора — фоном на всю ширину (тонированы в гамме сайта), заголовок, подпись и кнопка —
+   поверх, по центру, на мягком затемнении. Размер текста считается от ширины баннера (cqw). Перед каждым cqw —
+   то же значение от ширины экрана: браузеры без cqw (старые Safari, Яндекс, Samsung) иначе отбрасывают правило */
 .hero__frame { container-type: inline-size; }
 .hero__overlay {
   position: absolute; inset: 8px; border-radius: 16px; pointer-events: none;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 0 calc(min(100vw - 48px, 1024px) * .05); padding: 0 5cqw;
-  background:
-    radial-gradient(75% 65% at 50% 50%, rgba(3,8,7,.78) 0%, rgba(3,8,7,.5) 55%, rgba(3,8,7,.2) 100%);
-  color: var(--text); text-align: center; text-shadow: 0 2px 18px rgba(0,0,0,.85);
+  padding: 0 calc(min(100vw - 48px, 1024px) * .06); padding: 0 6cqw;
+  background: radial-gradient(55% 55% at 50% 50%, rgba(3,8,7,.58) 0%, rgba(3,8,7,.38) 55%, rgba(3,8,7,.08) 100%);
+  color: var(--text); text-align: center; text-shadow: 0 1px 2px rgba(0,0,0,.9), 0 2px 10px rgba(0,0,0,.6);
 }
-.hero__overlay .hero__title { font-size: clamp(22px, calc(min(100vw - 48px, 1024px) * .048), 50px); font-size: clamp(22px, 4.8cqw, 50px); }
+.hero__overlay .hero__title {
+  max-width: 15em; font-weight: 600; line-height: 1.06;
+  font-size: clamp(24px, calc(min(100vw - 48px, 1024px) * .048), 52px); font-size: clamp(24px, 4.8cqw, 52px);
+}
 .hero__lead {
-  margin-top: calc(min(100vw - 48px, 1024px) * .02); font-size: clamp(14px, calc(min(100vw - 48px, 1024px) * .022), 22px);
-  margin-top: 2cqw; font-size: clamp(14px, 2.2cqw, 22px); line-height: 1.35; color: rgba(230,230,230,.85);
+  max-width: 30em; line-height: 1.35; color: var(--accent); font-weight: 500;   /* бирюзовый: на ПК за подписью светлые приборы */
+  margin-top: calc(min(100vw - 48px, 1024px) * .02); font-size: clamp(14px, calc(min(100vw - 48px, 1024px) * .02), 20px);
+  margin-top: 2cqw; font-size: clamp(14px, 2cqw, 20px);
 }
-.hero__frame img, .hero__frame .img-fallback { filter: brightness(.6) saturate(.85); }
-/* телефон: баннер выше, чтобы заголовок и подпись свободно легли поверх приборов */
+.hero__btn { pointer-events: auto; margin-top: calc(min(100vw - 48px, 1024px) * .03); margin-top: 3cqw; min-height: 52px; font-size: 16px; text-shadow: none; }
 @media (max-width: 600px) {
-  .hero__overlay { padding: 0 14px; }
+  .hero__overlay { padding: 20px 18px; background: radial-gradient(90% 48% at 50% 50%, rgba(3,8,7,.74) 0%, rgba(3,8,7,.5) 60%, rgba(3,8,7,.12) 100%); }
+  .hero__overlay .hero__title { font-size: 25px; }
+  .hero__lead { font-size: 15px; margin-top: 10px; color: rgba(230,230,230,.88); font-weight: 400; }   /* на телефоне подпись прежняя */
+  .hero__btn { margin-top: 18px; }
 }
-.hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 32px; width: 100%; }
-.hero__cta .btn { min-height: 54px; font-size: 16px; }
 
 .hero__stage { position: relative; width: 100%; max-width: 1040px; margin-top: 20px; padding-top: 48px; }
 .hero__beam {
@@ -393,13 +396,12 @@ button { cursor: pointer; }
 .hero__frame img, .hero__frame .img-fallback {
   width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: center; border-radius: 16px; background: var(--surface);
 }
-@media (max-width: 600px) { .hero__frame img, .hero__frame .img-fallback { aspect-ratio: 4 / 3.3; } }   /* телефон: баннер выше */
+@media (max-width: 600px) { .hero__frame img, .hero__frame .img-fallback { aspect-ratio: 3 / 4; } }   /* телефон: баннер выше — приборы в два яруса */
 @media (max-width: 760px) {
   .hero { padding-top: 44px; }
   .hero__stage { padding-top: 36px; margin-top: 16px; }
   .hero__beam { width: 300px; height: 160px; }
 }
-@media (max-width: 480px) { .hero__cta .btn { width: 100%; } }
 
 /* Строка «Где работают приборы» */
 
@@ -969,7 +971,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .section__lead { margin-top: 10px; font-size: 16px; }
   .pill, .section__eyebrow { margin-bottom: 14px; }
   .hero { padding: 24px 0 44px; }
-  .hero__cta { margin-top: 24px; }
   .hero__stage { padding-top: 28px; margin-top: 12px; }
   .hero__beam { height: 110px; }
   .apps, .catalog, .why, .reviews, .contacts, .calc { gap: 12px; }
@@ -1089,11 +1090,9 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           <div class="hero__overlay">
             <h1 class="hero__title" id="hero-title">Приборы контроля pH и&nbsp;микроклимата <em>для гидропоники, теплиц и&nbsp;аквариумов</em></h1>
             <p class="hero__lead">pH-метры, pH-контроллеры и блоки управления «Джинн»</p>
+            <a class="btn btn--glow hero__btn" href="#catalog">Каталог и цены<span class="btn__arrow" aria-hidden="true"><svg class="i i-sm"><use href="#i-arrow-right"/></svg></span></a>
           </div>
         </div>
-      </div>
-      <div class="hero__cta reveal">
-        <a class="btn btn--glow" href="#catalog">Каталог и цены<span class="btn__arrow" aria-hidden="true"><svg class="i i-sm"><use href="#i-arrow-right"/></svg></span></a>
       </div>
     </div>
   </section>
@@ -1489,7 +1488,7 @@ const CONFIG = {
    ========================================================= */
 const IMAGES = {
   // для ПК — приборы приподняты над низом баннера; на телефоне (images/m/) — прежний вариант, там текст занимает больше места
-  hero: "images/hero-lineup-5.jpg",
+  hero: "images/hero-bg-9.jpg",
   scheme: "images/calc-connection.jpg",
   // первая картинка — вертикальная карточка товара (2:3) для каталога
   // фото для карточек каталога: прибор у нижнего края, сверху место под характеристики
@@ -2549,8 +2548,9 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") $$(".stat.is-open").forEach(li => li.classList.remove("is-open")); });
 // титул на телефоне: нажатие — крупно, повторное нажатие — вернуть как было
-$(".hero__frame").addEventListener("click", () => {
-  if (MOBILE_MQ.matches) openWidePhoto(IMAGES.hero, $(".hero__frame img").alt);
+// (крупно показывается линейка приборов целиком, без тонировки; кнопка «Каталог и цены» работает как обычно)
+$(".hero__frame").addEventListener("click", e => {
+  if (MOBILE_MQ.matches && !e.target.closest("a")) openWidePhoto("images/hero-lineup-5.jpg", $(".hero__frame img").alt);
 });
 // фото подключения в калькуляторе: нажатие — крупно (на ПК и на телефоне)
 $(".calc-scheme img").addEventListener("click", () => openWidePhoto(IMAGES.scheme, $(".calc-scheme figcaption").textContent));
