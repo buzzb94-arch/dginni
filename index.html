@@ -364,6 +364,13 @@ button { cursor: pointer; }
   margin-top: calc(min(100vw - 48px, 1024px) * .016); font-size: clamp(11px, calc(min(100vw - 48px, 1024px) * .019), 20px);
   margin-top: 1.6cqw; font-size: clamp(11px, 1.9cqw, 20px); line-height: 1.3; color: var(--text-2);
 }
+.hero__lead--below { display: none; }
+/* телефон: на баннере только заголовок, подпись — под баннером, иначе текст заходит на приборы */
+@media (max-width: 600px) {
+  .hero__overlay .hero__lead { display: none; }
+  .hero__overlay { padding-top: 10px; }
+  .hero__lead--below { display: block; margin: 14px 0 0; font-size: 15px; text-align: center; }
+}
 .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 32px; width: 100%; }
 .hero__cta .btn { min-height: 54px; font-size: 16px; }
 
@@ -1084,6 +1091,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
             <p class="hero__lead">pH-метры, pH-контроллеры и блоки управления «Джинн»</p>
           </div>
         </div>
+        <p class="hero__lead hero__lead--below" aria-hidden="true">pH-метры, pH-контроллеры и блоки управления «Джинн»</p>
       </div>
       <div class="hero__cta reveal">
         <a class="btn btn--glow" href="#catalog">Каталог и цены<span class="btn__arrow" aria-hidden="true"><svg class="i i-sm"><use href="#i-arrow-right"/></svg></span></a>
