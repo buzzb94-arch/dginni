@@ -669,25 +669,13 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 /* =========================================================
    Как работает pH-контроллер, пробоотборник
    ========================================================= */
-.dose { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
-.dose__chart { margin: 0; }
-.dose > * { min-width: 0; }
-.dose__rules { margin-top: 18px; }
-.dose__svg { display: block; width: 100%; height: auto; }
-.dose__svg .axis { stroke: rgba(255,255,255,.55); stroke-width: 1.5; }
-.dose__svg .bar { fill: var(--accent); filter: drop-shadow(0 0 6px rgba(1,244,199,.6)); }
-.dose__svg .pause { stroke: var(--text-2); stroke-width: 1.2; }
-.dose__svg text { font-family: var(--font); fill: var(--text); }
-.dose__svg .lbl { font-size: 15px; font-weight: 500; }
-.dose__svg .ph { font-size: 13px; fill: var(--text-2); }
-.dose__svg .ph-target { fill: var(--accent); font-weight: 600; }
-.dose__svg .dim { font-size: 12px; fill: var(--text-3); }
-.dose__legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; font-size: 13px; color: var(--text-2); }
-.dose__legend span { display: inline-flex; align-items: center; gap: 8px; }
-.dose__swatch { width: 22px; height: 10px; border-radius: 2px; background: var(--accent); box-shadow: 0 0 8px rgba(1,244,199,.6); }
-.dose__gap { width: 22px; height: 0; border-top: 1.5px dashed var(--text-2); }
-@media (max-width: 1080px) { .dose { grid-template-columns: 1fr; } }
 
+/* видео «Как pH-контроллер дозирует реагент» */
+.dose-video {
+  max-width: 960px; margin: 0 auto; border-radius: var(--radius); overflow: hidden; background: #000;
+  border: 1px solid var(--border-accent); box-shadow: var(--shadow), 0 0 50px rgba(1,244,199,.12);
+}
+.dose-video__player { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
 /* =========================================================
    12–13. Представителям
    ========================================================= */
@@ -742,12 +730,7 @@ a.contact-card__value:hover { color: var(--accent); }
   .contact-card__icon { grid-row: span 2; margin: 0; }
   .contact-card__value { font-size: 18px; }
   .section__title { font-size: clamp(28px, 8vw, 36px); }
-  /* график дозирования: прокрутка внутри карточки, чтобы подписи оставались читаемыми */
-  #doseChart { overflow-x: auto; margin: 0 -16px; padding: 0 16px 6px; -webkit-overflow-scrolling: touch; }
-  #doseChart .dose__svg { min-width: 560px; }
-  .dose__hint { display: block; }
 }
-.dose__hint { display: none; font-size: 12px; color: var(--text-3); margin-bottom: 8px; }
 
 /* =========================================================
    15. Модальные окна (dialog)
@@ -966,7 +949,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .hero__cta { margin-top: 24px; }
   .hero__stage { padding-top: 28px; margin-top: 12px; }
   .hero__beam { height: 110px; }
-  .apps, .catalog, .why, .reviews, .contacts, .calc, .dose { gap: 12px; }
+  .apps, .catalog, .why, .reviews, .contacts, .calc { gap: 12px; }
   .contacts-row { margin-top: 16px; }
   .panel { padding: 18px 14px; }
   .footer { padding-bottom: 32px; }
@@ -1311,34 +1294,12 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <p class="section__lead">В приборе используется ПИД-регулятор. Прибор постоянно сравнивает текущий и заданный pH и подаёт порцию реагента с учётом объёма системы.</p>
       </div>
 
-      <div class="dose reveal">
-        <div class="panel dose__settings">
-          <h3 class="panel__title">Настройки прибора</h3>
-          <table class="spec-table">
-            <tbody>
-              <tr><th scope="row">Уровень pH</th><td>значение, которое нужно поддерживать</td></tr>
-              <tr><th scope="row">Режим рег.</th><td>pH+ (повышение) или pH− (понижение)</td></tr>
-              <tr><th scope="row">Пауза дозирования</th><td>время, за которое раствор успевает перемешаться с реагентом</td></tr>
-              <tr><th scope="row">Объём</th><td>объём ёмкости: чем больше объём, тем больше разовая подача</td></tr>
-            </tbody>
-          </table>
-          <ul class="kit dose__rules">
-            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span>pH после подачи не меняется — дозировка увеличивается.</span></li>
-            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span>Разница уменьшается — дозировка снижается.</span></li>
-            <li><svg class="i" aria-hidden="true"><use href="#i-check"/></svg><span>Заданный pH достигнут — подача прекращается.</span></li>
-          </ul>
-          <p class="pm__note">Прибор рассчитан на реагент концентрацией 15%. Если концентрация выше, уменьшите объём в настройках или разбавьте реагент. Концентрация выше 30% разрушает трубку насоса.</p>
-        </div>
-        <figure class="panel dose__chart">
-          <h3 class="panel__title">Пример работы: заданный pH&nbsp;6.5</h3>
-          <p class="dose__hint">Листайте график вбок →</p>
-          <div id="doseChart"></div>
-          <figcaption class="dose__legend">
-            <span><i class="dose__swatch" aria-hidden="true"></i>длительность дозирования (время работы насоса)</span>
-            <span><i class="dose__gap" aria-hidden="true"></i>пауза дозирования</span>
-          </figcaption>
-          <p class="small-note">При увеличении объёма ёмкости длительность работы насоса увеличивается. По мере приближения к заданному pH подачи становятся короче.</p>
-        </figure>
+      <div class="dose-video reveal">
+        <video class="dose-video__player" controls preload="none" playsinline poster="images/dose-video-poster.jpg"
+               aria-label="Видео: как pH-контроллер «Джинн» дозирует реагент">
+          <source src="video/dose-control.mp4" type="video/mp4">
+          Ваш браузер не показывает видео. <a href="video/dose-control.mp4">Скачать ролик</a>.
+        </video>
       </div>
 
     </div>
@@ -2592,48 +2553,6 @@ document.addEventListener("click", e => {
   lb.addEventListener("click", e => { if (e.target === lb || e.target.id === "lbInner" || e.target.closest("[data-close]")) finish(); });
 })();
 
-/* =========================================================
-   13а. ГРАФИК ДОЗИРОВАНИЯ pH-КОНТРОЛЛЕРА
-   Длительность подач (условные единицы) по графику производителя:
-   заданный pH 6.5, ёмкость 50 л и 100 л.
-   ========================================================= */
-const DOSING = {
-  target: 6.5,
-  pause: 30,
-  steps: ["5", "5", "5.5", "5.7", "6", "6.2", "6.4"],
-  runs: [
-    { label: "Ёмкость 50 л", doses: [30, 42, 34, 27, 19, 11, 4] },
-    { label: "Ёмкость 100 л", doses: [41, 52, 45, 38, 30, 23, 11] }
-  ]
-};
-function renderDoseChart() {
-  const W = 640, x0 = 12, rowH = 112, top = 18, scale = 1.25;
-  const H = top + DOSING.runs.length * rowH;
-  let s = `<svg class="dose__svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="График дозирования: при объёме 100 литров подачи длиннее, чем при 50 литрах; по мере приближения к pH 6.5 подачи короче">`;
-  DOSING.runs.forEach((run, r) => {
-    const y = top + r * rowH, axisY = y + 62;
-    s += `<text class="lbl" x="${x0}" y="${y + 6}">${esc(run.label)}</text>`;
-    s += `<line class="axis" x1="${x0}" y1="${axisY}" x2="${W - 16}" y2="${axisY}"/>`;
-    s += `<path class="axis" d="M${W - 24} ${axisY - 5} L${W - 14} ${axisY} L${W - 24} ${axisY + 5}" fill="none"/>`;
-    let x = x0 + 4;
-    run.doses.forEach((d, i) => {
-      const w = Math.max(2, d * scale);
-      s += `<rect class="bar" x="${x}" y="${axisY - 20}" width="${w}" height="20" rx="2"/>`;
-      s += `<text class="ph" x="${x}" y="${axisY - 28}">pH ${DOSING.steps[i]}</text>`;
-      if (i === 0) {
-        s += `<text class="dim" x="${x}" y="${axisY + 18}">дозирование</text>`;
-      }
-      const nx = x + w + DOSING.pause * scale;
-      if (i === 1) {
-        s += `<line class="pause" x1="${x + w + 2}" y1="${axisY + 10}" x2="${nx - 2}" y2="${axisY + 10}" stroke-dasharray="3 3"/>`;
-        s += `<text class="dim" x="${x + w + 4}" y="${axisY + 26}">пауза</text>`;
-      }
-      x = nx;
-    });
-    s += `<text class="ph ph-target" x="${x}" y="${axisY - 28}">pH ${DOSING.target}</text>`;
-  });
-  $("#doseChart").innerHTML = s + "</svg>";
-}
 $("#lbPrev").addEventListener("click", () => showLightbox(lbIndex - 1));
 $("#lbNext").addEventListener("click", () => showLightbox(lbIndex + 1));
 $("#lightbox").addEventListener("keydown", e => {
@@ -2690,7 +2609,6 @@ function initReveal() {
 renderApps();
 renderCatalog();
 renderGallery();
-renderDoseChart();
 calc.renderRows();
 calc.compute();
 cart.load();
