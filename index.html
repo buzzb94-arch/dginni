@@ -946,7 +946,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .catalog { margin-left: -16px; margin-right: -16px; max-width: none; gap: 12px; }
   .product { border-radius: 0; border-left: 0; border-right: 0; }
   .product__media .product__img, .product__img { aspect-ratio: 1 / 1; width: 100%; margin: 0; border-radius: 0; }   /* фото от края до края */
-  .product__img img { object-position: 50% 25%; }   /* срезается больше снизу: сверху остаётся место под плашки */
+  .product__img img { object-position: 50% 50%; }   /* квадратное фото для телефона — без обрезки */
   .product__body { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 12px; padding: 14px 16px 16px; }
   .product__title { font-size: 17px; }
   .product__price { margin: 0; padding: 0; font-size: 22px; white-space: nowrap; }
@@ -1525,6 +1525,8 @@ const IMAGES = {
   // на ПК (2 колонки) под плашки характеристик 29% высоты, на телефоне (images/m/) — 37–40%: прибор занимает всё остальное
   // карточки каталога — вариант с запасом сверху под плашки (37–40 %): он подходит и для 4 карточек в ряд, и для телефона
   cards: { phMetr: "images/m/ph-metr-card5.jpg", phController: "images/m/ph-controller-card5.jpg", blokUniversal: "images/m/blok-universal-card5.jpg", blokPower: "images/m/blok-power-card5.jpg" },
+  // телефон: квадратные фото — сверху 38 % под плашки, прибор целиком ниже
+  cardsMobile: { phMetr: "images/m/ph-metr-card1.jpg", phController: "images/m/ph-controller-card1.jpg", blokUniversal: "images/m/blok-universal-card1.jpg", blokPower: "images/m/blok-power-card1.jpg" },
   phMetr: ["images/ph-metr-card.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
   phController: ["images/ph-controller-card.jpg", "images/ph-controller.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
   blokUniversal: ["images/blok-universal-card.jpg", "images/blok-universal-2.jpg", "images/blok-universal-3.jpg", "images/blok-universal-4.jpg", "images/blok-universal-5.jpg"],
@@ -1900,7 +1902,7 @@ function renderCatalog() {
     <article class="product reveal" id="product-${p.id}">
       <div class="product__media">
         <button class="product__img" type="button" data-open-product="${p.id}" aria-label="Подробнее: ${esc(p.name)}">
-          ${imgTag(IMAGES.cards[p.id] || p.photos[0], p.name)}
+          ${imgTag((MOBILE_MQ.matches ? IMAGES.cardsMobile : IMAGES.cards)[p.id] || p.photos[0], p.name)}
         </button>
         <ul class="product__chips" aria-label="Главные характеристики">
           ${p.keySpecs.map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join("")}
