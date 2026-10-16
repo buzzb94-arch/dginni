@@ -2687,6 +2687,9 @@ function initReveal() {
    ========================================================= */
 renderApps();
 renderCatalog();
+// ролик: громкость по умолчанию — средняя, чтобы звук не бил по ушам при первом запуске
+// (на iPhone громкость задаёт только сам телефон — там это свойство не работает)
+{ const v = $(".dose-video__player"); if (v) v.volume = 0.5; }
 renderGallery();
 calc.renderRows();
 calc.compute();
