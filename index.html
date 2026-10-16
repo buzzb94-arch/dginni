@@ -97,7 +97,8 @@
   --radius: 20px;
   --radius-sm: 12px;
   --shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 20px 40px rgba(0,0,0,.35);
-  --header-h: 72px;
+  --bar-h: 58px;      /* высота полосы шапки */
+  --header-h: 59px;   /* шапка целиком с рамкой — для отступов; скрипт уточняет по факту */
   --container: 1200px;
   --font: "Onest", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-logo: "Caveat", "Segoe Script", cursive;
@@ -263,7 +264,7 @@ button { cursor: pointer; }
   -webkit-backdrop-filter: saturate(140%) blur(14px);
   border-bottom: 1px solid var(--border);
 }
-.header__inner { display: flex; align-items: center; gap: 24px; height: var(--header-h); }
+.header__inner { display: flex; align-items: center; gap: 24px; height: var(--bar-h); }   /* не --header-h: его перезаписывает скрипт, шапка росла на 1 px при каждом resize */
 .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); flex: 0 0 auto; }
 .logo:hover { color: #fff; }
 .logo__mark {
@@ -273,7 +274,7 @@ button { cursor: pointer; }
     #0B2A24;
   box-shadow: inset 0 0 0 1px rgba(1,244,199,.35), 0 0 16px rgba(1,244,199,.3);
 }
-.logo__name { font-family: var(--font-logo); font-size: 34px; font-weight: 700; line-height: 1; }
+.logo__name { font-family: var(--font-logo); font-size: 30px; font-weight: 700; line-height: 1; }
 .logo__sub { font-size: 11px; font-weight: 500; letter-spacing: .14em; color: var(--text-3); text-transform: uppercase; }
 .nav { margin: 0 auto; }
 .nav__list { display: flex; gap: 2px; list-style: none; }
@@ -925,6 +926,32 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .product__chips b { font-size: 12.5px; font-weight: 500; color: var(--text); }
 @media (max-width: 360px) { .product__chips li { padding: 3px 7px; } .product__chips span { font-size: 9.5px; } .product__chips b { font-size: 11.5px; } }
 @media (min-width: 1200px) { .product__chips { left: 16px; right: 16px; top: 16px; gap: 6px; } .product__chips li { padding: 6px 11px; } .product__chips span { font-size: 12px; } .product__chips b { font-size: 14.5px; } }
+/* шапка ниже на телефоне */
+@media (max-width: 600px) { :root { --bar-h: 54px; --header-h: 55px; } .logo__name { font-size: 28px; } }
+/* каталог: карточка товара целиком помещается в экран (под шапкой).
+   Широкий экран — 4 карточки в ряд, компактный низ карточки; фото с запасом сверху под плашки (как на телефоне) */
+@media (min-width: 1100px) {
+  .catalog { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .product__chips { left: 8px; right: 8px; top: 8px; gap: 4px; }
+  .product__chips li { padding: 3px 7px; border-radius: 8px; }
+  .product__chips span { font-size: 9.5px; }
+  .product__chips b { font-size: 11.5px; }
+  .product__body { gap: 10px; padding: 14px; }
+  .product__title { font-size: 15px; }
+  .product__price { padding-top: 2px; font-size: 22px; }
+  .product__actions .btn, .product__market .mp-btn { min-height: 38px; padding: 6px 8px; font-size: 13px; }
+}
+/* телефон: карточка во всю ширину экрана, фото чуть ниже, название и цена в одну строку */
+@media (max-width: 600px) {
+  .catalog { margin-left: -16px; margin-right: -16px; max-width: none; gap: 12px; }
+  .product { border-radius: 0; border-left: 0; border-right: 0; }
+  .product__media .product__img, .product__img { aspect-ratio: 1 / 1; width: 100%; margin: 0; border-radius: 0; }   /* фото от края до края */
+  .product__img img { object-position: 50% 25%; }   /* срезается больше снизу: сверху остаётся место под плашки */
+  .product__body { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px 12px; padding: 14px 16px 16px; }
+  .product__title { font-size: 17px; }
+  .product__price { margin: 0; padding: 0; font-size: 22px; white-space: nowrap; }
+  .product__actions, .product__market { grid-column: 1 / -1; }
+}
 .pm__main { background: var(--surface-2); }
 .pm__main img { mix-blend-mode: normal; }
 .pm__thumb { background: var(--surface-2); }
@@ -1496,7 +1523,8 @@ const IMAGES = {
   // первая картинка — вертикальная карточка товара (2:3) для каталога
   // фото для карточек каталога: прибор у нижнего края, сверху место под характеристики
   // на ПК (2 колонки) под плашки характеристик 29% высоты, на телефоне (images/m/) — 37–40%: прибор занимает всё остальное
-  cards: { phMetr: "images/ph-metr-card5.jpg", phController: "images/ph-controller-card5.jpg", blokUniversal: "images/blok-universal-card5.jpg", blokPower: "images/blok-power-card5.jpg" },
+  // карточки каталога — вариант с запасом сверху под плашки (37–40 %): он подходит и для 4 карточек в ряд, и для телефона
+  cards: { phMetr: "images/m/ph-metr-card5.jpg", phController: "images/m/ph-controller-card5.jpg", blokUniversal: "images/m/blok-universal-card5.jpg", blokPower: "images/m/blok-power-card5.jpg" },
   phMetr: ["images/ph-metr-card.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
   phController: ["images/ph-controller-card.jpg", "images/ph-controller.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
   blokUniversal: ["images/blok-universal-card.jpg", "images/blok-universal-2.jpg", "images/blok-universal-3.jpg", "images/blok-universal-4.jpg", "images/blok-universal-5.jpg"],
