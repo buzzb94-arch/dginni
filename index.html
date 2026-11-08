@@ -1998,6 +1998,12 @@ function openDoc(key) {
   $("#docBody").innerHTML = d.html();
   openDialog($("#docModal"));
 }
+// прямые ссылки на документы: …/#policy, #consent, #terms (их даёт Telegram-бот)
+function openDocFromHash() {
+  const key = location.hash.slice(1);
+  if (Object.prototype.hasOwnProperty.call(DOCS, key)) openDoc(key);
+}
+window.addEventListener("hashchange", openDocFromHash);
 
 /* Согласие на обработку ПДн: пока галочка не отмечена, кнопки Telegram и «Почта» не срабатывают */
 $$("[data-consent]").forEach(box => {
@@ -2434,6 +2440,7 @@ initDealerLinks();
 applyConfigLinks();
 hydrateImages();
 initReveal();
+openDocFromHash();
 
 /* =========================================================
    17а. КНОПКА «НАВЕРХ»

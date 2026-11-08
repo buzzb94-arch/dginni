@@ -6,8 +6,14 @@
   • «Пробоотборник своими руками» — описание, детали, фото сборки и PDF;
   • «Задать вопрос инженеру» — вопрос пересылается инженеру, ответ инженера
     (ответом на пересланное сообщение) бот возвращает покупателю;
+  • «Персональные данные» — ссылки на политику и согласие, удаление своих данных;
   • ссылки вида t.me/<бот>?start=manuals, ?start=diy или ?start=manual_probe
     сразу открывают нужный раздел.
+
+Персональные данные (152-ФЗ): вопрос инженеру передаётся только после согласия
+покупателя (кнопка «Даю согласие», отметка с датой хранится в STATE_FILE).
+Связка «вопрос ↔ покупатель» хранится год, затем удаляется. Бот должен работать
+на сервере в России: STATE_FILE содержит персональные данные.
 
 Без сторонних библиотек: только стандартный Python 3.9+.
 
@@ -16,7 +22,7 @@
   ENGINEER_CHAT_ID  чат инженера: id личного чата или группы, куда приходят вопросы
                     (если не задан, бот предлагает позвонить или написать на почту)
   CONTENT_FILE      путь к content.json (по умолчанию рядом с bot.py)
-  STATE_FILE        файл для связки «вопрос ↔ покупатель» (по умолчанию state.json)
+  STATE_FILE        согласия и связка «вопрос ↔ покупатель» (по умолчанию state.json)
 
 Запуск:  BOT_TOKEN=... ENGINEER_CHAT_ID=... python bot.py
 """
@@ -42,6 +48,10 @@ with open(CONTENT_FILE, encoding="utf-8") as f:
 FAQ = CONTENT["faq"]
 DIY = CONTENT.get("diy")
 MANUALS = {m["id"]: m for m in CONTENT["manuals"]}
+# документы на сайте открываются по якорю: …/#policy, …/#consent
+POLICY_URL = CONTENT["site"] + "#policy"
+CONSENT_URL = CONTENT["site"] + "#consent"
+TICKET_TTL = 365 * 24 * 3600  # обращения храним год (срок из политики обработки ПДн)
 
 
 # ---------------------------------------------------------------------------
@@ -66,20 +76,39 @@ def api(method, **params):
 
 
 # ---------------------------------------------------------------------------
-# Хранилище: какое сообщение у инженера от какого покупателя
+# Хранилище: согласия на обработку ПДн и какое сообщение у инженера от какого покупателя
+#   consents: {chat_id: "дата согласия"}
+#   tickets:  {id сообщения у инженера: {"chat": chat_id покупателя, "ts": время}}
+#   waiting:  [chat_id] — нажали «Задать вопрос» и ещё не написали его
 # ---------------------------------------------------------------------------
 def load_state():
     try:
         with open(STATE_FILE, encoding="utf-8") as f:
-            return json.load(f)
+            state = json.load(f)
     except (OSError, ValueError):
-        return {"tickets": {}, "waiting": []}
+        state = {}
+    state.setdefault("tickets", {})
+    state.setdefault("waiting", [])
+    state.setdefault("consents", {})
+    # старый формат связки (просто chat_id) — со сроком хранения от сегодняшнего дня
+    now = int(time.time())
+    for mid, t in state["tickets"].items():
+        if not isinstance(t, dict):
+            state["tickets"][mid] = {"chat": t, "ts": now}
+    return state
 
 
 STATE = load_state()
 
 
+def purge_old_tickets():
+    old = time.time() - TICKET_TTL
+    for mid in [m for m, t in STATE["tickets"].items() if t["ts"] < old]:
+        del STATE["tickets"][mid]
+
+
 def save_state():
+    purge_old_tickets()
     tmp = STATE_FILE + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(STATE, f, ensure_ascii=False)
@@ -113,6 +142,7 @@ def main_kb():
         *([[btn("🛠 " + DIY["title"], "diy")]] if DIY else []),
         [btn("👷 Задать вопрос инженеру", "ask")],
         [btn("🌐 Сайт и каталог", url=CONTENT["site"])],
+        [btn("🔒 Персональные данные", "privacy")],
     ])
 
 
@@ -133,6 +163,37 @@ def manuals_kb():
 
 def contacts_text():
     return f"Телефон: {CONTENT['phone']}\nE-mail: {CONTENT['email']}"
+
+
+def who_is(user):
+    who = " ".join(x for x in [user.get("first_name"), user.get("last_name")] if x) or "Покупатель"
+    if user.get("username"):
+        who += f" (@{user['username']})"
+    return who
+
+
+DOCS_ROW = [btn("📄 Согласие", url=CONSENT_URL), btn("📄 Политика", url=POLICY_URL)]
+
+CONSENT_TEXT = (
+    "Чтобы передать вопрос инженеру, нужно ваше согласие на обработку персональных данных: "
+    "имени и имени пользователя в Telegram, текста вопроса и приложенных фото. "
+    "Они нужны только для ответа на ваш вопрос.\n\n"
+    "Текст согласия и политика обработки персональных данных — по кнопкам ниже."
+)
+
+
+def privacy_text():
+    return (
+        "<b>Персональные данные</b>\n\n"
+        "Бот хранит только то, что нужно, чтобы передать ваш вопрос инженеру и вернуть ответ: "
+        "номер вашего чата, дату согласия и связь вопроса с ответом. Связь вопроса с ответом "
+        "удаляется через год.\n\n"
+        f"Удалить свои данные можно кнопкой ниже или письмом на {CONTENT['email']}."
+    )
+
+
+def privacy_kb():
+    return kb([DOCS_ROW, [btn("🗑 Удалить мои данные", "forget")], BACK_MAIN])
 
 
 # ---------------------------------------------------------------------------
@@ -191,6 +252,10 @@ def start_ask(chat_id, message_id=None):
         show(chat_id, "Сейчас вопросы инженеру принимаются по телефону и почте.\n\n" + contacts_text(),
              kb([BACK_MAIN]), message_id)
         return
+    if str(chat_id) not in STATE["consents"]:
+        show(chat_id, CONSENT_TEXT, kb([DOCS_ROW, [btn("✅ Даю согласие", "agree")], [btn("Отмена", "main")]]),
+             message_id)
+        return
     if chat_id not in STATE["waiting"]:
         STATE["waiting"].append(chat_id)
         save_state()
@@ -199,19 +264,42 @@ def start_ask(chat_id, message_id=None):
          kb([[btn("Отмена", "main")]]), message_id)
 
 
+def agree(chat_id, message_id):
+    STATE["consents"][str(chat_id)] = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
+    save_state()
+    start_ask(chat_id, message_id)
+
+
+def forget(chat_id, user, message_id):
+    """Удаляет данные покупателя из бота; переписку в чате инженера удаляет инженер."""
+    STATE["consents"].pop(str(chat_id), None)
+    if chat_id in STATE["waiting"]:
+        STATE["waiting"].remove(chat_id)
+    tickets = [m for m, t in STATE["tickets"].items() if t["chat"] == chat_id]
+    for m in tickets:
+        del STATE["tickets"][m]
+    save_state()
+    if tickets and ENGINEER_CHAT_ID:
+        api("sendMessage", chat_id=ENGINEER_CHAT_ID,
+            text=f"🗑 {who_is(user)} попросил удалить персональные данные. "
+                 "Удалите переписку с ним в этом чате в течение 30 дней.")
+    show(chat_id,
+         "Готово: бот удалил ваши данные — дату согласия и связь ваших вопросов с ответами. "
+         + ("Инженер удалит переписку с вами в своём чате в течение 30 дней. " if tickets else "")
+         + "Историю этого чата вы можете очистить сами: меню чата → «Очистить историю».",
+         kb([BACK_MAIN]), message_id)
+
+
 def forward_to_engineer(msg):
     """Пересылает вопрос покупателя инженеру и запоминает, кому отвечать."""
     chat_id = msg["chat"]["id"]
-    user = msg.get("from", {})
-    who = " ".join(x for x in [user.get("first_name"), user.get("last_name")] if x) or "Покупатель"
-    if user.get("username"):
-        who += f" (@{user['username']})"
     head = api("sendMessage", chat_id=ENGINEER_CHAT_ID,
-               text=f"❓ Вопрос от {who}\nОтветьте на это сообщение или на пересланное ниже — ответ уйдёт покупателю.")
+               text=f"❓ Вопрос от {who_is(msg.get('from', {}))}\n"
+                    "Ответьте на это сообщение или на пересланное ниже — ответ уйдёт покупателю.")
     fwd = api("copyMessage", chat_id=ENGINEER_CHAT_ID, from_chat_id=chat_id, message_id=msg["message_id"])
     for r in (head, fwd):
         if r.get("ok"):
-            STATE["tickets"][str(r["result"]["message_id"])] = chat_id
+            STATE["tickets"][str(r["result"]["message_id"])] = {"chat": chat_id, "ts": int(time.time())}
     if chat_id in STATE["waiting"]:
         STATE["waiting"].remove(chat_id)
     save_state()
@@ -227,11 +315,14 @@ def engineer_reply(msg):
     reply_to = msg.get("reply_to_message")
     if not reply_to:
         return
-    customer = STATE["tickets"].get(str(reply_to["message_id"]))
-    if not customer:
+    ticket = STATE["tickets"].get(str(reply_to["message_id"]))
+    if not ticket:
         api("sendMessage", chat_id=msg["chat"]["id"], reply_to_message_id=msg["message_id"],
             text="Не нашёл, кому отвечать: ответьте на сообщение с вопросом.")
         return
+    customer = ticket["chat"]
+    ticket["ts"] = int(time.time())  # год хранения считаем от последнего ответа
+    save_state()
     api("sendMessage", chat_id=customer, text="👷 Ответ инженера:")
     res = api("copyMessage", chat_id=customer, from_chat_id=msg["chat"]["id"], message_id=msg["message_id"],
               reply_markup=kb([[btn("Задать ещё вопрос", "ask")], BACK_MAIN]))
@@ -250,6 +341,8 @@ def on_start(chat_id, payload):
         show_diy(chat_id)
     elif payload == "ask":
         start_ask(chat_id)
+    elif payload == "privacy":
+        show(chat_id, privacy_text(), privacy_kb())
     else:
         show(chat_id, MAIN_TEXT, main_kb())
 
@@ -266,9 +359,14 @@ def handle_message(msg):
         on_start(chat_id, parts[1] if len(parts) > 1 else "")
     elif text.startswith("/help") or text.startswith("/menu"):
         show(chat_id, MAIN_TEXT, main_kb())
+    elif text.startswith("/privacy"):
+        show(chat_id, privacy_text(), privacy_kb())
     elif chat_id in STATE["waiting"] or (ENGINEER_CHAT_ID and not text.startswith("/")):
-        # всё, что покупатель пишет боту, считается вопросом инженеру
-        forward_to_engineer(msg)
+        # всё, что покупатель пишет боту, считается вопросом инженеру — но только после согласия на обработку ПДн
+        if str(chat_id) in STATE["consents"]:
+            forward_to_engineer(msg)
+        else:
+            start_ask(chat_id)
     else:
         show(chat_id, MAIN_TEXT, main_kb())
 
@@ -307,12 +405,22 @@ def handle_callback(cb):
         send_diy_photos(chat_id)
     elif data == "ask":
         start_ask(chat_id, mid)
+    elif data == "agree":
+        agree(chat_id, mid)
+    elif data == "privacy":
+        show(chat_id, privacy_text(), privacy_kb(), mid)
+    elif data == "forget":
+        show(chat_id, "Удалить ваши данные из бота? Вопросы, которые ещё ждут ответа, останутся без ответа.",
+             kb([[btn("🗑 Да, удалить", "forget_yes")], [btn("Отмена", "privacy")]]), mid)
+    elif data == "forget_yes":
+        forget(chat_id, cb.get("from", {}), mid)
 
 
 def setup_commands():
     api("setMyCommands", commands=[
         {"command": "start", "description": "Главное меню"},
         {"command": "menu", "description": "Вопросы, инструкции, инженер"},
+        {"command": "privacy", "description": "Персональные данные и их удаление"},
     ])
 
 
