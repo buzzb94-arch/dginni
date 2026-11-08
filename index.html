@@ -16,9 +16,7 @@
 <meta property="og:url" content="https://dginni.ru/">
 <meta property="og:image" content="https://dginni.ru/images/hero-lineup-5.jpg">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Onest:wght@300;400;500;600;700&display=swap&subset=cyrillic" rel="stylesheet">
+<link rel="preload" href="fonts/onest-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- Микроразметка: организация и товары. При смене цен обновите и здесь. -->
 <script type="application/ld+json">
@@ -68,6 +66,11 @@
 </script>
 
 <style>
+/* Шрифты лежат на самом сайте: браузер посетителя не обращается к сторонним серверам */
+@font-face { font-family: "Caveat"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/caveat-cyrillic.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Caveat"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/caveat-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Onest"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("fonts/onest-cyrillic.woff2") format("woff2"); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Onest"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("fonts/onest-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* =========================================================
    1. Переменные и базовые стили
    Тёмная тема по референсу: почти чёрный фон с бирюзовым
@@ -759,7 +762,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .checkout__order b { color: var(--text); font-weight: 600; letter-spacing: .02em; }
 .checkout__lead { margin-bottom: 12px; font-size: 13.5px; color: var(--text-2); }
 .checkout { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.checkout > :first-child, .dealer-card__actions > :first-child { grid-column: 1 / -1; }   /* Telegram — на всю ширину, под ним почта и звонок */
+.checkout > a:first-of-type, .dealer-card__actions > a:first-of-type { grid-column: 1 / -1; }   /* Telegram — на всю ширину, под ним почта и звонок */
 .checkout__btn {
   display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 12px;
   border-radius: 14px; border: 1px solid var(--border-2); background: rgba(255,255,255,.03);
@@ -768,6 +771,19 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .checkout__btn:hover { border-color: var(--border-accent); background: var(--accent-soft); color: var(--text); }
 .checkout__btn svg { width: 22px; height: 22px; flex: 0 0 auto; }
 .checkout__btn .i { color: var(--accent); }
+.checkout__btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.checkout__btn[aria-disabled="true"]:hover { border-color: var(--border-2); background: rgba(255,255,255,.03); }
+/* Галочка согласия на обработку персональных данных: по умолчанию не отмечена */
+.consent { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 12px; font-size: 13px; line-height: 1.45; color: var(--text-2); cursor: pointer; }
+.consent input { flex: 0 0 auto; width: 20px; height: 20px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.consent a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.dealer-card__actions .consent { grid-column: 1 / -1; margin: 0 0 4px; }
+/* Тексты документов (политика, согласие, соглашение) */
+.doc h3 { margin: 18px 0 6px; font-size: 16px; }
+.doc p, .doc ul { margin: 0 0 10px; }
+.doc ul { padding-left: 20px; }
+.doc li { margin-bottom: 4px; }
+.doc__date { color: var(--text-2); font-size: 13px; }
 .cart-item { display: grid; grid-template-columns: 72px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
 .cart-item__img { width: 72px; height: 72px; border-radius: 12px; overflow: hidden; background: var(--plate); }
 .cart-item__img img { width: 100%; height: 100%; object-fit: contain; padding: 4px; mix-blend-mode: multiply; }
@@ -1278,6 +1294,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           </ul>
         </div>
         <div class="dealer-card__actions">
+          <label class="consent"><input type="checkbox" data-consent="#dealerTelegram, #dealerEmail"><span>Даю <a href="#" data-doc="consent">согласие на обработку персональных данных</a> и принимаю <a href="#" data-doc="policy">политику обработки персональных данных</a></span></label>
           <a class="checkout__btn" id="dealerTelegram" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Telegram</a>
           <a class="checkout__btn" id="dealerEmail"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Почта</a>
           <a class="checkout__btn" data-phone-link><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
@@ -1295,6 +1312,8 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
     <a class="logo" href="#top" aria-label="Джинн — наверх"><span class="logo__mark" aria-hidden="true"></span><span class="logo__name">Джинн</span><span class="logo__sub">dginni.ru</span></a>
     <ul class="footer__docs">
       <li><button type="button" data-doc="policy">Политика обработки персональных данных</button></li>
+      <li><button type="button" data-doc="consent">Согласие на обработку персональных данных</button></li>
+      <li><button type="button" data-doc="terms">Пользовательское соглашение</button></li>
       <li><button type="button" data-doc="offer">Публичная оферта</button></li>
       <li><button type="button" data-doc="requisites">Реквизиты</button></li>
     </ul>
@@ -1349,6 +1368,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <div class="drawer__total"><span>Итого</span><b id="cartTotal">0 ₽</b></div>
       <p class="checkout__order">Заказ от <b id="orderNo">—</b></p>
       <p class="checkout__lead">Отправьте заказ удобным способом — состав и сумма подставятся сами. Мы ответим и согласуем оплату и доставку.</p>
+      <label class="consent"><input type="checkbox" data-consent="#coTelegram, #coEmail"><span>Даю <a href="#" data-doc="consent">согласие на обработку персональных данных</a> и принимаю <a href="#" data-doc="policy">политику обработки персональных данных</a></span></label>
       <div class="checkout">
         <a class="checkout__btn" id="coTelegram" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Telegram</a>
         <a class="checkout__btn" id="coEmail"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Почта</a>
@@ -1583,18 +1603,99 @@ const APPLICATIONS = [
 ];
 
 /* Вопросы и ответы */
-/* Документы (тексты-заглушки) */
+/* Документы. Политика и согласие — по 152-ФЗ «О персональных данных» */
+const DOCS_DATE = "08.11.2026";
+const operatorLine = () => `${esc(CONFIG.seller.name)} (ИНН ${esc(CONFIG.seller.inn)}, ОГРНИП ${esc(CONFIG.seller.ogrnip)}, ${esc(CONFIG.seller.city)})`;
+const emailLink = () => `<a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a>`;
+const contactLinks = () => `${emailLink()}, <a href="${telHref(CONFIG.phone)}">${esc(CONFIG.phone)}</a>`;
+// письмо с готовой просьбой удалить данные
+const deleteHref = () => `mailto:${CONFIG.email}?subject=${encodeURIComponent("Удаление персональных данных")}&body=${encodeURIComponent("Прошу удалить мои персональные данные.\nИмя: \nКонтакт, по которому я связывался с вами (телефон, e-mail или Telegram): ")}`;
+const PD_LIST = `<ul>
+        <li>имя (фамилия, имя, отчество — если вы их укажете);</li>
+        <li>номер телефона и адрес электронной почты;</li>
+        <li>имя пользователя и имя профиля в Telegram;</li>
+        <li>адрес доставки;</li>
+        <li>название компании и город — если вы пишете как представитель или оптовый покупатель;</li>
+        <li>содержание обращений и приложенные к ним фотографии.</li>
+      </ul>`;
 const DOCS = {
   policy: { title: "Политика обработки персональных данных",
-    html: () => `<p><span class="placeholder-mark">[Заменить: текст политики обработки персональных данных в соответствии с 152-ФЗ.]</span></p>
-      <h3 style="margin-top:16px">Оператор персональных данных</h3>
+    html: () => `<div class="doc">
+      <p class="doc__date">Редакция от ${DOCS_DATE}</p>
+      <h3>1. Общие положения</h3>
+      <p>Политика написана по статье 18.1 Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных» и объясняет, как оператор обрабатывает и защищает персональные данные. Она действует для данных, полученных через сайт dginni.ru, Telegram-бот @dginni_engineer_bot, по телефону и электронной почте.</p>
+      <p>Оператор — ${operatorLine()}.</p>
+      <h3>2. Какие данные мы обрабатываем</h3>
+      ${PD_LIST}
+      <p>На сайте нет форм: заказ вы отправляете сами — в Telegram, письмом или по телефону. Корзина хранится только в вашем браузере и нам не передаётся. Файлы cookie и счётчики аналитики сайт не использует.</p>
+      <h3>3. Цели обработки</h3>
+      <ul>
+        <li>оформить и выполнить заказ: согласовать состав, оплату и доставку;</li>
+        <li>ответить на вопросы, проконсультировать по подключению и настройке приборов;</li>
+        <li>выполнить гарантийные обязательства, ремонт и обмен;</li>
+        <li>обсудить сотрудничество с представителями и оптовыми покупателями.</li>
+      </ul>
+      <p>Рекламные рассылки мы не ведём.</p>
+      <h3>4. Правовые основания</h3>
+      <p>Ваше согласие на обработку персональных данных (п. 1 ч. 1 ст. 6 152-ФЗ), а также заключение и исполнение договора, стороной которого вы являетесь (п. 5 ч. 1 ст. 6 152-ФЗ).</p>
+      <h3>5. Как мы обрабатываем данные</h3>
+      <p>Обработка смешанная, с использованием компьютера и без него: сбор, запись, систематизация, накопление, хранение, уточнение, использование, передача (предоставление), блокирование, удаление и уничтожение.</p>
+      <p>Запись, систематизация, накопление, хранение, уточнение и извлечение персональных данных граждан России ведутся с использованием баз данных, находящихся на территории Российской Федерации (ч. 5 ст. 18 152-ФЗ).</p>
+      <p>Если вы пишете нам в Telegram, сообщение проходит через серверы Telegram по правилам мессенджера. Чтобы связаться без иностранных сервисов, используйте телефон или электронную почту.</p>
+      <h3>6. Передача третьим лицам</h3>
+      <p>Только для выполнения заказа: службе доставки — имя, телефон и адрес; банку — данные, нужные для приёма оплаты. Мы не продаём персональные данные и не передаём их для рекламы.</p>
+      <h3>7. Сроки хранения</h3>
+      <p>Данные хранятся, пока это нужно для целей обработки: обращения — один год после ответа, данные о заказах — пять лет (срок хранения учётных документов). Затем данные уничтожаются.</p>
+      <h3>8. Ваши права</h3>
+      <p>Вы можете узнать, какие ваши данные мы обрабатываем, потребовать их уточнить, заблокировать или уничтожить, отозвать согласие, а также обжаловать наши действия в Роскомнадзоре или в суде. На запрос мы отвечаем в течение 10 рабочих дней.</p>
+      <h3>9. Как удалить свои данные</h3>
+      <p>Напишите на <a href="${esc(deleteHref())}">${esc(CONFIG.email)}</a> с темой «Удаление персональных данных» и укажите контакт, по которому связывались с нами. Мы удалим данные в течение 30 дней и сообщим об этом. Если данные нужны для уже оплаченного заказа или их хранения требует закон, сообщим, какие данные и на какой срок остаются.</p>
+      <p>Корзину на сайте можно удалить кнопкой «Очистить» в корзине или очисткой данных сайта в браузере.</p>
+      <h3>10. Защита данных</h3>
+      <p>Доступ к персональным данным есть только у оператора. Устройства и учётные записи, где хранятся данные, защищены паролями; данные не публикуются и не передаются посторонним.</p>
+      <h3>11. Изменения политики</h3>
+      <p>Новая редакция действует с момента публикации на этой странице.</p>
+      <h3>Оператор персональных данных</h3>
       <table class="spec-table"><tbody>
         <tr><th scope="row">Оператор</th><td>${esc(CONFIG.seller.name)}</td></tr>
         <tr><th scope="row">ИНН</th><td>${esc(CONFIG.seller.inn)}</td></tr>
         <tr><th scope="row">ОГРНИП</th><td>${esc(CONFIG.seller.ogrnip)}</td></tr>
         <tr><th scope="row">Местонахождение</th><td>${esc(CONFIG.seller.city)}</td></tr>
-        <tr><th scope="row">Обращения по персональным данным</th><td><a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a>, <a href="${telHref(CONFIG.phone)}">${esc(CONFIG.phone)}</a></td></tr>
-      </tbody></table>` },
+        <tr><th scope="row">Обращения по персональным данным</th><td>${contactLinks()}</td></tr>
+      </tbody></table>
+    </div>` },
+  consent: { title: "Согласие на обработку персональных данных",
+    html: () => `<div class="doc">
+      <p class="doc__date">Редакция от ${DOCS_DATE}</p>
+      <p>Отмечая галочку «Даю согласие на обработку персональных данных» на сайте dginni.ru, я свободно, своей волей и в своём интересе даю согласие оператору — ${operatorLine()} — на обработку моих персональных данных на следующих условиях.</p>
+      <h3>Какие данные</h3>
+      ${PD_LIST}
+      <h3>Для чего</h3>
+      <p>Оформление и выполнение заказа, консультации по приборам, гарантийное обслуживание, обсуждение сотрудничества.</p>
+      <h3>Какие действия</h3>
+      <p>Сбор, запись, систематизация, накопление, хранение, уточнение, использование, передача (предоставление) службе доставки и банку для выполнения заказа, блокирование, удаление и уничтожение — с использованием компьютера и без него.</p>
+      <h3>Срок и отзыв</h3>
+      <p>Согласие действует до достижения целей обработки или до его отзыва. Отозвать согласие можно письмом на ${emailLink()}; данные будут уничтожены в течение 30 дней, если их хранения не требует закон.</p>
+      <p>Подробнее — в политике обработки персональных данных (ссылка внизу сайта).</p>
+    </div>` },
+  terms: { title: "Пользовательское соглашение",
+    html: () => `<div class="doc">
+      <p class="doc__date">Редакция от ${DOCS_DATE}</p>
+      <h3>1. О соглашении</h3>
+      <p>Соглашение определяет правила пользования сайтом dginni.ru. Владелец сайта — ${operatorLine()}. Пользуясь сайтом, вы принимаете эти правила.</p>
+      <h3>2. Что есть на сайте</h3>
+      <p>Сайт рассказывает о приборах «Джинн» и помогает отправить заказ. Цены и наличие уточняются при подтверждении заказа. Покупка оформляется по публичной оферте: вы отправляете заказ в Telegram, письмом или по телефону, мы подтверждаем его и согласуем оплату и доставку.</p>
+      <h3>3. Персональные данные</h3>
+      <p>Обработка данных описана в политике обработки персональных данных и в согласии на обработку персональных данных (ссылки внизу сайта).</p>
+      <h3>4. Материалы сайта</h3>
+      <p>Тексты, фотографии, видео и инструкции принадлежат владельцу сайта. Копировать и публиковать их можно только с письменного разрешения, кроме цитирования со ссылкой на dginni.ru.</p>
+      <h3>5. Сторонние сервисы</h3>
+      <p>Ссылки ведут на Ozon, Telegram и ВКонтакте. На этих сервисах действуют их собственные правила, за которые владелец сайта не отвечает.</p>
+      <h3>6. Ответственность</h3>
+      <p>Описания и схемы подключения на сайте носят справочный характер. Перед подключением сверяйтесь с инструкцией к прибору или консультируйтесь с инженером.</p>
+      <h3>7. Прочее</h3>
+      <p>К соглашению применяется право Российской Федерации. Новая редакция действует с момента публикации. Вопросы — ${contactLinks()}.</p>
+    </div>` },
   offer: { title: "Публичная оферта",
     html: () => `<p><span class="placeholder-mark">[Заменить: текст публичной оферты — предмет договора, порядок оформления заказа, оплата, доставка, гарантия 1 год, возврат.]</span></p>` },
   requisites: { title: "Реквизиты",
@@ -1897,6 +1998,20 @@ function openDoc(key) {
   $("#docBody").innerHTML = d.html();
   openDialog($("#docModal"));
 }
+
+/* Согласие на обработку ПДн: пока галочка не отмечена, кнопки Telegram и «Почта» не срабатывают */
+$$("[data-consent]").forEach(box => {
+  const btns = $$(box.dataset.consent);
+  const sync = () => btns.forEach(a => a.setAttribute("aria-disabled", String(!box.checked)));
+  box.addEventListener("change", sync);
+  sync();
+});
+document.addEventListener("click", e => {
+  if (!e.target.closest('.checkout__btn[aria-disabled="true"]')) return;
+  e.preventDefault();
+  e.stopPropagation();
+  toast("Отметьте согласие на обработку персональных данных");
+}, true);
 
 /* =========================================================
    10. КОРЗИНА
