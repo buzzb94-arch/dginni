@@ -21,3 +21,6 @@ DGINNI-*-mobile/
 *oken*
 *.env
 *secret*
+.env
+.env.*
+!.env.example
