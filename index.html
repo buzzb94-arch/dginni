@@ -512,13 +512,15 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 .product__price { margin-top: auto; padding-top: 8px; font-size: 28px; font-weight: 500; letter-spacing: -0.02em; color: #fff; }
 .product__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .product__actions .btn { padding: 8px 10px; white-space: nowrap; }
-.product__market { display: grid; grid-template-columns: 1fr; gap: 8px; }
-/* кнопка маркетплейса — фирменным значком Ozon */
+.product__market { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* кнопки маркетплейсов — в фирменных цветах Ozon и Яндекс Маркета */
 .mp-btn {
   display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 12px;
   border-radius: 999px; border: 0; color: #fff; text-decoration: none; transition: filter .2s, box-shadow .2s, transform .2s;
 }
 .mp-btn--ozon { background: #005BFF; }
+.mp-btn--ym { background: #FED42B; color: #111; font-size: 14px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+.mp-btn--ym:hover { color: #111; }
 .mp-btn:hover { filter: brightness(1.12); box-shadow: 0 6px 18px rgba(0,0,0,.35); color: #fff; }
 .mp-logo { display: block; height: 15px; width: auto; }
 @media (max-width: 900px) { .catalog { grid-template-columns: 1fr; max-width: 560px; margin-left: auto; margin-right: auto; } }
@@ -588,14 +590,20 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 /* =========================================================
    10. Отзывы
    ========================================================= */
-.reviews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.review { display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: var(--radius); border-style: dashed; border-color: var(--border-2); }
-.review__head { display: flex; align-items: center; gap: 12px; }
-.review__avatar { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: #0B2A24; color: var(--accent); font-weight: 600; box-shadow: inset 0 0 0 1px rgba(1,244,199,.3); }
-.review__name { font-weight: 500; }
+.reviews { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.review--wide { grid-column: 1 / -1; }   /* длинный отзыв — под двумя короткими, на всю ширину */
+.review { display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: var(--radius); }
+.review__head { display: flex; align-items: center; gap: 14px; }
+.review__avatar { flex: 0 0 auto; width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: #0B2A24; box-shadow: 0 0 0 2px var(--bg, #030807), 0 0 0 3px rgba(1,244,199,.45); }
+.review__avatar.img-fallback { display: grid; place-items: center; overflow: hidden; }
+.review__avatar.img-fallback span { display: none; }
+.review__name { font-weight: 600; }
 .review__meta { font-size: 13px; color: var(--text-2); }
-.review__tag { align-self: flex-start; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 12px; }
-.review__text { padding: 14px; border-radius: 12px; background: rgba(255,209,102,.07); border: 1px solid rgba(255,209,102,.25); color: var(--warn); font-size: 14px; }
+.review__text { font-size: 15px; line-height: 1.6; color: var(--text); }
+.review__points { display: grid; gap: 12px; margin: 0; font-size: 15px; line-height: 1.6; }
+.review__points dt { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.review__points dd { margin: 2px 0 0; color: var(--text); }
+@media (min-width: 921px) { .review--wide .review__points { grid-template-columns: 1.1fr .6fr 1.5fr; column-gap: 32px; } }
 @media (max-width: 920px) { .reviews { grid-template-columns: 1fr; } }
 
 /* Заглушки «заменить» в документах */
@@ -707,6 +715,11 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .kit .i { color: var(--accent); width: 18px; height: 18px; margin-top: 3px; }
 .pm__note { margin-top: 18px; padding: 14px 16px; border-radius: 0 12px 12px 0; background: rgba(1,244,199,.05); border-left: 2px solid var(--accent); font-size: 14px; color: var(--text); }
 .pm__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+/* телефон: «В корзину» на всю ширину, Ozon и Яндекс Маркет — рядом под ней */
+@media (max-width: 600px) {
+  .pm__actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .pm__actions > .btn { grid-column: 1 / -1; }
+}
 @media (max-width: 760px) { .pm { grid-template-columns: 1fr; } .modal__body, .modal__head { padding: 18px 16px; } }
 
 /* Лайтбокс */
@@ -761,6 +774,10 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .checkout__order { margin: -6px 0 8px; font-size: 14px; color: var(--text-2); }
 .checkout__order b { color: var(--text); font-weight: 600; letter-spacing: .02em; }
 .checkout__lead { margin-bottom: 12px; font-size: 13.5px; color: var(--text-2); }
+/* если Telegram недоступен — купить на маркетплейсе */
+.checkout__alt { margin: 14px 0 8px; font-size: 13.5px; color: var(--text-2); }
+.checkout__mp { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.checkout__mp .mp-btn { min-height: 44px; }
 .checkout { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .checkout > a:first-of-type, .dealer-card__actions > a:first-of-type { grid-column: 1 / -1; }   /* Telegram — на всю ширину, под ним почта и звонок */
 .checkout__btn {
@@ -989,6 +1006,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   <!-- Брендовые значки (упрощённые) -->
   <symbol id="b-telegram" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#229ED9"/><path fill="#fff" d="M5.4 11.7 16.9 7.3c.5-.2 1 .1.8.9l-2 9.2c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2 0-.3-.3-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9z"/></symbol>
   <symbol id="b-vk" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#0077FF"/><path fill="#fff" d="M12.8 17c-5 0-7.9-3.4-8-9.1h2.5c.1 4.2 1.9 5.9 3.4 6.3V7.9h2.4v3.6c1.4-.2 2.9-1.8 3.4-3.6h2.4c-.4 2.2-2 3.8-3.1 4.5 1.1.5 2.9 1.9 3.6 4.6h-2.6c-.6-1.8-2-3.1-3.7-3.3V17z"/></symbol>
+  <symbol id="b-ym" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#FED42B"/><text x="12" y="17" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#111">Я</text></symbol>
   <symbol id="b-ozon" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#005BFF"/><text x="12" y="15.6" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="700" fill="#fff">OZ</text></symbol>
 </svg>
 
@@ -1110,6 +1128,28 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 
 
   <!-- =========================================================
+       ПРОБООТБОРНИК: РОЛИК О СБОРКЕ (на месте бывшего калькулятора)
+       ========================================================= -->
+  <section class="section" id="probe" aria-labelledby="probe-title">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="section__eyebrow">Своими руками</span>
+        <h2 class="section__title" id="probe-title">Как собрать <em>пробоотборник</em></h2>
+        <p class="section__lead">Пошаговая сборка пробоотборника для pH&#8209;контроллера «Джинн»: трубы и фитинги, подключение помпы и проверка соединений на протечку.</p>
+      </div>
+
+      <div class="dose-video reveal">
+        <video class="dose-video__player" controls preload="none" playsinline poster="images/probe-video-poster.webp"
+               aria-label="Видео: как собрать пробоотборник для pH-контроллера «Джинн»">
+          <source src="video/probe-assembly.mp4" type="video/mp4">
+          Ваш браузер не показывает видео. <a href="video/probe-assembly.mp4">Скачать ролик</a>.
+        </video>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
        ПОЧЕМУ МЫ
        ========================================================= -->
   <section class="section dots" id="why" aria-labelledby="why-title">
@@ -1195,32 +1235,31 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <h2 class="section__title" id="reviews-title">Отзывы <em>клиентов</em></h2>
       </div>
       <div class="reviews">
-        <!-- ЗАМЕНИТЬ: отзыв 1 -->
+        <!-- Отзывы покупателей. Аватары: images/reviews/ (WebP 192×192) -->
         <article class="review reveal">
           <div class="review__head">
-            <div class="review__avatar" aria-hidden="true">?</div>
-            <div><div class="review__name">[Имя клиента]</div><div class="review__meta">[Город]</div></div>
+            <img class="review__avatar" data-src="images/reviews/vyacheslav.webp" alt="Фото: Вячеслав М." width="56" height="56" loading="lazy">
+            <div><div class="review__name">Вячеслав М.</div><div class="review__meta">Покупатель pH-контроллера</div></div>
           </div>
-          <span class="review__tag">[Сфера: гидропоника]</span>
-          <p class="review__text">[Отзыв клиента — заменить на реальный]</p>
+          <p class="review__text">Качество на высоте, обратная связь и поддержка от производителя суперская, гарантию на изделие даёт сам производитель и это не только слова, а проверено. Прошивки на рН контроллер можно так же обновить, если потребуется. Даже не представляю сейчас как раньше приходилось прыгать и следить в ручном режиме за рН, теперь красота</p>
         </article>
-        <!-- ЗАМЕНИТЬ: отзыв 2 -->
         <article class="review reveal">
           <div class="review__head">
-            <div class="review__avatar" aria-hidden="true">?</div>
-            <div><div class="review__name">[Имя клиента]</div><div class="review__meta">[Город]</div></div>
+            <img class="review__avatar" data-src="images/reviews/viet.webp" alt="Фото: Виет Н." width="56" height="56" loading="lazy">
+            <div><div class="review__name">Виет Н.</div><div class="review__meta">Покупатель pH-контроллера</div></div>
           </div>
-          <span class="review__tag">[Сфера: аквариум]</span>
-          <p class="review__text">[Отзыв клиента — заменить на реальный]</p>
+          <p class="review__text">Отличный контроллер, обратная связь моментальная. Мастера своего дела ещё и подсказали как сделать мою систему лучше. Однозначно советую этих ребят.</p>
         </article>
-        <!-- ЗАМЕНИТЬ: отзыв 3 -->
-        <article class="review reveal">
+        <article class="review review--wide reveal">
           <div class="review__head">
-            <div class="review__avatar" aria-hidden="true">?</div>
-            <div><div class="review__name">[Имя клиента]</div><div class="review__meta">[Город]</div></div>
+            <img class="review__avatar" data-src="images/reviews/vitaliy.webp" alt="Фото: Lemaev G." width="56" height="56" loading="lazy">
+            <div><div class="review__name">Lemaev G.</div><div class="review__meta">Покупатель pH-контроллера</div></div>
           </div>
-          <span class="review__tag">[Сфера: теплица]</span>
-          <p class="review__text">[Отзыв клиента — заменить на реальный]</p>
+          <dl class="review__points">
+            <div><dt>Достоинства</dt><dd>Работает корректно, заводская калибровка очень точная, удобные и понятные меню и настройки, ручная подача реагента, длины всех проводов и трубок хватило с запасом, упакован надежно</dd></div>
+            <div><dt>Недостатки</dt><dd>Так и не обнаружил</dd></div>
+            <div><dt>Комментарий</dt><dd>Контроллер избавил меня от ежедневных танцев с ПШметром и его калибровкой, если раньше я каждый день должен был заморачиваться, то сейчас раз в неделю подхожу порадоваться, что все в норме и без моего присмотра. Спасибо производителю, планирую покупать второй!</dd></div>
+          </dl>
         </article>
       </div>
     </div>
@@ -1278,6 +1317,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <ul class="socials">
           <li><a class="social" data-link="vk" target="_blank" rel="noopener"><svg><use href="#b-vk"/></svg>ВКонтакте</a></li>
           <li><a class="social" data-link="ozonStore" target="_blank" rel="noopener"><svg><use href="#b-ozon"/></svg>Ozon</a></li>
+          <li><a class="social" data-link="yandexMarketStore" target="_blank" rel="noopener"><svg><use href="#b-ym"/></svg>Яндекс Маркет</a></li>
           <li><a class="social social--accent" data-link="engineerBotManuals" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#b-telegram"/></svg>Инструкции в Telegram</a></li>
         </ul>
       </div>
@@ -1374,6 +1414,11 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
         <a class="checkout__btn" id="coEmail"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Почта</a>
         <a class="checkout__btn" data-phone-link><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
       </div>
+      <p class="checkout__alt">Не работает Telegram? Купите в нашем магазине на маркетплейсе:</p>
+      <div class="checkout__mp">
+        <a class="mp-btn mp-btn--ozon" data-link="ozonStore" target="_blank" rel="noopener" aria-label="Магазин на Ozon"><svg class="mp-logo" viewBox="0 0 64 16" aria-hidden="true"><text x="32" y="12.6" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="14" font-weight="900" letter-spacing="-.4" fill="currentColor">OZON</text></svg></a>
+        <a class="mp-btn mp-btn--ym" data-link="yandexMarketStore" target="_blank" rel="noopener" aria-label="Магазин на Яндекс Маркете">Яндекс Маркет</a>
+      </div>
     </div>
   </div>
 </dialog>
@@ -1394,6 +1439,9 @@ const CONFIG = {
   ozonStore: "https://www.ozon.ru/seller/dzhinn-1437094/products/?miniapp=seller_1437094", // магазин на Ozon
   // Ссылки на товары. Если не заполнено, кнопка «Купить на Ozon» ведёт в магазин (ozonStore)
   ozon: { phMetr: "ЗАМЕНИТЬ", phController: "ЗАМЕНИТЬ", blokUniversal: "ЗАМЕНИТЬ", blokPower: "ЗАМЕНИТЬ" },
+  yandexMarketStore: "https://market.yandex.ru/business--dzhinnpro/93137151", // магазин «ДжиннПРО» на Яндекс Маркете
+  // Ссылки на товары. Если не заполнено, кнопка «Яндекс Маркет» ведёт в магазин (yandexMarketStore)
+  yandexMarket: { phMetr: "ЗАМЕНИТЬ", phController: "ЗАМЕНИТЬ", blokUniversal: "ЗАМЕНИТЬ", blokPower: "ЗАМЕНИТЬ" },
   // Telegram-бот инженера: вопросы-ответы и инструкции (PDF открываются прямо в Telegram).
   // Ссылки с ?start= сразу открывают нужный раздел бота.
   engineerBot: "https://t.me/dginni_engineer_bot",
@@ -1603,7 +1651,7 @@ const APPLICATIONS = [
 ];
 
 /* Вопросы и ответы */
-/* Документы. Политика и согласие — по 152-ФЗ «О персональных данных» */
+/* Документы. Политика и согласие — по 152-ФЗ «О персональных данных»; оферта — по договору поставки и закону «О защите прав потребителей» */
 const DOCS_DATE = "08.11.2026";
 const operatorLine = () => `${esc(CONFIG.seller.name)} (ИНН ${esc(CONFIG.seller.inn)}, ОГРНИП ${esc(CONFIG.seller.ogrnip)}, ${esc(CONFIG.seller.city)})`;
 const emailLink = () => `<a href="mailto:${esc(CONFIG.email)}">${esc(CONFIG.email)}</a>`;
@@ -1690,14 +1738,51 @@ const DOCS = {
       <h3>4. Материалы сайта</h3>
       <p>Тексты, фотографии, видео и инструкции принадлежат владельцу сайта. Копировать и публиковать их можно только с письменного разрешения, кроме цитирования со ссылкой на dginni.ru.</p>
       <h3>5. Сторонние сервисы</h3>
-      <p>Ссылки ведут на Ozon, Telegram и ВКонтакте. На этих сервисах действуют их собственные правила, за которые владелец сайта не отвечает.</p>
+      <p>Ссылки ведут на Ozon, Яндекс Маркет, Telegram и ВКонтакте. На этих сервисах действуют их собственные правила, за которые владелец сайта не отвечает.</p>
       <h3>6. Ответственность</h3>
       <p>Описания и схемы подключения на сайте носят справочный характер. Перед подключением сверяйтесь с инструкцией к прибору или консультируйтесь с инженером.</p>
       <h3>7. Прочее</h3>
       <p>К соглашению применяется право Российской Федерации. Новая редакция действует с момента публикации. Вопросы — ${contactLinks()}.</p>
     </div>` },
   offer: { title: "Публичная оферта",
-    html: () => `<p><span class="placeholder-mark">[Заменить: текст публичной оферты — предмет договора, порядок оформления заказа, оплата, доставка, гарантия 1 год, возврат.]</span></p>` },
+    html: () => `<div class="doc">
+      <p class="doc__date">Редакция от 13.11.2026</p>
+      <h3>1. Общие положения</h3>
+      <p>${operatorLine()} (далее — Продавец) предлагает заключить договор купли-продажи приборов «Джинн» на изложенных ниже условиях. Этот документ — публичная оферта (ст. 437 Гражданского кодекса РФ).</p>
+      <p>Оферта принимается (акцепт, п. 3 ст. 438 ГК РФ) оплатой подтверждённого заказа. С момента оплаты договор считается заключённым. К отношениям с покупателями — гражданами применяется Закон РФ «О защите прав потребителей».</p>
+      <p>Оптовые покупатели — организации и индивидуальные предприниматели — могут заключить с Продавцом отдельный договор поставки.</p>
+      <h3>2. Предмет договора</h3>
+      <p>Продавец передаёт покупателю товар — приборы «Джинн» в полной комплектности, а покупатель принимает и оплачивает его. Описание, характеристики и цены товаров приведены на сайте dginni.ru.</p>
+      <h3>3. Оформление заказа</h3>
+      <p>Покупатель отправляет заказ из корзины сайта в Telegram, письмом или сообщает по телефону. Продавец подтверждает наличие товара, итоговую сумму и стоимость доставки. Цена подтверждённого заказа фиксируется и не меняется.</p>
+      <h3>4. Цена и оплата</h3>
+      <p>Цены указаны в рублях, НДС не облагается. Оплата — 100 % предоплата переводом на расчётный счёт Продавца в течение трёх дней после подтверждения заказа. Реквизиты для оплаты Продавец присылает вместе с подтверждением; они также указаны в разделе «Реквизиты».</p>
+      <h3>5. Доставка</h3>
+      <p>Продавец отправляет товар в течение трёх дней после поступления оплаты. Товар доставляет транспортная компания; доставку оплачивает покупатель по тарифам транспортной компании. Срок в пути зависит от города и транспортной компании.</p>
+      <p>С каждым прибором передаются относящиеся к нему документы и принадлежности. Упаковка обеспечивает сохранность товара при перевозке и хранении. По согласованию с покупателем товар может быть отправлен раньше срока.</p>
+      <h3>6. Приёмка товара</h3>
+      <p>При получении осмотрите товар: проверьте количество, комплектность и отсутствие повреждений. Если что-то не так, отметьте это в документах транспортной компании и сообщите Продавцу в течение трёх рабочих дней — так мы быстрее решим вопрос с перевозчиком.</p>
+      <h3>7. Гарантия</h3>
+      <p>Гарантийный срок — один год с даты получения товара. В течение гарантийного срока Продавец за свой счёт ремонтирует или заменяет неисправный прибор, если неисправность не вызвана нарушением условий хранения, подключения или эксплуатации. Для гарантийного обслуживания свяжитесь с Продавцом: ${contactLinks()}.</p>
+      <h3>8. Возврат и обмен</h3>
+      <p>Товар надлежащего качества покупатель — гражданин вправе вернуть в течение 7 дней после получения (п. 4 ст. 26.1 Закона «О защите прав потребителей»), если сохранены товарный вид, потребительские свойства и документ об оплате. Деньги возвращаются в течение 10 дней со дня получения требования, за вычетом расходов Продавца на доставку товара покупателю. Обратную пересылку оплачивает покупатель.</p>
+      <p>Если в товаре обнаружен недостаток, покупатель вправе потребовать ремонта, замены или возврата денег по ст. 18 Закона «О защите прав потребителей».</p>
+      <h3>9. Ответственность и форс-мажор</h3>
+      <p>Продавец отвечает за качество, комплектность и количество товара. Ответственность сторон определяется законодательством РФ.</p>
+      <p>Стороны не отвечают за неисполнение обязательств из-за обстоятельств непреодолимой силы: войны, эпидемии, стихийного бедствия, решений государственных органов. Сторона, столкнувшаяся с такими обстоятельствами, сразу сообщает о них другой стороне. Если они длятся более трёх месяцев подряд, любая сторона может отказаться от договора, письменно уведомив другую.</p>
+      <h3>10. Споры</h3>
+      <p>Споры решаются переговорами. Претензию направьте на ${emailLink()}; ответ — в течение 10 дней. Если договориться не удалось, спор рассматривается в суде по законодательству РФ.</p>
+      <h3>11. Прочее</h3>
+      <p>Персональные данные обрабатываются по политике обработки персональных данных (ссылка внизу сайта). Продавец может изменить оферту; к оплаченным заказам применяется редакция, действовавшая на дату оплаты.</p>
+      <h3>Продавец</h3>
+      <table class="spec-table"><tbody>
+        <tr><th scope="row">Продавец</th><td>${esc(CONFIG.seller.name)}</td></tr>
+        <tr><th scope="row">ИНН</th><td>${esc(CONFIG.seller.inn)}</td></tr>
+        <tr><th scope="row">ОГРНИП</th><td>${esc(CONFIG.seller.ogrnip)}</td></tr>
+        <tr><th scope="row">Местонахождение</th><td>${esc(CONFIG.seller.city)}</td></tr>
+        <tr><th scope="row">Контакты</th><td>${contactLinks()}</td></tr>
+      </tbody></table>
+    </div>` },
   requisites: { title: "Реквизиты",
     html: () => `<table class="spec-table"><tbody>
       <tr><th scope="row">Продавец</th><td>${esc(CONFIG.seller.name)}</td></tr>
@@ -1800,6 +1885,11 @@ function linkAttrs(url) {
 function marketLink(market, id) {
   const own = CONFIG[market] && CONFIG[market][id];
   return isRealLink(own) ? own : CONFIG[market + "Store"];
+}
+/* Кнопки «Ozon» и «Яндекс Маркет» для товара */
+function marketButtons(p) {
+  return `<a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))} aria-label="Купить на Ozon" title="Купить на Ozon"><svg class="mp-logo" viewBox="0 0 64 16" aria-hidden="true"><text x="32" y="12.6" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="14" font-weight="900" letter-spacing="-.4" fill="currentColor">OZON</text></svg></a>
+          <a class="mp-btn mp-btn--ym" ${linkAttrs(marketLink("yandexMarket", p.id))} aria-label="Купить на Яндекс Маркете" title="Купить на Яндекс Маркете">Яндекс Маркет</a>`;
 }
 function applyConfigLinks(root = document) {
   $$("[data-link]", root).forEach(a => {
@@ -1910,7 +2000,7 @@ function renderCatalog() {
           <button class="btn btn--outline btn--sm" type="button" data-wholesale="${p.id}">Заказать оптом</button>
         </div>
         <div class="product__market">
-          <a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))} aria-label="Купить на Ozon" title="Купить на Ozon"><svg class="mp-logo" viewBox="0 0 64 16" aria-hidden="true"><text x="32" y="12.6" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="14" font-weight="900" letter-spacing="-.4" fill="currentColor">OZON</text></svg></a>
+          ${marketButtons(p)}
         </div>
       </div>
     </article>`).join("");
@@ -1945,7 +2035,7 @@ function openProduct(id) {
         <div class="pm__price">${formatPrice(p.price)}</div>
         <div class="pm__actions">
           <button class="btn btn--primary" type="button" data-add="${p.id}">${icon("i-cart", "i i-sm")}В корзину</button>
-          <a class="mp-btn mp-btn--ozon" ${linkAttrs(marketLink("ozon", p.id))} aria-label="Купить на Ozon" title="Купить на Ozon"><svg class="mp-logo" viewBox="0 0 64 16" aria-hidden="true"><text x="32" y="12.6" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="14" font-weight="900" letter-spacing="-.4" fill="currentColor">OZON</text></svg></a>
+          ${marketButtons(p)}
         </div>
         <h3>Характеристики</h3>
         <table class="spec-table"><tbody>
@@ -2432,7 +2522,7 @@ renderApps();
 renderCatalog();
 // ролик: громкость по умолчанию — средняя, чтобы звук не бил по ушам при первом запуске
 // (на iPhone громкость задаёт только сам телефон — там это свойство не работает)
-{ const v = $(".dose-video__player"); if (v) v.volume = 0.5; }
+$$(".dose-video__player").forEach(v => { v.volume = 0.5; });
 renderGallery();
 cart.load();
 cart.render();
