@@ -661,7 +661,7 @@ a.contact-card__value:hover { color: var(--accent); }
 .footer__docs { display: flex; flex-wrap: wrap; gap: 6px 20px; list-style: none; }
 .footer__docs button { background: none; border: 0; padding: 4px 0; color: var(--text-2); text-decoration: underline; text-underline-offset: 3px; font-size: 14px; }
 .footer__docs button:hover { color: var(--accent); }
-.footer__copy { width: 100%; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-3); }
+.footer__copy { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; width: 100%; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-3); }   /* слева копирайт магазина, справа — разработчик сайта; на узком экране — друг под другом */
 @media (max-width: 920px) { .contacts { grid-template-columns: 1fr; } }
 
 /* =========================================================
@@ -1362,7 +1362,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <li><button type="button" data-doc="offer">Публичная оферта</button></li>
       <li><button type="button" data-doc="requisites">Реквизиты</button></li>
     </ul>
-    <div class="footer__copy">© 2008–2026 Dginni.ru · Пермь, Россия</div>
+    <div class="footer__copy"><span>© 2008–2026 Dginni.ru · Пермь, Россия</span><span>Создание сайта © 2009–2026 BuzzStudio</span></div>
   </div>
 </footer>
 
