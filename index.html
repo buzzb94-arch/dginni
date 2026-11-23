@@ -65,6 +65,12 @@
     "description": "Блок управления для мощной нагрузки. 4 силовых выхода: 2 × 1 кВт, 1 × 2 кВт, 1 × 8 кВт.",
     "brand": { "@type": "Brand", "name": "Джинн" },
     "offers": { "@type": "Offer", "price": "17000", "priceCurrency": "RUB", "availability": "https://schema.org/InStock" }
+  },
+  {
+    "@context": "https://schema.org", "@type": "Product",
+    "name": "pH-электрод с разъёмом BNC", "image": "https://dginni.ru/images/ph-electrode.webp",
+    "description": "Электрод для измерения pH раствора с кабелем и разъёмом BNC. Диапазон pH 0–14, температура раствора 0–60 °C.",
+    "offers": { "@type": "Offer", "price": "1200", "priceCurrency": "RUB", "availability": "https://schema.org/InStock" }
   }
 ]
 </script>
@@ -501,7 +507,8 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
    5. Каталог
    ========================================================= */
 /* по 2 крупные карточки в ряд: товар крупно, все характеристики помещаются на фото */
-.catalog { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.catalog { --cols: 2; --gap: 18px; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }   /* неполный последний ряд — по центру */
+.catalog > .product { flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); min-width: 0; }
 .product { display: flex; flex-direction: column; border-radius: var(--radius); overflow: hidden; transition: border-color .3s, box-shadow .3s; }
 .product:hover { border-color: var(--border-accent); box-shadow: var(--shadow), 0 0 50px rgba(1,244,199,.12); }
 .product:target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 50px rgba(1,244,199,.25); }
@@ -527,7 +534,7 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 .mp-btn--ym:hover { color: #111; }
 .mp-btn:hover { filter: brightness(1.12); box-shadow: 0 6px 18px rgba(0,0,0,.35); color: #fff; }
 .mp-logo { display: block; height: 15px; width: auto; }
-@media (max-width: 900px) { .catalog { grid-template-columns: 1fr; max-width: 560px; margin-left: auto; margin-right: auto; } }
+@media (max-width: 900px) { .catalog { --cols: 1; max-width: 560px; margin-left: auto; margin-right: auto; } }
 
 /* =========================================================
    8. Почему мы — bento
@@ -614,15 +621,23 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
 .placeholder-mark { background: rgba(255,209,102,.12); color: var(--warn); padding: 0 6px; border-radius: 6px; }
 
 /* =========================================================
-   Как работает pH-контроллер, пробоотборник
+   Видео: обложка с кнопкой, по нажатию — плеер Rutube
    ========================================================= */
-
-/* видео «Как pH-контроллер дозирует реагент» */
-.dose-video {
-  max-width: 860px; margin: 0 auto; border-radius: var(--radius); overflow: hidden; background: #000;
-  border: 1px solid var(--border-accent); box-shadow: var(--shadow), 0 0 50px rgba(1,244,199,.12);
+.videos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 18px; max-width: 1080px; margin: 0 auto; }
+.video-card { display: flex; flex-direction: column; border-radius: var(--radius); overflow: hidden; background: var(--surface); border: 1px solid var(--border); }
+.video-card__frame { position: relative; aspect-ratio: 16 / 9; background: #000; }
+.video-card__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-card__play { position: absolute; inset: 0; display: block; width: 100%; padding: 0; border: 0; background: #000; cursor: pointer; }
+.video-card__play img { width: 100%; height: 100%; object-fit: cover; opacity: .9; transition: opacity .3s, transform .5s; }
+.video-card__play:hover img { opacity: 1; transform: scale(1.02); }
+.video-card__btn {
+  position: absolute; left: 50%; top: 50%; display: grid; place-items: center; width: 72px; height: 72px; margin: -36px 0 0 -36px;
+  border-radius: 50%; background: var(--accent); color: var(--on-accent); box-shadow: 0 0 0 8px rgba(1,244,199,.18), 0 10px 30px rgba(0,0,0,.45); transition: transform .2s;
 }
-.dose-video__player { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; } /* пропорции ролика */
+.video-card__btn svg { width: 28px; height: 28px; margin-left: 4px; }
+.video-card__play:hover .video-card__btn, .video-card__play:focus-visible .video-card__btn { transform: scale(1.08); }
+.video-card__time { position: absolute; right: 10px; bottom: 10px; padding: 3px 8px; border-radius: 8px; background: rgba(0,0,0,.72); color: #fff; font-size: 13px; }
+.video-card__title { padding: 14px 18px 16px; font-size: 16px; font-weight: 600; }
 /* =========================================================
    12–13. Представителям
    ========================================================= */
@@ -882,7 +897,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 /* каталог: карточка товара целиком помещается в экран (под шапкой).
    Широкий экран — 4 карточки в ряд, компактный низ карточки; фото с запасом сверху под плашки (как на телефоне) */
 @media (min-width: 1100px) {
-  .catalog { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .catalog { --cols: 4; --gap: 14px; }
   .product__chips { left: 8px; right: 8px; top: 8px; gap: 4px; }
   .product__chips li { padding: 3px 7px; border-radius: 8px; }
   .product__chips span { font-size: 9.5px; }
@@ -894,7 +909,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 }
 /* телефон: карточка во всю ширину экрана, фото чуть ниже, название и цена в одну строку */
 @media (max-width: 600px) {
-  .catalog { margin-left: -16px; margin-right: -16px; max-width: none; gap: 12px; }
+  .catalog { margin-left: -16px; margin-right: -16px; max-width: none; --gap: 12px; }
   .product { border-radius: 0; border-left: 0; border-right: 0; }
   .product__media .product__img, .product__img { aspect-ratio: 1 / 1; width: 100%; margin: 0; border-radius: 0; }   /* фото от края до края */
   .product__img img { object-position: 50% 50%; }   /* квадратное фото для телефона — без обрезки */
@@ -1133,24 +1148,16 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 
 
   <!-- =========================================================
-       ПРОБООТБОРНИК: РОЛИК О СБОРКЕ (на месте бывшего калькулятора)
+       ВИДЕО: ролики с Rutube, плеер подгружается только по нажатию
        ========================================================= -->
-  <section class="section" id="probe" aria-labelledby="probe-title">
+  <section class="section" id="videos" aria-labelledby="videos-title">
     <div class="container">
       <div class="section__head reveal">
-        <span class="section__eyebrow">Своими руками</span>
-        <h2 class="section__title" id="probe-title">Как собрать <em>пробоотборник</em></h2>
-        <p class="section__lead">Пошаговая сборка пробоотборника для pH&#8209;контроллера «Джинн»: трубы и фитинги, подключение помпы и проверка соединений на протечку.</p>
+        <span class="section__eyebrow">Видео</span>
+        <h2 class="section__title" id="videos-title">Приборы «Джинн» <em>в&nbsp;деле</em></h2>
+        <p class="section__lead">Сборка пробоотборника и настройка pH&#8209;контроллера.</p>
       </div>
-
-      <div class="dose-video reveal">
-        <video class="dose-video__player" controls preload="none" playsinline poster="images/probe-video-poster.webp"
-               aria-label="Видео: как собрать пробоотборник для pH-контроллера «Джинн»">
-          <source src="video/probe-assembly.mp4" type="video/mp4">
-          Ваш браузер не показывает видео. <a href="video/probe-assembly.mp4">Скачать ролик</a>.
-        </video>
-      </div>
-
+      <div class="videos" id="videoList"></div>
     </div>
   </section>
 
@@ -1267,28 +1274,6 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
           </dl>
         </article>
       </div>
-    </div>
-  </section>
-
-  <!-- =========================================================
-       КАК РАБОТАЕТ pH-КОНТРОЛЛЕР И ПРОБООТБОРНИК
-       ========================================================= -->
-  <section class="section section--alt" id="howto" aria-labelledby="howto-title">
-    <div class="container">
-      <div class="section__head reveal">
-        <span class="section__eyebrow">Настройка</span>
-        <h2 class="section__title" id="howto-title">Как pH-контроллер <em>дозирует&nbsp;реагент</em></h2>
-        <p class="section__lead">В приборе используется ПИД-регулятор. Прибор постоянно сравнивает текущий и заданный pH и подаёт порцию реагента с учётом объёма системы.</p>
-      </div>
-
-      <div class="dose-video reveal">
-        <video class="dose-video__player" controls preload="none" playsinline poster="images/dose-video-poster-6.jpg"
-               aria-label="Видео: как pH-контроллер «Джинн» дозирует реагент">
-          <source src="video/dose-control-7.mp4" type="video/mp4">
-          Ваш браузер не показывает видео. <a href="video/dose-control-7.mp4">Скачать ролик</a>.
-        </video>
-      </div>
-
     </div>
   </section>
 
@@ -1447,7 +1432,8 @@ const CONFIG = {
     phMetr: "https://www.ozon.ru/product/ph-metr-dzhinn-3196423684/",
     phController: "https://www.ozon.ru/product/ph-kontroller-dzhinn-1248661022/",
     blokUniversal: "https://www.ozon.ru/product/blok-upravleniya-universalnyy-dzhinn-1248648168/",
-    blokPower: "https://www.ozon.ru/product/blok-upravleniya-universalnyy-s-vysokoy-vyhodnoy-moshchnostyu-8-kvt-dzhinn-1313073794/"
+    blokPower: "https://www.ozon.ru/product/blok-upravleniya-universalnyy-s-vysokoy-vyhodnoy-moshchnostyu-8-kvt-dzhinn-1313073794/",
+    phElectrode: "ЗАМЕНИТЬ"
   },
   yandexMarketStore: "https://market.yandex.ru/business--dzhinnpro/93137151", // магазин «ДжиннПРО» на Яндекс Маркете
   // Ссылки на товары. Если не заполнено, кнопка «Яндекс Маркет» ведёт в магазин (yandexMarketStore)
@@ -1455,7 +1441,8 @@ const CONFIG = {
     phMetr: "https://market.yandex.ru/card/ph-metr-dzhinn/4831746630",
     phController: "https://market.yandex.ru/card/ph-kontroller-dzhinn/102470316755",
     blokUniversal: "https://market.yandex.ru/card/blok-upravleniya-universalnyy-dzhinn/102460930617",
-    blokPower: "https://market.yandex.ru/card/blok-upravleniya-universalnyy-s-vysokoy-vykhodnoy-moshchnostyu-8-kvt-dzhinn/102559494542"
+    blokPower: "https://market.yandex.ru/card/blok-upravleniya-universalnyy-s-vysokoy-vykhodnoy-moshchnostyu-8-kvt-dzhinn/102559494542",
+    phElectrode: "ЗАМЕНИТЬ"
   },
   // Telegram-бот инженера: вопросы-ответы и инструкции (PDF открываются прямо в Telegram).
   // Ссылки с ?start= сразу открывают нужный раздел бота.
@@ -1484,13 +1471,14 @@ const IMAGES = {
   // фото для карточек каталога: прибор у нижнего края, сверху место под характеристики
   // на ПК (2 колонки) под плашки характеристик 29% высоты, на телефоне (images/m/) — 37–40%: прибор занимает всё остальное
   // карточки каталога — вариант с запасом сверху под плашки (37–40 %): он подходит и для 4 карточек в ряд, и для телефона
-  cards: { phMetr: "images/m/ph-metr-card5.jpg", phController: "images/m/ph-controller-card5.jpg", blokUniversal: "images/m/blok-universal-card5.jpg", blokPower: "images/m/blok-power-card5.jpg" },
+  cards: { phMetr: "images/m/ph-metr-card5.jpg", phController: "images/m/ph-controller-card5.jpg", blokUniversal: "images/m/blok-universal-card5.jpg", blokPower: "images/m/blok-power-card5.jpg", phElectrode: "images/m/ph-electrode-card5.webp" },
   // телефон: квадратные фото — сверху 38 % под плашки, прибор целиком ниже
-  cardsMobile: { phMetr: "images/m/ph-metr-card1.jpg", phController: "images/m/ph-controller-card1.jpg", blokUniversal: "images/m/blok-universal-card1.jpg", blokPower: "images/m/blok-power-card1.jpg" },
+  cardsMobile: { phMetr: "images/m/ph-metr-card1.jpg", phController: "images/m/ph-controller-card1.jpg", blokUniversal: "images/m/blok-universal-card1.jpg", blokPower: "images/m/blok-power-card1.jpg", phElectrode: "images/m/ph-electrode-card1.webp" },
   phMetr: ["images/ph-metr-card.jpg", "images/ph-metr-2.jpg", "images/ph-metr-3.jpg", "images/ph-metr-4.jpg"],
   phController: ["images/ph-controller-card.jpg", "images/ph-controller.jpg", "images/ph-controller-3.jpg", "images/ph-controller-4.jpg"],
   blokUniversal: ["images/blok-universal-card.jpg", "images/blok-universal-2.jpg", "images/blok-universal-3.jpg", "images/blok-universal-4.jpg", "images/blok-universal-5.jpg"],
   blokPower: ["images/blok-power-card.jpg", "images/blok-power-2.jpg"],
+  phElectrode: ["images/ph-electrode.webp"],
   apps: {
     hydro: "images/app-hydro.jpg",
     aqua: "images/app-aqua.jpg",
@@ -1646,23 +1634,56 @@ const PRODUCTS = [
     note: "Рекомендуемые автоматы: 10 А — 2000 Вт; 16 А — 3300 Вт; 20 А — 4200 Вт; 25 А — 5200 Вт; 32 А — 6800 Вт; 40 А — 8800 Вт.",
     photos: IMAGES.blokPower,
     outputs: [1000, 1000, 2000, 8000]
+  },
+  {
+    id: "phElectrode",
+    name: "pH-электрод с разъёмом BNC",
+    short: "pH-электрод",
+    price: 1200,
+    purpose: "Электрод для измерения pH раствора.",
+    description: "Электрод для измерения pH раствора с кабелем и разъёмом BNC. Диапазон измерения pH 0–14, температура раствора 0–60 °C.",
+    keySpecs: [
+      ["Диапазон", "pH 0–14"],
+      ["Разъём", "BNC"],
+      ["Раствор", "0–60 °C"],
+      ["Длина", "18,4 см"],
+      ["Влажность", "до 85 %"]
+    ],
+    specs: [
+      ["Модель", "PH Meter"],
+      ["Диапазон измерения", "pH 0–14"],
+      ["Разъём", "BNC"],
+      ["Температура раствора", "0–60 °C"],
+      ["Температура окружающей среды", "5–40 °C"],
+      ["Относительная влажность воздуха", "до 85 %"],
+      ["Длина", "18,4 см"]
+    ],
+    kit: ["pH-электрод с кабелем и разъёмом BNC"],
+    note: "",
+    photos: IMAGES.phElectrode
   }
+];
+
+/* Ролики на Rutube: id из ссылки rutube.ru/video/<id>/, обложка лежит на сайте */
+const VIDEOS = [
+  { id: "0497109e7cba108c7f8e9d248f9b0f44", title: "Как собрать пробоотборник", time: "1:32", thumb: "images/video/probe.webp" },
+  { id: "f8a5d70ee1283120e0c6b0e894bf9029", title: "Меню и настройки pH-контроллера", time: "0:42", thumb: "images/video/ph-controller-menu.webp" }
 ];
 
 /* Применение: карточки блока «Где применяют» */
 const APPLICATIONS = [
   { key: "hydro", icon: "i-leaf", title: "Гидропоника и сити-фермы",
     text: "Контроль и автоматическая коррекция pH питательного раствора. Управление светом, поливом и климатом.",
-    products: ["phMetr", "phController", "blokUniversal"] },
+    products: ["phMetr", "phController", "phElectrode", "blokUniversal"] },
   { key: "aqua", icon: "i-fish", title: "Аквариумы",
     text: "Измерение pH воды и поддержание заданного уровня дозированием реагента.",
-    products: ["phMetr", "phController"] },
+    products: ["phMetr", "phController", "phElectrode"] },
   { key: "greenhouse", icon: "i-greenhouse", title: "Теплицы и оранжереи",
     text: "Обогрев, вентиляция, освещение и полив по таймеру, по времени и по температуре.",
     products: ["blokUniversal", "blokPower"] },
   { key: "agro", icon: "i-wheat", title: "Сельское хозяйство",
     text: "Контроль pH растворов. Управление мощной нагрузкой: до 12 ламп по 600 Вт.",
-    products: ["phMetr", "phController", "blokPower"] }
+    products: ["phMetr", "phController", "phElectrode", "blokPower"] }
 ];
 
 /* Вопросы и ответы */
@@ -1690,7 +1711,7 @@ const DOCS = {
       <p>Оператор — ${operatorLine()}.</p>
       <h3>2. Какие данные мы обрабатываем</h3>
       ${PD_LIST}
-      <p>На сайте нет форм: заказ вы отправляете сами — в Telegram, письмом или по телефону. Корзина хранится только в вашем браузере и нам не передаётся. Файлы cookie и счётчики аналитики сайт не использует.</p>
+      <p>На сайте нет форм: заказ вы отправляете сами — в Telegram, письмом или по телефону. Корзина хранится только в вашем браузере и нам не передаётся. Файлы cookie и счётчики аналитики сайт не использует. Ролики в блоке «Видео» загружаются с Rutube только после нажатия на ролик; с этого момента действуют правила Rutube, в том числе его файлы cookie.</p>
       <h3>3. Цели обработки</h3>
       <ul>
         <li>оформить и выполнить заказ: согласовать состав, оплату и доставку;</li>
@@ -1753,7 +1774,7 @@ const DOCS = {
       <h3>4. Материалы сайта</h3>
       <p>Тексты, фотографии, видео и инструкции принадлежат владельцу сайта. Копировать и публиковать их можно только с письменного разрешения, кроме цитирования со ссылкой на dginni.ru.</p>
       <h3>5. Сторонние сервисы</h3>
-      <p>Ссылки ведут на Ozon, Яндекс Маркет, Telegram и ВКонтакте. На этих сервисах действуют их собственные правила, за которые владелец сайта не отвечает.</p>
+      <p>Ссылки и видео ведут на Ozon, Яндекс Маркет, Rutube, Telegram и ВКонтакте. На этих сервисах действуют их собственные правила, за которые владелец сайта не отвечает.</p>
       <h3>6. Ответственность</h3>
       <p>Описания и схемы подключения на сайте носят справочный характер. Перед подключением сверяйтесь с инструкцией к прибору или консультируйтесь с инженером.</p>
       <h3>7. Прочее</h3>
@@ -2530,14 +2551,38 @@ function initReveal() {
   }, 2500);
 }
 
+/* Видео: до нажатия — только обложка с сайта, плеер Rutube загружается по клику */
+function renderVideos() {
+  $("#videoList").innerHTML = VIDEOS.map(v => `
+    <article class="video-card reveal">
+      <div class="video-card__frame">
+        <button class="video-card__play" type="button" data-rutube="${esc(v.id)}" aria-label="Смотреть видео: ${esc(v.title)}">
+          ${imgTag(v.thumb, v.title)}
+          <span class="video-card__btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+          <span class="video-card__time">${esc(v.time)}</span>
+        </button>
+      </div>
+      <h3 class="video-card__title">${esc(v.title)}</h3>
+    </article>`).join("");
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-rutube]");
+  if (!b) return;
+  const v = VIDEOS.find(x => x.id === b.dataset.rutube);
+  const f = document.createElement("iframe");
+  f.src = `https://rutube.ru/play/embed/${encodeURIComponent(v.id)}?autoplay=1`;
+  f.title = v.title;
+  f.allow = "autoplay; clipboard-write; fullscreen; picture-in-picture";
+  f.allowFullscreen = true;
+  b.replaceWith(f);
+});
+
 /* =========================================================
    17. ЗАПУСК
    ========================================================= */
 renderApps();
 renderCatalog();
-// ролик: громкость по умолчанию — средняя, чтобы звук не бил по ушам при первом запуске
-// (на iPhone громкость задаёт только сам телефон — там это свойство не работает)
-$$(".dose-video__player").forEach(v => { v.volume = 0.5; });
+renderVideos();
 renderGallery();
 cart.load();
 cart.render();
