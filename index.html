@@ -716,6 +716,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .pm__main { aspect-ratio: 1 / 1; border-radius: 16px; overflow: hidden; background: var(--plate); }
 .pm__main img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
 .pm__thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.pm__video { margin-top: 18px; }
 .pm__thumb { width: 64px; height: 64px; padding: 0; border: 2px solid var(--border-2); border-radius: 12px; overflow: hidden; background: var(--plate); }
 .pm__thumb img { width: 100%; height: 100%; object-fit: cover; }
 .pm__thumb .img-fallback { min-height: 0; padding: 4px; }
@@ -732,6 +733,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .kit { list-style: none; display: grid; gap: 6px; font-size: 15px; }
 .kit li { display: flex; gap: 8px; }
 .kit .i { color: var(--accent); width: 18px; height: 18px; margin-top: 3px; }
+.pm__doc { margin-top: 18px; }
 .pm__note { margin-top: 18px; padding: 14px 16px; border-radius: 0 12px 12px 0; background: rgba(1,244,199,.05); border-left: 2px solid var(--accent); font-size: 14px; color: var(--text); }
 .pm__actions { display: flex; flex-wrap: wrap; gap: 8px; }
 /* телефон: «В корзину» на всю ширину, Ozon и Яндекс Маркет — рядом под ней */
@@ -1155,7 +1157,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
       <div class="section__head reveal">
         <span class="section__eyebrow">Видео</span>
         <h2 class="section__title" id="videos-title">Приборы «Джинн» <em>в&nbsp;деле</em></h2>
-        <p class="section__lead">Сборка пробоотборника и настройка pH&#8209;контроллера.</p>
+        <p class="section__lead">Как pH&#8209;контроллер дозирует реагент и как собрать пробоотборник.</p>
       </div>
       <div class="videos" id="videoList"></div>
     </div>
@@ -1552,6 +1554,7 @@ const PRODUCTS = [
     ],
     kit: ["pH-метр", "pH-электрод", "Калибровочный раствор — 2 шт.", "Руководство по эксплуатации"],
     note: "",
+    manual: "docs/ph-metr.pdf",   // инструкция (PDF) — только в окне товара, на главной её не видно
     photos: IMAGES.phMetr
   },
   {
@@ -1588,6 +1591,8 @@ const PRODUCTS = [
     ],
     kit: ["Регулятор pH", "Трубки с микрофитингами", "pH-электрод", "Инструкция"],
     note: "Для одновременной работы с кислотой и щёлочью ставят два прибора. В гидропонике обычно достаточно одного: pH, как правило, смещается в одну сторону.",
+    manual: "docs/ph-controller.pdf",
+    video: "phControllerMenu",   // ролик в окне товара, слева под фото   // инструкция по эксплуатации (PDF)
     photos: IMAGES.phController
   },
   {
@@ -1607,6 +1612,7 @@ const PRODUCTS = [
     specs: [["Силовые выходы", "4: 3 × 1 кВт и 1 × 2 кВт"]].concat(COMMON_BLOCK_SPECS),
     kit: BLOCK_KIT,
     note: "При отключении электроэнергии часы и все настройки сохраняются.",
+    manual: "docs/blok-universal.pdf",   // инструкция по эксплуатации (PDF)
     photos: IMAGES.blokUniversal,
     outputs: [1000, 1000, 1000, 2000]
   },
@@ -1632,6 +1638,7 @@ const PRODUCTS = [
     ].concat(COMMON_BLOCK_SPECS),
     kit: BLOCK_KIT,
     note: "Рекомендуемые автоматы: 10 А — 2000 Вт; 16 А — 3300 Вт; 20 А — 4200 Вт; 25 А — 5200 Вт; 32 А — 6800 Вт; 40 А — 8800 Вт.",
+    manual: "docs/blok-power.pdf",   // инструкция по эксплуатации (PDF)
     photos: IMAGES.blokPower,
     outputs: [1000, 1000, 2000, 8000]
   },
@@ -1665,10 +1672,12 @@ const PRODUCTS = [
 ];
 
 /* Ролики на Rutube: id из ссылки rutube.ru/video/<id>/, обложка лежит на сайте */
-const VIDEOS = [
-  { id: "0497109e7cba108c7f8e9d248f9b0f44", title: "Как собрать пробоотборник", time: "1:32", thumb: "images/video/probe.webp" },
-  { id: "f8a5d70ee1283120e0c6b0e894bf9029", title: "Меню и настройки pH-контроллера", time: "0:42", thumb: "images/video/ph-controller-menu.webp" }
-];
+const VIDEOS = {
+  dose: { id: "f82e9267cbf14329a339c79f30188538", title: "Как pH-контроллер дозирует реагент", time: "0:45", thumb: "images/video/dose.webp" },
+  probe: { id: "0497109e7cba108c7f8e9d248f9b0f44", title: "Как собрать пробоотборник", time: "1:32", thumb: "images/video/probe.webp" },
+  phControllerMenu: { id: "f8a5d70ee1283120e0c6b0e894bf9029", title: "Меню и настройки pH-контроллера", time: "0:42", thumb: "images/video/ph-controller-menu.webp" }
+};
+const VIDEO_BLOCK = ["dose", "probe"];   // блок «Видео» на главной; ролик о меню — в окне pH-контроллера
 
 /* Применение: карточки блока «Где применяют» */
 const APPLICATIONS = [
@@ -2065,6 +2074,7 @@ function openProduct(id) {
         ${p.photos.length > 1 ? `<div class="pm__thumbs">${p.photos.map((src, i) => `
           <button class="pm__thumb" type="button" data-thumb="${i}" aria-label="Фото ${i + 1}" ${i === 0 ? 'aria-current="true"' : ""}>${imgTag(src, p.name + ", фото " + (i + 1))}</button>`).join("")}
         </div>` : ""}
+        ${p.video ? `<div class="pm__video">${videoCard(p.video)}</div>` : ""}
       </div>
       <div>
         <p class="pm__desc">${esc(p.description)}</p>
@@ -2080,6 +2090,7 @@ function openProduct(id) {
         <h3>Комплектация</h3>
         <ul class="kit">${p.kit.map(k => `<li>${icon("i-check")}<span>${esc(k)}</span></li>`).join("")}</ul>
         ${p.note ? `<p class="pm__note">${esc(p.note)}</p>` : ""}
+        ${p.manual ? `<a class="btn btn--outline btn--sm pm__doc" href="${esc(p.manual)}" target="_blank" rel="noopener">${icon("i-file", "i i-sm")}Инструкция по эксплуатации (PDF)</a>` : ""}
       </div>
     </div>`;
   hydrateImages($("#pmBody"));
@@ -2552,23 +2563,27 @@ function initReveal() {
 }
 
 /* Видео: до нажатия — только обложка с сайта, плеер Rutube загружается по клику */
-function renderVideos() {
-  $("#videoList").innerHTML = VIDEOS.map(v => `
-    <article class="video-card reveal">
+function videoCard(key, cls = "") {
+  const v = VIDEOS[key];
+  return `
+    <article class="video-card ${cls}">
       <div class="video-card__frame">
-        <button class="video-card__play" type="button" data-rutube="${esc(v.id)}" aria-label="Смотреть видео: ${esc(v.title)}">
+        <button class="video-card__play" type="button" data-rutube="${esc(key)}" aria-label="Смотреть видео: ${esc(v.title)}">
           ${imgTag(v.thumb, v.title)}
           <span class="video-card__btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></span>
           <span class="video-card__time">${esc(v.time)}</span>
         </button>
       </div>
       <h3 class="video-card__title">${esc(v.title)}</h3>
-    </article>`).join("");
+    </article>`;
+}
+function renderVideos() {
+  $("#videoList").innerHTML = VIDEO_BLOCK.map(k => videoCard(k, "reveal")).join("");
 }
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-rutube]");
   if (!b) return;
-  const v = VIDEOS.find(x => x.id === b.dataset.rutube);
+  const v = VIDEOS[b.dataset.rutube];
   const f = document.createElement("iframe");
   f.src = `https://rutube.ru/play/embed/${encodeURIComponent(v.id)}?autoplay=1`;
   f.title = v.title;
