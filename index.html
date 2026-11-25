@@ -714,7 +714,10 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .modal--sm { width: min(640px, calc(100vw - 32px)); }
 @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
 
-.pm { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; }
+.pm { display: grid; grid-template-columns: 1fr 1.1fr; grid-template-rows: auto 1fr; grid-template-areas: "media info" "extra info"; gap: 0 28px; }
+.pm > :first-child { grid-area: media; }
+.pm__info { grid-area: info; }
+.pm__extra { grid-area: extra; align-self: start; }   /* комплектация, заметка и инструкция — слева под фото */
 .pm__main { aspect-ratio: 1 / 1; border-radius: 16px; overflow: hidden; background: var(--plate); }
 .pm__main img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
 .pm__thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
@@ -743,7 +746,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
   .pm__actions { display: grid; grid-template-columns: 1fr 1fr; }
   .pm__actions > .btn { grid-column: 1 / -1; }
 }
-@media (max-width: 760px) { .pm { grid-template-columns: 1fr; } .modal__body, .modal__head { padding: 18px 16px; } }
+@media (max-width: 760px) { .pm { grid-template-columns: 1fr; grid-template-rows: none; grid-template-areas: "media" "info" "extra"; gap: 0; } .pm__info { margin-top: 28px; } .modal__body, .modal__head { padding: 18px 16px; } }
 
 /* Лайтбокс */
 .lightbox { width: 100vw; height: 100vh; max-height: 100vh; margin: 0; }
@@ -2078,7 +2081,7 @@ function openProduct(id) {
         </div>` : ""}
         ${p.video ? `<div class="pm__video">${videoCard(p.video)}</div>` : ""}
       </div>
-      <div>
+      <div class="pm__info">
         <p class="pm__desc">${esc(p.description)}</p>
         <div class="pm__price">${formatPrice(p.price)}</div>
         <div class="pm__actions">
@@ -2089,6 +2092,8 @@ function openProduct(id) {
         <table class="spec-table"><tbody>
           ${p.specs.map(([k, v]) => `<tr><th scope="row">${esc(k)}</th><td>${esc(v)}</td></tr>`).join("")}
         </tbody></table>
+      </div>
+      <div class="pm__extra">
         <h3>Комплектация</h3>
         <ul class="kit">${p.kit.map(k => `<li>${icon("i-check")}<span>${esc(k)}</span></li>`).join("")}</ul>
         ${p.note ? `<p class="pm__note">${esc(p.note)}</p>` : ""}
