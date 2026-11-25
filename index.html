@@ -278,7 +278,7 @@ button { cursor: pointer; }
   border-bottom: 1px solid var(--border);
 }
 .header__inner { display: flex; align-items: center; gap: 24px; height: var(--bar-h); }   /* не --header-h: его перезаписывает скрипт, шапка росла на 1 px при каждом resize */
-.logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); flex: 0 0 auto; }
+.logo { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; color: var(--text); flex: 0 0 auto; }   /* 44 px — удобно нажимать пальцем */
 .logo:hover { color: #fff; }
 .logo__mark {
   width: 32px; height: 32px; border-radius: 10px;
@@ -439,6 +439,7 @@ button { cursor: pointer; }
   border-radius: 50%; border: 1px solid var(--border-accent); background: var(--accent-soft); color: var(--accent);
   font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer; transition: background-color .2s, color .2s;
 }
+.stat__info::before { content: ""; position: absolute; inset: -9px; border-radius: 50%; }   /* зона нажатия 44 px вокруг маленького значка */
 .stat__info:hover, .stat.is-open .stat__info { background: var(--accent); color: var(--on-accent); }
 .stat__pop {
   position: absolute; z-index: 90; left: 50%; bottom: calc(100% + 8px); width: 300px; padding: 10px;
@@ -650,10 +651,11 @@ body:has(.stat.is-open) .to-top { opacity: 0; pointer-events: none; }
    14. Контакты и футер
    ========================================================= */
 .contacts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.contact-card { padding: 26px; border-radius: var(--radius); }
+.contact-card { position: relative; padding: 26px; border-radius: var(--radius); }
 .contact-card__icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #0B2A24; color: var(--accent); margin-bottom: 16px; box-shadow: inset 0 0 0 1px rgba(1,244,199,.3), 0 0 20px rgba(1,244,199,.2); }
 .contact-card__label { font-size: 13px; color: var(--text-2); }
 .contact-card__value { font-size: 22px; font-weight: 500; color: var(--text); text-decoration: none; word-break: break-word; }
+a.contact-card__value::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }   /* телефон и почта: нажимается вся карточка */
 /* виджет «Задать вопрос инженеру — Написать в чат»: открывает чат-бот в Telegram */
 .contact-card--chat { display: block; text-decoration: none; color: inherit; border-color: var(--border-accent);
   background: radial-gradient(120% 90% at 0% 0%, rgba(1,244,199,.18), transparent 60%), var(--surface); transition: opacity .7s ease, transform .7s ease, box-shadow .2s; }
@@ -836,7 +838,7 @@ dialog::backdrop { background: rgba(0,4,3,.72); backdrop-filter: blur(6px); }
 .qty button:hover { background: var(--accent-soft); color: var(--accent); }
 .qty output { min-width: 32px; text-align: center; font-weight: 500; }
 .cart-item__sum { font-weight: 500; white-space: nowrap; }
-.remove-btn { border: 0; background: none; color: var(--text-3); display: inline-flex; align-items: center; gap: 4px; font-size: 13px; padding: 4px; margin-top: 4px; }
+.remove-btn { border: 0; background: none; color: var(--text-3); display: inline-flex; align-items: center; gap: 4px; min-height: 36px; font-size: 13px; padding: 4px; margin-top: 2px; }
 .remove-btn:hover { color: var(--red); }
 .cart-empty { text-align: center; padding: 48px 12px; color: var(--text-2); }
 .cart-empty .i { width: 48px; height: 48px; color: var(--text-3); margin: 0 auto 12px; }
